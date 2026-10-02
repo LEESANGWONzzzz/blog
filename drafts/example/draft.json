@@ -1,0 +1,24 @@
+{
+  "test": true,
+  "title": "임시저장 동작 테스트 글",
+  "persona": {
+    "연령직군": "",
+    "소득구간": "",
+    "자산단계": "",
+    "투자경험": "",
+    "현재감정": ""
+  },
+  "keywords": { "main": "", "sub": [] },
+  "hook_pattern": "공감형",
+  "sponsored": null,
+  "blocks": [
+    { "type": "text", "content": "자동화 테스트용 첫 문단이에요.\n발행하지 않고 임시저장만 확인합니다." },
+    { "type": "subtitle", "content": "임시저장은 잘 되나요?" },
+    { "type": "text", "content": "이 문단이 에디터에 그대로 들어가면 성공이에요. 확인 후 임시저장함에서 지우면 됩니다." },
+    { "type": "divider" },
+    { "type": "text", "content": "마지막 문단입니다." }
+  ],
+  "tags": ["테스트"],
+  "place": null,
+  "video": null
+}

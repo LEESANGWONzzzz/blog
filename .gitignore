@@ -1,0 +1,16 @@
+node_modules/
+# 로그인 세션 (쿠키) — 절대 커밋·공유 금지
+naver-profile/
+# 개인 사진·초안·디버그 스크린샷
+input/photos/*
+!input/photos/.gitkeep
+!input/photos/_mosaic/
+input/photos/_mosaic/*
+!input/photos/_mosaic/.gitkeep
+drafts/*
+!drafts/.gitkeep
+!drafts/example/
+debug/
+.DS_Store
+drafts/example/status.json
+drafts/example/publish_checklist.txt

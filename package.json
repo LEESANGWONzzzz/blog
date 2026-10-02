@@ -1,0 +1,20 @@
+{
+  "name": "naver-blog-tool",
+  "version": "0.1.0",
+  "private": true,
+  "description": "네이버 블로그 초안 작성 → 임시저장 자동화 (발행은 사람이 직접)",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "login": "node scripts/naver_login.js",
+    "lint": "node scripts/lint_draft.js",
+    "draft": "node scripts/naver_draft.js",
+    "status": "node scripts/draft_status.js",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "playwright": "^1.63.0"
+  }
+}
