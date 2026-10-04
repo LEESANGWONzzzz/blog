@@ -35,7 +35,8 @@ module.exports = {
   },
 
   // 본문 컴포넌트 종류 (구조 검사용). 제목 컴포넌트는 titleComponent로 제외한다.
-  // text·quotation은 debug/2026-10-04T15-04-28 HTML에서 확인. horizontalLine·image는 아직 실측 전.
+  // text·quotation은 debug/2026-10-04T15-04-28 HTML에서 확인. horizontalLine은 예제 글(구분선 포함) --resave가
+  // 구조 검사를 통과해 확인됨 (틀렸다면 unknown으로 잡혀 저장이 멈췄을 것). image는 아직 실측 전.
   titleComponent: '.se-documentTitle',
   componentTypes: {
     text: '.se-text',
