@@ -126,60 +126,73 @@ async function countIn(frame, candidates) {
   return max;
 }
 
-// 커서가 어디 있는지: 본문 문단(se-text)인지, 맨 마지막 컴포넌트인지, 인용구 안인지.
+// 커서가 어디 있는지: 본문 문단(se-text)인지, 맨 마지막 컴포넌트인지, 인용구(출처 칸 포함) 안인지.
+// 에디터 입력은 숨은 iframe으로 들어가 window.getSelection()이 갱신되지 않으므로,
+// 에디터가 커서 위치 섹션에 붙이는 포커스 클래스로 판정한다. 포커스가 0개거나 2개 이상이면 found:false.
 async function cursorPosition(frame) {
-  return frame.evaluate((titleSel) => {
-    const sel = window.getSelection();
-    const node = sel && sel.anchorNode;
-    const el = node && (node.nodeType === 1 ? node : node.parentElement);
-    const comp = el && el.closest('.se-component');
+  return frame.evaluate(({ titleSel, focusedSel, citeSel }) => {
+    const focused = [...document.querySelectorAll(focusedSel)].filter((el) => !el.closest(titleSel));
+    if (focused.length !== 1) return { found: false, focusedCount: focused.length };
+    const el = focused[0];
+    const comp = el.closest('.se-component');
+    if (!comp) return { found: false, focusedCount: 1 };
     const comps = [...document.querySelectorAll('.se-component')].filter((c) => !c.matches(titleSel));
-    if (!comp) return { found: false };
     return {
       found: true,
       inText: comp.classList.contains('se-text'),
       isLast: comp === comps[comps.length - 1],
       inQuote: !!el.closest('.se-quotation'),
+      inCite: !!el.closest(citeSel),
     };
-  }, SEL.titleComponent);
+  }, { titleSel: SEL.titleComponent, focusedSel: SEL.focusedSection, citeSel: SEL.quoteCite });
 }
 
-const cursorReady = (pos) => pos.found && pos.inText && pos.isLast && !pos.inQuote;
+const cursorReady = (pos) => pos.found && pos.inText && pos.isLast && !pos.inQuote && !pos.inCite;
+
+// 포커스 클래스는 클릭 직후 조금 늦게 바뀔 수 있어 잠깐 기다리며 확인한다.
+async function waitCursorReady(frame, timeout = 1500) {
+  const deadline = Date.now() + timeout;
+  for (;;) {
+    if (cursorReady(await cursorPosition(frame))) return true;
+    if (Date.now() >= deadline) return false;
+    await new Promise((r) => setTimeout(r, 150));
+  }
+}
 
 // 컴포넌트(인용구·구분선·사진) 삽입 뒤 커서를 그 아래 새 본문 문단으로 옮긴다.
 // 옮기지 못하면 예외 — 엉뚱한 칸(인용구 출처 등)에 글을 넣지 않는다.
 async function moveCursorBelowLastComponent(page, frame) {
   const tried = [];
   const lastComp = () => frame.locator(`.se-component:not(${SEL.titleComponent})`).last();
+  const lastIsText = () => lastComp().evaluate((el, textSel) => el.matches(textSel), SEL.componentTypes.text).catch(() => false);
 
-  // A. 마지막이 이미 본문 문단이면 그 끝으로
-  const lastIsText = await lastComp().evaluate((el) => el.classList.contains('se-text')).catch(() => false);
-  if (lastIsText) {
+  // 인용구를 넣으면 에디터가 바로 아래에 빈 본문 컴포넌트를 자동으로 만든다 — 생길 때까지 잠깐 기다린다.
+  const deadline = Date.now() + 2000;
+  while (!(await lastIsText()) && Date.now() < deadline) await new Promise((r) => setTimeout(r, 150));
+
+  // A. 마지막이 본문 컴포넌트면 그 마지막 문단을 클릭하고 끝으로
+  if (await lastIsText()) {
     await lastComp().locator('.se-text-paragraph').last().click();
     await page.keyboard.press('End');
-    if (cursorReady(await cursorPosition(frame))) return;
-    tried.push('마지막 문단 클릭');
+    if (await waitCursorReady(frame)) return;
+    tried.push('마지막 본문 문단 클릭');
   }
 
-  // B. 마지막 컴포넌트 바로 아래 빈 곳 클릭 (에디터가 새 문단을 만든다)
-  const comp = lastComp();
-  await comp.scrollIntoViewIfNeeded().catch(() => {});
-  const box = await comp.boundingBox();
-  if (box) {
-    await page.mouse.click(box.x + box.width / 2, box.y + box.height + 24);
-    if (cursorReady(await cursorPosition(frame))) return;
-    tried.push('컴포넌트 아래 클릭');
+  // B. 본문 맨 아래 "본문 추가" 버튼 (마지막 컴포넌트 아래에 새 본문 문단을 만든다)
+  const addBottom = await tryFirst(frame, SEL.canvasBottom);
+  if (addBottom) {
+    await safeClick(addBottom);
+    if (await lastIsText()) {
+      await lastComp().locator('.se-text-paragraph').last().click();
+      await page.keyboard.press('End');
+    }
+    if (await waitCursorReady(frame)) return;
+    tried.push('본문 추가 버튼');
   }
 
-  // C. 방향키로 빠져나오기 (인용구 출처 칸에서는 글자를 치지 않음)
-  for (let i = 0; i < 3; i += 1) {
-    await page.keyboard.press('ArrowDown');
-    if (cursorReady(await cursorPosition(frame))) return;
-  }
-  tried.push('방향키 아래 3회');
-
+  // 방향키는 쓰지 않는다 — 인용구 본문에서 ↓를 누르면 출처 칸으로 들어간다 (첫 실행 때 그 칸에 글이 들어감).
   const pos = await cursorPosition(frame);
-  throw new Error(`컴포넌트 아래로 커서를 옮기지 못했습니다 (${tried.join(' → ')}; 현재 위치 ${JSON.stringify(pos)}). selectors.js 실측 필요`);
+  throw new Error(`컴포넌트 아래로 커서를 옮기지 못했습니다 (${tried.join(' → ') || '시도할 대상 없음'}; 현재 위치 ${JSON.stringify(pos)}). selectors.js 실측 필요`);
 }
 
 // 초안 블록 → 기대하는 컴포넌트 종류 순서. 연속된 text는 에디터에서 한 컴포넌트로 묶일 수 있어 하나로 합친다.
@@ -205,14 +218,21 @@ function compareStructure(expected, actual) {
 }
 
 async function actualStructure(frame) {
-  const raw = await frame.evaluate(({ titleSel, types, citeSel }) => {
+  const raw = await frame.evaluate(({ titleSel, types, citeSel, placeholderSel }) => {
     const comps = [...document.querySelectorAll('.se-component')].filter((c) => !c.matches(titleSel));
     return comps.map((c) => {
       const type = Object.keys(types).find((k) => c.matches(types[k])) || `unknown(${c.className})`;
-      const cite = type === 'quotation' ? (c.querySelector(citeSel)?.innerText || '').trim() : '';
+      let cite = '';
+      const citeEl = type === 'quotation' && c.querySelector(citeSel);
+      if (citeEl) {
+        // "출처 입력" 안내문은 글이 아니므로 빼고 센다
+        const clone = citeEl.cloneNode(true);
+        clone.querySelectorAll(placeholderSel).forEach((p) => p.remove());
+        cite = (clone.textContent || '').trim();
+      }
       return { type, empty: type === 'text' && !(c.innerText || '').trim(), cite };
     });
-  }, { titleSel: SEL.titleComponent, types: SEL.componentTypes, citeSel: SEL.quoteCite });
+  }, { titleSel: SEL.titleComponent, types: SEL.componentTypes, citeSel: SEL.quoteCite, placeholderSel: SEL.placeholder });
   const problems = raw.filter((c) => c.cite).map((c) => `인용구 출처 칸에 글이 들어갔습니다: "${c.cite.slice(0, 30)}"`);
   return { types: collapseText(raw.filter((c) => !c.empty).map((c) => c.type)), problems };
 }
@@ -238,7 +258,8 @@ async function insertBlock(page, frame, block, index) {
       const before = await countIn(frame, ['.se-component.se-quotation']);
       await safeClick(await first(frame, SEL.toolbar.quotation));
       await frame.waitForFunction((n) => document.querySelectorAll('.se-component.se-quotation').length > n, before);
-      await (await first(frame, SEL.lastQuoteParagraph)).click();
+      const quote = frame.locator(`.se-component${SEL.componentTypes.quotation}`).last();
+      await (await first(quote, SEL.lastQuoteParagraph)).click();
       await typeText(page, block.content);
       await moveCursorBelowLastComponent(page, frame);
       break;
@@ -260,7 +281,8 @@ async function insertBlock(page, frame, block, index) {
         { timeout: 60000 },
       );
       if (block.caption && block.caption.trim()) {
-        await (await first(frame, SEL.lastImageCaption)).click();
+        const img = frame.locator(`.se-component${SEL.componentTypes.image}`).last();
+        await (await first(img, SEL.lastImageCaption)).click();
         await page.keyboard.insertText(block.caption.trim());
       }
       await moveCursorBelowLastComponent(page, frame);

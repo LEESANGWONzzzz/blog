@@ -35,6 +35,7 @@ module.exports = {
   },
 
   // 본문 컴포넌트 종류 (구조 검사용). 제목 컴포넌트는 titleComponent로 제외한다.
+  // text·quotation은 debug/2026-10-04T15-04-28 HTML에서 확인. horizontalLine·image는 아직 실측 전.
   titleComponent: '.se-documentTitle',
   componentTypes: {
     text: '.se-text',
@@ -42,13 +43,26 @@ module.exports = {
     horizontalLine: '.se-horizontalLine',
     image: '.se-image',
   },
-  // 인용구 아래 "출처" 칸 — 소제목에서는 비어 있어야 한다
+  // 인용구 구조 (실측): .se-component.se-quotation > … > .se-quotation-container
+  //   ├ .se-module-text.se-quote  — 본문 칸 (소제목이 들어갈 곳)
+  //   └ .se-module-text.se-cite   — 출처 칸 (비어 있으면 .se-is-empty, 안내문은 .se-placeholder)
+  // 인용구를 넣으면 에디터가 그 아래에 빈 본문 컴포넌트(.se-text)를 자동으로 만든다.
   quoteCite: '.se-cite',
+  placeholder: '.se-placeholder',
 
-  // 마지막으로 추가된 이미지의 캡션 입력칸
-  lastImageCaption: ['.se-component.se-image:last-of-type .se-caption .se-text-paragraph'],
-  // 마지막 인용구 컴포넌트의 본문
-  lastQuoteParagraph: ['.se-component.se-quotation:last-of-type .se-quote .se-text-paragraph'],
+  // 커서 위치 판정: 에디터 입력은 숨은 iframe(input_buffer)으로 들어가서 window.getSelection()은
+  // 이전 위치(인용구 안)에 머문다. 에디터가 실제 커서가 있는 섹션에 붙이는 이 클래스로 판정한다.
+  focusedSection: '.se-is-focused',
+
+  // 아래 두 항목은 "마지막 이미지/인용구 컴포넌트" 안에서 찾는 상대 셀렉터다.
+  // (:last-of-type은 클래스가 아니라 태그 기준이라, 뒤에 빈 본문이 붙으면 못 찾는다)
+  // 이미지 캡션 입력칸 — 실측 전
+  lastImageCaption: ['.se-caption .se-text-paragraph'],
+  // 인용구 본문 칸 (실측)
+  lastQuoteParagraph: ['.se-quote .se-text-paragraph'],
+
+  // 본문 맨 아래 "본문 추가" 버튼 — 마지막 컴포넌트 아래에 새 본문 문단을 만든다 (실측)
+  canvasBottom: ['button.se-canvas-bottom-button'],
 
   // 임시저장 버튼 — "발행" 버튼과 혼동하지 않도록 safeClick()이 한 번 더 검사한다.
   saveButton: ['button[class*="save_btn"]', 'button:has-text("저장")'],
