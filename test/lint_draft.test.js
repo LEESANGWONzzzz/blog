@@ -87,3 +87,15 @@ test('텍스트 대조: 순서·누락 검출', () => {
   assert.deepStrictEqual(compareInOrder(pieces, '제목\n첫 문단.\n\n둘째\n문단.'), []);
   assert.deepStrictEqual(compareInOrder(pieces, '둘째 문단.\n첫 문단.'), ['둘째 문단.']);
 });
+
+test('구조 비교: 연속 text는 하나로, 인용구 출처 오입력은 위치 차이로 잡힘', () => {
+  const { expectedStructure, compareStructure } = require('../scripts/naver_draft');
+  const blocks = require('../drafts/example/draft.json').blocks;
+  const expected = expectedStructure(blocks);
+  assert.deepStrictEqual(expected, ['text', 'quotation', 'text', 'horizontalLine', 'text']);
+  assert.deepStrictEqual(compareStructure(expected, ['text', 'quotation', 'text', 'horizontalLine', 'text']), []);
+  // 이번 실제 사례: 소제목 다음 문단이 인용구 안으로 들어가 text가 하나 빠짐
+  const diff = compareStructure(expected, ['text', 'quotation', 'horizontalLine', 'text']);
+  assert.strictEqual(diff.length, 1);
+  assert.match(diff[0], /3번째 컴포넌트: 기대 text \/ 실제 horizontalLine/);
+});

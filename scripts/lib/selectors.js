@@ -34,6 +34,17 @@ module.exports = {
     image: ['button[data-name="image"]', 'button.se-image-toolbar-button'],
   },
 
+  // 본문 컴포넌트 종류 (구조 검사용). 제목 컴포넌트는 titleComponent로 제외한다.
+  titleComponent: '.se-documentTitle',
+  componentTypes: {
+    text: '.se-text',
+    quotation: '.se-quotation',
+    horizontalLine: '.se-horizontalLine',
+    image: '.se-image',
+  },
+  // 인용구 아래 "출처" 칸 — 소제목에서는 비어 있어야 한다
+  quoteCite: '.se-cite',
+
   // 마지막으로 추가된 이미지의 캡션 입력칸
   lastImageCaption: ['.se-component.se-image:last-of-type .se-caption .se-text-paragraph'],
   // 마지막 인용구 컴포넌트의 본문

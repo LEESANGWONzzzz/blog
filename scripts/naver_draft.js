@@ -126,22 +126,95 @@ async function countIn(frame, candidates) {
   return max;
 }
 
+// 커서가 어디 있는지: 본문 문단(se-text)인지, 맨 마지막 컴포넌트인지, 인용구 안인지.
+async function cursorPosition(frame) {
+  return frame.evaluate((titleSel) => {
+    const sel = window.getSelection();
+    const node = sel && sel.anchorNode;
+    const el = node && (node.nodeType === 1 ? node : node.parentElement);
+    const comp = el && el.closest('.se-component');
+    const comps = [...document.querySelectorAll('.se-component')].filter((c) => !c.matches(titleSel));
+    if (!comp) return { found: false };
+    return {
+      found: true,
+      inText: comp.classList.contains('se-text'),
+      isLast: comp === comps[comps.length - 1],
+      inQuote: !!el.closest('.se-quotation'),
+    };
+  }, SEL.titleComponent);
+}
+
+const cursorReady = (pos) => pos.found && pos.inText && pos.isLast && !pos.inQuote;
+
 // 컴포넌트(인용구·구분선·사진) 삽입 뒤 커서를 그 아래 새 본문 문단으로 옮긴다.
+// 옮기지 못하면 예외 — 엉뚱한 칸(인용구 출처 등)에 글을 넣지 않는다.
 async function moveCursorBelowLastComponent(page, frame) {
-  const lastIsText = await frame.evaluate(() => {
-    const comps = document.querySelectorAll('.se-component');
-    const last = comps[comps.length - 1];
-    return !!(last && last.classList.contains('se-text'));
-  });
+  const tried = [];
+  const lastComp = () => frame.locator(`.se-component:not(${SEL.titleComponent})`).last();
+
+  // A. 마지막이 이미 본문 문단이면 그 끝으로
+  const lastIsText = await lastComp().evaluate((el) => el.classList.contains('se-text')).catch(() => false);
   if (lastIsText) {
-    const para = frame.locator(SEL.bodyParagraph[0]).last();
-    await para.click();
+    await lastComp().locator('.se-text-paragraph').last().click();
     await page.keyboard.press('End');
-  } else {
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('End');
-    await page.keyboard.press('Enter');
+    if (cursorReady(await cursorPosition(frame))) return;
+    tried.push('마지막 문단 클릭');
   }
+
+  // B. 마지막 컴포넌트 바로 아래 빈 곳 클릭 (에디터가 새 문단을 만든다)
+  const comp = lastComp();
+  await comp.scrollIntoViewIfNeeded().catch(() => {});
+  const box = await comp.boundingBox();
+  if (box) {
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height + 24);
+    if (cursorReady(await cursorPosition(frame))) return;
+    tried.push('컴포넌트 아래 클릭');
+  }
+
+  // C. 방향키로 빠져나오기 (인용구 출처 칸에서는 글자를 치지 않음)
+  for (let i = 0; i < 3; i += 1) {
+    await page.keyboard.press('ArrowDown');
+    if (cursorReady(await cursorPosition(frame))) return;
+  }
+  tried.push('방향키 아래 3회');
+
+  const pos = await cursorPosition(frame);
+  throw new Error(`컴포넌트 아래로 커서를 옮기지 못했습니다 (${tried.join(' → ')}; 현재 위치 ${JSON.stringify(pos)}). selectors.js 실측 필요`);
+}
+
+// 초안 블록 → 기대하는 컴포넌트 종류 순서. 연속된 text는 에디터에서 한 컴포넌트로 묶일 수 있어 하나로 합친다.
+function expectedStructure(blocks) {
+  const map = { text: 'text', subtitle: 'quotation', divider: 'horizontalLine', image: 'image' };
+  return collapseText(blocks.map((b) => map[b.type]));
+}
+
+function collapseText(types) {
+  return types.filter((t, i) => !(t === 'text' && types[i - 1] === 'text'));
+}
+
+// 같으면 [], 다르면 사람이 읽을 수 있는 차이 목록
+function compareStructure(expected, actual) {
+  if (expected.length === actual.length && expected.every((t, i) => t === actual[i])) return [];
+  const n = Math.max(expected.length, actual.length);
+  for (let i = 0; i < n; i += 1) {
+    if (expected[i] !== actual[i]) {
+      return [`${i + 1}번째 컴포넌트: 기대 ${expected[i] || '(없음)'} / 실제 ${actual[i] || '(없음)'} — 기대 [${expected.join(', ')}] / 실제 [${actual.join(', ')}]`];
+    }
+  }
+  return [];
+}
+
+async function actualStructure(frame) {
+  const raw = await frame.evaluate(({ titleSel, types, citeSel }) => {
+    const comps = [...document.querySelectorAll('.se-component')].filter((c) => !c.matches(titleSel));
+    return comps.map((c) => {
+      const type = Object.keys(types).find((k) => c.matches(types[k])) || `unknown(${c.className})`;
+      const cite = type === 'quotation' ? (c.querySelector(citeSel)?.innerText || '').trim() : '';
+      return { type, empty: type === 'text' && !(c.innerText || '').trim(), cite };
+    });
+  }, { titleSel: SEL.titleComponent, types: SEL.componentTypes, citeSel: SEL.quoteCite });
+  const problems = raw.filter((c) => c.cite).map((c) => `인용구 출처 칸에 글이 들어갔습니다: "${c.cite.slice(0, 30)}"`);
+  return { types: collapseText(raw.filter((c) => !c.empty).map((c) => c.type)), problems };
 }
 
 async function typeText(page, content) {
@@ -316,7 +389,14 @@ async function main() {
         throw new Error(`blocks[${i}] (${draft.blocks[i].type}) 입력 실패: ${e.message}`);
       }
     }
-    mark(draftFile, status, 'body', true);
+    // 구조 검사 — 틀리면 저장하지 않는다 (글자만 맞고 위치가 틀린 경우를 잡기 위해)
+    const structure = await actualStructure(frame);
+    const structureIssues = [...structure.problems, ...compareStructure(expectedStructure(draft.blocks), structure.types)];
+    const dumped = await saveDebug(page, structureIssues.length ? 'body-structure-mismatch' : 'body-ok');
+    if (structureIssues.length) {
+      throw new Error(`본문 구조가 초안과 다릅니다 — 저장하지 않았습니다.\n  ${structureIssues.join('\n  ')}`);
+    }
+    mark(draftFile, status, 'body', true, dumped ? `에디터 HTML: ${dumped}.html` : undefined);
 
     // 5. 임시저장 (발행 아님)
     current = 'save';
@@ -374,4 +454,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { compareInOrder, expectedPieces, squash, STEPS, readStatus, statusPath };
+module.exports = { compareInOrder, expectedPieces, squash, STEPS, readStatus, statusPath, expectedStructure, compareStructure, collapseText };
