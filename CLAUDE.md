@@ -25,7 +25,8 @@
 | `node scripts/lint_draft.js <draft.json>` | 형식 검사. 오류가 있으면 저장 불가 |
 | `node scripts/naver_draft.js <draft.json>` | 검사 → 에디터 입력 → 임시저장 → 텍스트 전문 대조 1회 |
 | `node scripts/draft_status.js [draft.json]` | 단계별 진행 상황과 재개 지점 |
-| `npm test` | 형식 검사·발행 가드 테스트 |
+| `node scripts/analyze_performance.js <csv>` | 조회수 상위 글의 교집합 분석 → `data/analysis-latest.md` (`/analyze`) |
+| `npm test` | 형식 검사·발행 가드·성과 분석 테스트 |
 
 ## 안전 규칙 (제거·우회 금지)
 

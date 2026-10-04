@@ -12,6 +12,7 @@
     "lint": "node scripts/lint_draft.js",
     "draft": "node scripts/naver_draft.js",
     "status": "node scripts/draft_status.js",
+    "analyze": "node scripts/analyze_performance.js data/performance.csv",
     "test": "node --test test/*.test.js"
   },
   "dependencies": {

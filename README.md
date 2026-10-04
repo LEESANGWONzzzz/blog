@@ -133,6 +133,14 @@ node scripts/draft_status.js 결과랑 debug/ 최신 파일 보고 selectors.js�
 
 3. 끝나면 `drafts/<글폴더>/publish_checklist.txt`를 보고 임시저장함에서 확인합니다. 태그를 입력하고 **직접 발행**하세요.
 
+### 5-3. 성과 분석 (글이 10개 이상 쌓인 뒤)
+
+조회수가 잘 나온 내 글들의 공통점(제목 유형, 도입 후킹, 자주 나온 단어)을 찾아 다음 글에 반영합니다. 자세한 방법은 `docs/performance-analysis.md`에 있습니다.
+
+1. 네이버 크리에이터 어드바이저 → 조회수 순위에서 1~20위의 제목과 조회수를 확인합니다.
+2. Claude Code에서 `/analyze`를 입력하고, 제목과 조회수를 붙여넣습니다.
+3. 결과는 `data/analysis-latest.md`에 저장되고, 이후 `/write`가 이 결과를 참고합니다.
+
 ## 6. 자주 막히는 곳 (Mac 기준)
 
 | 증상 | 해결 |
@@ -161,6 +169,7 @@ scripts/naver_login.js     전용 프로필 로그인
 scripts/naver_draft.js     검사 → 입력 → 임시저장 → 대조
 scripts/lint_draft.js      형식 검사기
 scripts/draft_status.js    재개 지점 안내
+scripts/analyze_performance.js  조회수 상위 글 교집합 분석 (/analyze)
 scripts/lib/publish_guard.js  발행 차단 가드 (제거·우회 금지)
 scripts/lib/selectors.js   에디터 셀렉터 (실측 후 갱신)
 input/photos/_mosaic/      모자이크 끝난 사진 (git 제외)

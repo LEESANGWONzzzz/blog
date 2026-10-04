@@ -28,6 +28,7 @@ argument-hint: 소재: … , 한줄 메모: … [, 제목: …] [, 큰 틀: 소�
 
 ## 5. 작성
 - 직전 후킹 패턴을 `drafts/`의 가장 최근 draft.json에서 확인하고, 다른 패턴을 고른다.
+- `data/analysis-latest.md`가 있으면 읽고, 상위 글 교집합(제목 유형·단어)을 제목 유형(`title_hook`)과 키워드 후보에 반영한다 (규칙 8절). 반영했으면 검수 보고에 근거를 적는다.
 - `drafts/YYYYMMDD-<영문슬러그>/draft.json`과 `review.md`(7-2 형식)를 쓴다.
 
 ## 6. 형식 검사

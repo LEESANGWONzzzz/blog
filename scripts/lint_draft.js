@@ -11,6 +11,7 @@ const { resolveFromRoot } = require('./lib/config');
 
 const BLOCK_TYPES = new Set(['text', 'subtitle', 'divider', 'image']);
 const HOOK_PATTERNS = new Set(['손실회피형', '현장몰입형', '반전형', '공감형']);
+const TITLE_HOOKS = new Set(['숫자형', '비교형', '손실회피형', '질문형', '반전형']);
 const PERSONA_KEYS = ['연령직군', '소득구간', '자산단계', '투자경험', '현재감정'];
 const MARKER = /\[\[확인필요:[^\]]*\]\]/g;
 const TITLE_ALLOWED = /^[가-힣ㄱ-ㅎA-Za-z0-9 ]+$/;
@@ -91,6 +92,11 @@ function lintDraft(draft, { baseDir, testMode = false } = {}) {
     }
     if (!HOOK_PATTERNS.has(draft.hook_pattern)) {
       err(`hook_pattern은 ${[...HOOK_PATTERNS].join(' / ')} 중 하나여야 합니다.`);
+    }
+    if (draft.title_hook === undefined || draft.title_hook === null) {
+      warn('title_hook이 없습니다 — 성과 분석(analyze)에서 제목 유형을 추정으로만 볼 수 있습니다.');
+    } else if (!TITLE_HOOKS.has(draft.title_hook)) {
+      err(`title_hook은 ${[...TITLE_HOOKS].join(' / ')} 중 하나여야 합니다.`);
     }
   }
   const main = draft.keywords && typeof draft.keywords.main === 'string' ? draft.keywords.main.trim() : '';
