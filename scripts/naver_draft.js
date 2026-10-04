@@ -18,6 +18,7 @@ const { ROOT, PROFILE_DIR, DEBUG_DIR, loadConfig, resolveFromRoot } = require('.
 const { installGuard, assertGuard, safeClick } = require('./lib/publish_guard');
 const { lintDraft, printReport } = require('./lint_draft');
 const SEL = require('./lib/selectors');
+const { sessionStatus } = require('./lib/session');
 
 const STEPS = ['lint', 'open_editor', 'title', 'body', 'save', 'verify'];
 
@@ -284,9 +285,9 @@ async function main() {
 
   let current = 'open_editor';
   try {
-    const cookies = new Set((await context.cookies('https://naver.com')).map((c) => c.name));
-    if (!SEL.sessionCookies.every((n) => cookies.has(n))) {
-      throw new Error('로그인 세션이 없습니다. 먼저 node scripts/naver_login.js 를 실행하세요.');
+    const session = await sessionStatus(context);
+    if (!session.ok) {
+      throw new Error('로그인 세션이 없습니다. node scripts/naver_login.js 를 다시 실행하고, 네이버 로그인 화면에서 "로그인 상태 유지"를 체크하세요.');
     }
 
     // 2. 에디터 열기 + 가드 확인
