@@ -462,6 +462,9 @@ async function main() {
     console.error(`\n✖ [${current}] ${e.message}`);
     if (dbg) console.error(`  화면·HTML 저장: ${dbg}.png / .html`);
     console.error('  초안은 다시 쓰지 마세요. node scripts/draft_status.js 로 재개 지점을 확인하세요.');
+    if (current === 'body' || current === 'save') {
+      console.error('  ⚠ 네이버 에디터가 입력 중인 글을 자동저장했을 수 있습니다. 임시저장함에 중간까지만 쓴 글이 있으면 발행하지 말고 지우세요.');
+    }
     process.exitCode = 1;
   } finally {
     if (keepOpen) await waitForEnter('창을 닫으려면 Enter > ');

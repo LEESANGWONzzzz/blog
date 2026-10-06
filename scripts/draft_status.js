@@ -19,7 +19,8 @@ function nextAction(status) {
   const failed = STEPS.find((s) => status.steps[s] && !status.steps[s].ok);
   if (failed === 'lint') return '형식 오류 — 초안 JSON의 해당 항목만 고친 뒤 naver_draft.js 재실행.';
   if (failed) {
-    return `[${failed}] 단계 실패 — 에디터는 매번 처음부터 다시 입력합니다. 원인(대개 scripts/lib/selectors.js)만 고치고 naver_draft.js 재실행. 초안은 다시 쓰지 않습니다.`;
+    const autosave = failed === 'body' || failed === 'save' ? ' 네이버 자동저장으로 임시저장함에 중간본이 남았을 수 있으니 발행하지 말고 지우세요.' : '';
+    return `[${failed}] 단계 실패 —${autosave} 에디터는 매번 처음부터 다시 입력합니다. 원인(대개 scripts/lib/selectors.js)만 고치고 naver_draft.js 재실행. 초안은 다시 쓰지 않습니다.`;
   }
   return '아직 실행 전 — node scripts/naver_draft.js <draft.json>';
 }
