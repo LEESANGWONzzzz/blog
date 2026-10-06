@@ -19,11 +19,13 @@ argument-hint: 소재: … , 한줄 메모: … [, 제목: …] [, 큰 틀: 소�
 
 ## 3. 이미지 (규칙 5-7, 5-8)
 - `input/photos/_mosaic/`의 사진은 Read 도구로 직접 본다. `_mosaic`에 없는 사진은 쓰지 않고 모자이크가 필요하다고 알린다. 가려지지 않은 개인정보가 보이면 빼고 알린다. 사진에서 확인되는 사실만 쓴다.
-- 사진이 4장보다 적으면 나머지는 이미지로 채운다:
+- 사진이 4장보다 적으면 나머지는 이미지로 채운다 (규칙 5-8):
+  - **정보 카드(기본):** 5번에서 draft.json을 쓴 뒤 `drafts/<글폴더>/cards.json`을 쓰고
+    `node scripts/make_cards.js --plan drafts/<글폴더>/cards.json --draft drafts/<글폴더>/draft.json`을 실행한다.
+    숫자 불일치로 실패하면 카드 쪽을 본문에 맞춘다 (본문은 확인된 값이 기준). 만든 카드는 Read 도구로 열어 본다.
   - 공식 자료: 출처 기관 페이지에서 공공누리 제1유형 표시를 확인한 카드뉴스·인포그래픽만 `input/images/official/`에 받고 `.source.txt`를 남긴다.
-  - AI 일러스트: 4번(수치 확인)이 끝난 뒤 `drafts/<글폴더>/images.json`을 쓰고 `node scripts/generate_image.js --plan …`을 실행한다. 이미지 속 숫자는 확인된 값만.
-    종료 코드 3(API 키 없음)이면 `image_prompts.md`를 사용자에게 안내하고, 이미지가 준비될 때까지 임시저장하지 않는다.
-  - 만든 이미지는 Read 도구로 열어 철자·숫자를 확인한다. 틀리면 그 파일을 지우고 다시 만든다 (최대 2회).
+  - AI 일러스트(선택): `.env`에 OPENAI_API_KEY가 있을 때만 `node scripts/generate_image.js --plan …`. 키가 없으면(종료 코드 3) 만들지 않고 카드로 대신한다.
+    운영자가 원하면 `image_prompts.md`를 ChatGPT에 붙여넣어 만든 그림을 나중에 직접 추가할 수 있다고 보고에 한 줄 적는다.
 - 이야기 순서대로 배치한다.
 
 ## 4. 수치 확인

@@ -25,6 +25,7 @@
 | `node scripts/lint_draft.js <draft.json>` | 형식 검사. 오류가 있으면 저장 불가 |
 | `node scripts/naver_draft.js <draft.json>` | 검사 → 에디터 입력 → 임시저장 → 텍스트 전문 대조 1회 |
 | `node scripts/draft_status.js [draft.json]` | 단계별 진행 상황과 재개 지점 |
+| `node scripts/make_cards.js --plan <cards.json> --draft <draft.json>` | 정보 카드 이미지 (기본, API 키 불필요) |
 | `node scripts/generate_image.js --plan <images.json>` | AI 일러스트 생성 (키 없으면 수동용 프롬프트 파일) |
 | `node scripts/analyze_performance.js <csv>` | 조회수 상위 글의 교집합 분석 → `data/analysis-latest.md` (`/analyze`) |
 | `npm test` | 형식 검사·발행 가드·성과 분석 테스트 |

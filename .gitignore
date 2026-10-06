@@ -20,6 +20,8 @@ drafts/example/publish_checklist.txt
 input/images/*
 !input/images/generated/
 !input/images/official/
+!input/images/cards/
+input/images/cards/*
 input/images/generated/*
 input/images/official/*
 !input/images/*/.gitkeep

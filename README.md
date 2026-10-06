@@ -141,16 +141,16 @@ node scripts/draft_status.js 결과랑 debug/ 최신 파일 보고 selectors.js�
 2. Claude Code에서 `/analyze`를 입력하고, 제목과 조회수를 붙여넣습니다.
 3. 결과는 `data/analysis-latest.md`에 저장되고, 이후 `/write`가 이 결과를 참고합니다.
 
-### 5-4. 이미지 자동 생성 (선택)
+### 5-4. 이미지
 
-`/write`·`/auto`는 사진이 부족하면 AI 일러스트(표지·요약 카드)를 만들어 넣습니다.
-- 자동으로 만들려면 OpenAI **API 키**가 필요합니다. ChatGPT 구독과는 별도로 platform.openai.com에서 발급하고 결제합니다.
-  ```bash
-  cp .env.example .env
-  open -e .env      # OPENAI_API_KEY= 뒤에 키 붙여넣고 저장
-  ```
-- 키가 없으면 `drafts/<글폴더>/image_prompts.md`에 프롬프트가 만들어집니다. ChatGPT에 붙여넣어 만든 이미지를 적힌 파일 이름으로 `input/images/generated/`에 저장하면 이어서 진행됩니다.
-- 공식 기관 카드뉴스는 공공누리 제1유형 표시가 있는 것만 `input/images/official/`에 받아 씁니다. 다른 블로그·뉴스 이미지는 쓰지 않습니다.
+`/write`·`/auto`는 사진이 부족하면 **정보 카드 이미지**(표지·핵심 숫자·신청 순서·체크리스트)를 자동으로 만들어 넣습니다.
+- API 키도 비용도 필요 없습니다. 글자를 그대로 그리기 때문에 한글·숫자가 틀어지지 않습니다.
+- 카드 숫자가 본문과 다르면 만들지 않고 멈춥니다.
+
+그림 같은 일러스트를 더 넣고 싶으면 (선택):
+- OpenAI API 키가 있으면 `.env`에 넣어 자동 생성 (ChatGPT 구독과 별도 결제)
+- 없으면 ChatGPT에서 직접 그림을 만들어 `input/images/generated/`에 넣고, 맥 Claude에게 "이 그림을 표지로 넣어줘"라고 요청
+- 공식 기관 카드뉴스는 공공누리 제1유형 표시가 있는 것만 씁니다. 다른 블로그·뉴스 이미지는 쓰지 않습니다.
 
 ### 5-5. 한 번에 자동으로 (`/auto`)
 
@@ -188,7 +188,8 @@ scripts/naver_draft.js     검사 → 입력 → 임시저장 → 대조
 scripts/lint_draft.js      형식 검사기
 scripts/draft_status.js    재개 지점 안내
 scripts/analyze_performance.js  조회수 상위 글 교집합 분석 (/analyze)
-scripts/generate_image.js  AI 일러스트 생성 (images.json → input/images/generated/)
+scripts/make_cards.js  정보 카드 이미지 (cards.json → input/images/cards/)
+scripts/generate_image.js  AI 일러스트 생성, 선택 (images.json → input/images/generated/)
 scripts/lib/publish_guard.js  발행 차단 가드 (제거·우회 금지)
 scripts/lib/selectors.js   에디터 셀렉터 (실측 후 갱신)
 input/photos/_mosaic/      모자이크 끝난 사진 (git 제외)

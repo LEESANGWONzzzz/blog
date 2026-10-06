@@ -42,6 +42,7 @@ function splitSentences(text) {
 // 이미지 출처 종류: 직접 찍은 사진(모자이크 완료) / AI 생성 일러스트 / 공식 기관 자료
 function imageKind(p) {
   if (p.startsWith('input/photos/_mosaic/')) return 'photo';
+  if (p.startsWith('input/images/cards/')) return 'card';
   if (p.startsWith('input/images/generated/')) return 'generated';
   if (p.startsWith('input/images/official/')) return 'official';
   return 'other';
@@ -169,7 +170,7 @@ function lintDraft(draft, { baseDir, testMode = false } = {}) {
       imagePaths.add(b.path);
       const kind = imageKind(b.path);
       if (kind === 'generated') generated += 1;
-      if (kind === 'other') warn(`${where}: 허용 폴더 밖의 이미지입니다 (input/photos/_mosaic · input/images/generated · input/images/official).`);
+      if (kind === 'other') warn(`${where}: 허용 폴더 밖의 이미지입니다 (input/photos/_mosaic · input/images/cards · input/images/generated · input/images/official).`);
       if (kind === 'official' && !/출처/.test(b.caption || '')) err(`${where}: 공식 자료 이미지는 캡션에 "출처: 기관명"이 있어야 합니다.`);
       if (baseDir) {
         const p = path.isAbsolute(b.path) ? b.path : path.join(baseDir, b.path);
