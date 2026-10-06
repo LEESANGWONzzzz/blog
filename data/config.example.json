@@ -1,4 +1,6 @@
 {
   "blogId": "블로그주소_blog.naver.com/뒤의_아이디",
-  "slowMo": 60
+  "slowMo": 60,
+  "dailySaveLimit": 2,
+  "schedule": { "start": "07:00", "every": 120, "end": "21:00" }
 }

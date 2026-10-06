@@ -19,6 +19,7 @@ const { installGuard, assertGuard, safeClick } = require('./lib/publish_guard');
 const { lintDraft, printReport } = require('./lint_draft');
 const SEL = require('./lib/selectors');
 const { sessionStatus } = require('./lib/session');
+const { localDate, countSavesOn, readAllStatus } = require('./lib/schedule');
 
 const STEPS = ['lint', 'open_editor', 'title', 'body', 'save', 'verify'];
 
@@ -352,6 +353,18 @@ async function main() {
     console.log('\n이 초안은 이미 임시저장됐습니다 (중복 저장 방지).');
     console.log('네이버 블로그 → 글쓰기 → 임시저장함에서 확인하세요. 꼭 다시 저장하려면 --resave');
     return;
+  }
+
+  // 하루 자동 임시저장 상한 (data/config.json의 dailySaveLimit, 기본 2)
+  if (!dryRun && !draft.test) {
+    const { dailySaveLimit } = loadConfig();
+    const today = localDate(new Date());
+    const used = countSavesOn(today, readAllStatus());
+    if (used >= dailySaveLimit) {
+      console.error(`\n✖ 오늘(${today}) 자동 임시저장 ${used}건 — 하루 상한 ${dailySaveLimit}건에 도달했습니다. 내일 다시 실행하세요.`);
+      console.error('  상한은 data/config.json의 dailySaveLimit에서 바꿀 수 있습니다 (올릴수록 계정 위험도 커짐).');
+      process.exit(1);
+    }
   }
 
   if (dryRun) {

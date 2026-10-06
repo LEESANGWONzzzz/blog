@@ -159,6 +159,18 @@ node scripts/draft_status.js 결과랑 debug/ 최신 파일 보고 selectors.js�
 ```
 주제 선정 → 공식 자료로 수치 확인 → 이미지 → 글쓰기 → 형식 검사 → 임시저장까지 진행합니다. 확인 안 된 수치가 남거나 이미지가 준비되지 않으면 멈추고 알려 줍니다. 발행은 하지 않습니다.
 
+### 5-6. 여러 편 미리 만들고 2시간 간격 예약 (`/batch`)
+
+```
+/batch 4
+```
+1. Claude가 주제를 분야별로 골라 `/auto` 절차로 한 편씩 임시저장합니다 (하루 상한까지).
+2. `drafts/publish_plan.md`에 예약 시각표가 만들어집니다 (기본 07:00부터 2시간 간격, 21:00까지).
+3. 임시저장함에서 글마다 확인 → 발행 설정에서 태그 입력 → **예약**에 시각 입력 → 직접 예약 버튼.
+4. 예약한 글 표시: `node scripts/plan_schedule.js --published drafts/<글폴더>/draft.json`
+
+하루 자동 임시저장 상한은 `data/config.json`의 `"dailySaveLimit"`(기본 2)입니다. 2시간 간격으로 하루 내내 올리려면 이 값을 올려야 하는데, 네이버 약관상 자동화는 회색지대라 **올릴수록 계정 위험도 커집니다.** 처음엔 3~4로 시작해 문제가 없는지 보며 늘리세요. 간격·시간대는 `"schedule": {"start": "07:00", "every": 120, "end": "21:00"}`로 바꿉니다.
+
 ## 6. 자주 막히는 곳 (Mac 기준)
 
 | 증상 | 해결 |
@@ -188,6 +200,7 @@ scripts/naver_draft.js     검사 → 입력 → 임시저장 → 대조
 scripts/lint_draft.js      형식 검사기
 scripts/draft_status.js    재개 지점 안내
 scripts/analyze_performance.js  조회수 상위 글 교집합 분석 (/analyze)
+scripts/plan_schedule.js  예약 발행 계획표 (drafts/publish_plan.md)
 scripts/make_cards.js  정보 카드 이미지 (cards.json → input/images/cards/)
 scripts/generate_image.js  AI 일러스트 생성, 선택 (images.json → input/images/generated/)
 scripts/lib/publish_guard.js  발행 차단 가드 (제거·우회 금지)

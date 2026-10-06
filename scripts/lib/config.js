@@ -18,6 +18,10 @@ function loadConfig() {
     // 사람이 화면을 보며 확인할 수 있도록 기본은 브라우저 창을 띄운다.
     headless: process.env.HEADLESS === '1',
     slowMo: Number(process.env.SLOW_MO || fileConfig.slowMo || 60),
+    // 하루 자동 임시저장 상한 (네이버 약관상 자동화는 회색지대 — 올릴수록 위험도 커진다)
+    dailySaveLimit: Number(fileConfig.dailySaveLimit || 2),
+    // 예약 발행 계획 기본값 (plan_schedule.js)
+    schedule: { start: '07:00', every: 120, end: '21:00', ...(fileConfig.schedule || {}) },
   };
 }
 
