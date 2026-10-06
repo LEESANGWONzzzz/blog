@@ -14,3 +14,12 @@ debug/
 .DS_Store
 drafts/example/status.json
 drafts/example/publish_checklist.txt
+# API 키 — 절대 커밋 금지
+.env
+# 생성·공식 이미지 (용량·저작권 관리를 위해 커밋하지 않음)
+input/images/*
+!input/images/generated/
+!input/images/official/
+input/images/generated/*
+input/images/official/*
+!input/images/*/.gitkeep

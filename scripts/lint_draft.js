@@ -39,6 +39,14 @@ function splitSentences(text) {
     .filter(Boolean);
 }
 
+// 이미지 출처 종류: 직접 찍은 사진(모자이크 완료) / AI 생성 일러스트 / 공식 기관 자료
+function imageKind(p) {
+  if (p.startsWith('input/photos/_mosaic/')) return 'photo';
+  if (p.startsWith('input/images/generated/')) return 'generated';
+  if (p.startsWith('input/images/official/')) return 'official';
+  return 'other';
+}
+
 function countOccurrences(haystack, needle) {
   if (!needle) return 0;
   let count = 0;
@@ -112,6 +120,7 @@ function lintDraft(draft, { baseDir, testMode = false } = {}) {
 
   const imagePaths = new Set();
   let images = 0;
+  let generated = 0;
   let captions = 0;
   let run = 0;
   let longestRun = 0;
@@ -158,7 +167,10 @@ function lintDraft(draft, { baseDir, testMode = false } = {}) {
       }
       if (imagePaths.has(b.path)) err(`${where}: 같은 사진을 재사용했습니다 (${b.path}).`);
       imagePaths.add(b.path);
-      if (!b.path.includes('_mosaic')) warn(`${where}: 모자이크 폴더(_mosaic) 밖의 사진입니다 — 개인정보 확인 필요.`);
+      const kind = imageKind(b.path);
+      if (kind === 'generated') generated += 1;
+      if (kind === 'other') warn(`${where}: 허용 폴더 밖의 이미지입니다 (input/photos/_mosaic · input/images/generated · input/images/official).`);
+      if (kind === 'official' && !/출처/.test(b.caption || '')) err(`${where}: 공식 자료 이미지는 캡션에 "출처: 기관명"이 있어야 합니다.`);
       if (baseDir) {
         const p = path.isAbsolute(b.path) ? b.path : path.join(baseDir, b.path);
         if (!fs.existsSync(p)) err(`${where}: 사진 파일이 없습니다 (${b.path}).`);
@@ -224,6 +236,9 @@ function lintDraft(draft, { baseDir, testMode = false } = {}) {
       err('협찬 글은 첫 블록(text)에 협찬 표기가 있어야 합니다.');
     }
   }
+  if (generated > 0 && !blocks.some((b) => b.type === 'text' && /AI로 (만든|생성|제작)/.test(b.content || ''))) {
+    warn('AI 생성 이미지가 있습니다 — 본문(보통 마지막 문단)에 "AI로 만든 이미지" 안내를 넣으세요.');
+  }
   if (!testMode && blocks.length && blocks[blocks.length - 1].type !== 'text') {
     warn('마지막 블록이 text가 아닙니다 — 투자 면책 문구 위치를 확인하세요.');
   }
@@ -256,4 +271,4 @@ if (require.main === module) {
   process.exit(result.errors.length ? 1 : 0);
 }
 
-module.exports = { lintDraft, loadDraft, printReport, splitSentences, LIMITS };
+module.exports = { imageKind, lintDraft, loadDraft, printReport, splitSentences, LIMITS };

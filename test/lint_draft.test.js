@@ -99,3 +99,14 @@ test('구조 비교: 연속 text는 하나로, 인용구 출처 오입력은 위
   assert.strictEqual(diff.length, 1);
   assert.match(diff[0], /3번째 컴포넌트: 기대 text \/ 실제 horizontalLine/);
 });
+
+test('이미지 출처 규칙: 공식 자료는 출처 캡션 필수, AI 이미지는 안내 문구 권장', () => {
+  const d = validDraft();
+  d.blocks.push({ type: 'image', path: 'input/images/official/card.png', caption: '청년미래적금 안내' });
+  d.blocks.push({ type: 'image', path: 'input/images/generated/cover.png' });
+  d.blocks.push({ type: 'image', path: 'downloads/x.png' });
+  const r = lintDraft(d);
+  assert.ok(r.errors.some((e) => e.includes('출처: 기관명')));
+  assert.ok(r.warnings.some((w) => w.includes('AI로 만든 이미지')));
+  assert.ok(r.warnings.some((w) => w.includes('허용 폴더 밖')));
+});
