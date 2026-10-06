@@ -30,10 +30,14 @@ function toMinutes(hhmm) {
   return h * 60 + m;
 }
 
-// date의 start부터 every분 간격, end까지의 시각. now 이후만 (같은 날이면 지난 시각 제외)
-function buildSlots(date, { start, every, end }, now = new Date()) {
+// date의 예약 시각 목록. slots(["07:00", …])가 있으면 그대로, 없으면 start부터 every분 간격으로 end까지.
+// now 이후만 남긴다 (같은 날이면 지난 시각 제외).
+function buildSlots(date, { start, every, end, slots: fixed }, now = new Date()) {
+  const minutes = Array.isArray(fixed) && fixed.length
+    ? fixed.map(toMinutes).sort((a, b) => a - b)
+    : (() => { const m = []; for (let t = toMinutes(start); t <= toMinutes(end); t += every) m.push(t); return m; })();
   const slots = [];
-  for (let t = toMinutes(start); t <= toMinutes(end); t += every) {
+  for (const t of minutes) {
     const slot = new Date(`${date}T${pad(Math.floor(t / 60))}:${pad(t % 60)}:00`);
     if (slot > now) slots.push(slot);
   }

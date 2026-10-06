@@ -3,7 +3,7 @@
 // 발행은 사람이 한다: 이 표를 보고 네이버 발행 설정에서 "예약"으로 직접 시각을 넣는다.
 //
 // 사용:
-//   node scripts/plan_schedule.js                         # 오늘 남은 시각에 배정 (기본 07:00부터 120분 간격, 21:00까지)
+//   node scripts/plan_schedule.js                         # 오늘 남은 시각에 배정 (data/config.json의 schedule.slots, 없으면 07:00부터 120분 간격)
 //   node scripts/plan_schedule.js --date 2026-10-08 --start 07:00 --every 120 --end 21:00
 //   node scripts/plan_schedule.js --published drafts/<글폴더>/draft.json   # 예약·발행 완료 표시 (계획에서 빠짐)
 
@@ -32,16 +32,22 @@ function main() {
   if (arg('--published')) return markPublished(arg('--published'));
 
   const cfg = loadConfig().schedule;
+  const custom = arg('--start') || arg('--every') || arg('--end');
   const opts = {
     start: arg('--start') || cfg.start,
     every: Number(arg('--every') || cfg.every),
     end: arg('--end') || cfg.end,
+    // --start/--every/--end를 직접 주면 고정 시각표(schedule.slots) 대신 간격 방식으로 계산
+    slots: custom ? null : cfg.slots,
   };
+  const label = opts.slots && opts.slots.length
+    ? `시각 ${opts.slots.join('·')}`
+    : `${opts.start}부터 ${opts.every}분 간격, ${opts.end}까지`;
   const date = arg('--date') || localDate(new Date());
   const slots = buildSlots(date, opts);
   const { plan, overflow } = assignSlots(readAllStatus(), slots);
 
-  const lines = [`# 예약 발행 계획 — ${date} (${opts.start}부터 ${opts.every}분 간격, ${opts.end}까지)`, ''];
+  const lines = [`# 예약 발행 계획 — ${date} (${label})`, ''];
   if (plan.length === 0) lines.push('- 배정할 글이 없습니다 (임시저장됐고 아직 발행 표시가 없는 글이 0개).');
   plan.forEach(({ entry, slot }, i) => {
     const rel = path.relative(ROOT, entry.draft);

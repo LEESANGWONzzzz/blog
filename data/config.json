@@ -1,4 +1,13 @@
 {
   "blogId": "beforepayday",
-  "slowMo": 60
+  "slowMo": 60,
+  "dailySaveLimit": 4,
+  "schedule": {
+    "slots": [
+      "07:00",
+      "09:00",
+      "17:00",
+      "19:00"
+    ]
+  }
 }

@@ -40,3 +40,9 @@ test('배정: 저장 순서대로, 발행 표시된 글 제외, 남는 글은 �
   assert.deepStrictEqual(plan.map((p) => [p.entry.d.title, p.slot.getHours()]), [['먼저', 7], ['늦게', 9]]);
   assert.deepStrictEqual(overflow.map((e) => e.d.title), ['넘김']);
 });
+
+test('고정 시각표: 07·09·17·19시, 순서 정렬', () => {
+  const cfg = { start: '07:00', every: 120, end: '21:00', slots: ['19:00', '07:00', '17:00', '09:00'] };
+  const all = buildSlots('2026-10-08', cfg, new Date(2026, 9, 7, 23, 0));
+  assert.deepStrictEqual(all.map((d) => d.getHours()), [7, 9, 17, 19]);
+});
