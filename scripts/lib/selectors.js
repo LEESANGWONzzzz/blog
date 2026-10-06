@@ -36,7 +36,7 @@ module.exports = {
 
   // 본문 컴포넌트 종류 (구조 검사용). 제목 컴포넌트는 titleComponent로 제외한다.
   // text·quotation은 debug/2026-10-04T15-04-28 HTML에서 확인. horizontalLine은 예제 글(구분선 포함) --resave가
-  // 구조 검사를 통과해 확인됨 (틀렸다면 unknown으로 잡혀 저장이 멈췄을 것). image는 아직 실측 전.
+  // 구조 검사를 통과해 확인됨 (틀렸다면 unknown으로 잡혀 저장이 멈췄을 것). image(.se-component.se-image)는 debug/2026-10-06T16-05-20 HTML에서 확인.
   titleComponent: '.se-documentTitle',
   componentTypes: {
     text: '.se-text',
@@ -57,8 +57,13 @@ module.exports = {
 
   // 아래 두 항목은 "마지막 이미지/인용구 컴포넌트" 안에서 찾는 상대 셀렉터다.
   // (:last-of-type은 클래스가 아니라 태그 기준이라, 뒤에 빈 본문이 붙으면 못 찾는다)
-  // 이미지 캡션 입력칸 — 실측 전
-  lastImageCaption: ['.se-caption .se-text-paragraph'],
+  // 사진 본체 — 클릭해서 사진 컴포넌트를 선택한다 (실측: debug/2026-10-06T16-05-20 HTML)
+  lastImageResource: ['.se-module-image .se-image-resource', '.se-module-image img'],
+  // 이미지 캡션 입력칸 (실측: 같은 HTML + 에디터 CSS 1.78.1)
+  //   .se-module-text.se-caption > p.se-text-paragraph 는 사진을 넣자마자 DOM에 생기지만
+  //   CSS가 `.se-caption{display:none}` / `.se-caption.se-is-on{display:block}` 이라
+  //   사진을 선택해 se-is-on이 붙기 전에는 보이지 않는다.
+  lastImageCaption: ['.se-caption.se-is-on .se-text-paragraph', '.se-caption .se-text-paragraph'],
   // 인용구 본문 칸 (실측)
   lastQuoteParagraph: ['.se-quote .se-text-paragraph'],
 

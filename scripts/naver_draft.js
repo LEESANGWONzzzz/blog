@@ -281,10 +281,13 @@ async function insertBlock(page, frame, block, index) {
         { timeout: 60000 },
       );
       if (block.caption && block.caption.trim()) {
+        // 캡션 칸은 사진을 선택해야 보인다 (selectors.js lastImageCaption 주석 참고) — 사진을 먼저 클릭한다.
         const img = frame.locator(`.se-component${SEL.componentTypes.image}`).last();
-        await (await first(img, SEL.lastImageCaption)).click();
+        await (await first(img, SEL.lastImageResource)).click();
+        await (await first(img, SEL.lastImageCaption, { timeout: 5000 })).click();
         await page.keyboard.insertText(block.caption.trim());
       }
+      // 사진을 넣으면 에디터가 그 아래에 빈 본문 컴포넌트를 자동으로 만들고 포커스를 둔다 (실측) — 그 문단으로 커서를 옮긴다.
       await moveCursorBelowLastComponent(page, frame);
       break;
     }
