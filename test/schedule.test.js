@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert');
-const { localDate, countSavesOn, buildSlots, assignSlots } = require('../scripts/lib/schedule');
+const { localDate, countSavesOn, saveLimitFor, buildSlots, assignSlots } = require('../scripts/lib/schedule');
 
 const entry = (title, at, extra = {}) => ({
   d: { title, tags: ['a'], ...(extra.d || {}) },
@@ -45,4 +45,11 @@ test('고정 시각표: 07·09·17·19시, 순서 정렬', () => {
   const cfg = { start: '07:00', every: 120, end: '21:00', slots: ['19:00', '07:00', '17:00', '09:00'] };
   const all = buildSlots('2026-10-08', cfg, new Date(2026, 9, 7, 23, 0));
   assert.deepStrictEqual(all.map((d) => d.getHours()), [7, 9, 17, 19]);
+});
+
+test('저장 상한: 그날짜 예외값만 적용, 다른 날은 기본값', () => {
+  const cfg = { dailySaveLimit: 4, dailySaveLimitOverrides: { '2026-10-07': 5 } };
+  assert.strictEqual(saveLimitFor('2026-10-07', cfg), 5);
+  assert.strictEqual(saveLimitFor('2026-10-08', cfg), 4);
+  assert.strictEqual(saveLimitFor('2026-10-08', { dailySaveLimit: 4 }), 4);
 });

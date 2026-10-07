@@ -20,6 +20,8 @@ function loadConfig() {
     slowMo: Number(process.env.SLOW_MO || fileConfig.slowMo || 60),
     // 하루 자동 임시저장 상한 (네이버 약관상 자동화는 회색지대 — 올릴수록 위험도 커진다)
     dailySaveLimit: Number(fileConfig.dailySaveLimit || 2),
+    // 특정 날짜만 상한을 바꾼다 ({"2026-10-07": 5}). 그날이 지나면 자동으로 dailySaveLimit로 돌아간다.
+    dailySaveLimitOverrides: fileConfig.dailySaveLimitOverrides || {},
     // 예약 발행 계획 기본값 (plan_schedule.js)
     schedule: { start: '07:00', every: 120, end: '21:00', ...(fileConfig.schedule || {}) },
   };

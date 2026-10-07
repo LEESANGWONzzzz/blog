@@ -25,6 +25,12 @@ function countSavesOn(date, entries) {
     && localDate(e.s.steps.save.at) === date).length;
 }
 
+// date(YYYY-MM-DD)의 저장 상한: 그날짜 예외값이 있으면 그것, 없으면 기본 상한
+function saveLimitFor(date, { dailySaveLimit, dailySaveLimitOverrides = {} }) {
+  const v = Number(dailySaveLimitOverrides[date]);
+  return Number.isFinite(v) && v > 0 ? v : dailySaveLimit;
+}
+
 function toMinutes(hhmm) {
   const [h, m] = hhmm.split(':').map(Number);
   return h * 60 + m;
@@ -55,4 +61,4 @@ function assignSlots(entries, slots) {
   };
 }
 
-module.exports = { localDate, readAllStatus, countSavesOn, buildSlots, assignSlots, toMinutes };
+module.exports = { localDate, readAllStatus, countSavesOn, saveLimitFor, buildSlots, assignSlots, toMinutes };

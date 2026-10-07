@@ -19,7 +19,7 @@ const { installGuard, assertGuard, safeClick } = require('./lib/publish_guard');
 const { lintDraft, printReport } = require('./lint_draft');
 const SEL = require('./lib/selectors');
 const { sessionStatus } = require('./lib/session');
-const { localDate, countSavesOn, readAllStatus } = require('./lib/schedule');
+const { localDate, countSavesOn, readAllStatus, saveLimitFor } = require('./lib/schedule');
 
 const STEPS = ['lint', 'open_editor', 'title', 'body', 'save', 'verify'];
 
@@ -357,12 +357,12 @@ async function main() {
 
   // 하루 자동 임시저장 상한 (data/config.json의 dailySaveLimit, 기본 2)
   if (!dryRun && !draft.test) {
-    const { dailySaveLimit } = loadConfig();
     const today = localDate(new Date());
+    const dailySaveLimit = saveLimitFor(today, loadConfig());
     const used = countSavesOn(today, readAllStatus());
     if (used >= dailySaveLimit) {
       console.error(`\n✖ 오늘(${today}) 자동 임시저장 ${used}건 — 하루 상한 ${dailySaveLimit}건에 도달했습니다. 내일 다시 실행하세요.`);
-      console.error('  상한은 data/config.json의 dailySaveLimit에서 바꿀 수 있습니다 (올릴수록 계정 위험도 커짐).');
+      console.error('  상한은 data/config.json의 dailySaveLimit(그날만: dailySaveLimitOverrides)에서 바꿀 수 있습니다 (올릴수록 계정 위험도 커짐).');
       process.exit(1);
     }
   }

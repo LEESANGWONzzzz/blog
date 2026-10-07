@@ -2,6 +2,9 @@
   "blogId": "beforepayday",
   "slowMo": 60,
   "dailySaveLimit": 4,
+  "dailySaveLimitOverrides": {
+    "2026-10-07": 5
+  },
   "schedule": {
     "slots": [
       "07:00",
