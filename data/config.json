@@ -3,7 +3,7 @@
   "slowMo": 60,
   "dailySaveLimit": 4,
   "dailySaveLimitOverrides": {
-    "2026-10-07": 5
+    "2026-10-08": 5
   },
   "schedule": {
     "slots": [
