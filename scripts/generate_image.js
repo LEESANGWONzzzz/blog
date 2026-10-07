@@ -5,7 +5,7 @@
 //   node scripts/generate_image.js --plan drafts/<글폴더>/images.json
 //
 // images.json 형식 (Claude가 /write 때 만든다):
-//   [{ "file": "input/images/generated/<글폴더>-01.png", "role": "표지", "prompt": "..." }, ...]
+//   [{ "file": "input/images/generated/<글폴더>-01.png", "role": "표지", "style": "flat|watercolor", "prompt": "..." }, ...]
 //
 // - 이미 있는 파일은 다시 만들지 않는다 (비용 절약). 다시 만들려면 파일을 지우고 실행.
 // - API 키가 없으면 만들지 않고, ChatGPT에 직접 붙여넣을 수 있도록 같은 폴더에 image_prompts.md를 쓴다 (종료 코드 3).
@@ -37,17 +37,24 @@ function settings() {
   };
 }
 
-// 모든 프롬프트 끝에 붙는 공통 지시 — 블로그 스타일과 금지 사항
-const STYLE_SUFFIX = [
-  'Style: clean flat illustration, white or very light ivory background, navy and mustard-yellow accents, bold simple lines, generous margins, readable on a small phone screen.',
-  'Do not include: money piles, gold bars, rising arrows, real people\'s faces, real company logos, fake app or bank screens, watermarks.',
+// 그림체 (images.json 항목의 "style"). 기준은 docs/image-style.md.
+const STYLES = {
+  // 기본: 개념도·설명 그림
+  flat: 'Style: clean flat illustration, white or very light ivory background, navy and mustard-yellow accents, bold simple lines, generous margins, readable on a small phone screen.',
+  // 표지·도입용 감성 그림 (따뜻한 수채 애니메이션풍 일상 장면)
+  watercolor: 'Style: warm hand-painted watercolor illustration in a Korean slice-of-life animation look, soft golden afternoon light, gentle pastel palette, detailed everyday background (commute, office, home, market), nostalgic and calm mood, square composition with clear empty space at the top for a short title.',
+};
+const RULES = [
+  'Do not include: money piles, gold bars, rising arrows, real or identifiable people, celebrities, real company logos or brand names, fake app or bank screens, charts with numbers, watermarks.',
   'Any Korean text must be short (a few words) and spelled exactly as given in quotes; if no text is quoted, include no text at all.',
 ].join(' ');
+const styleSuffix = (style = 'flat') => `${STYLES[style]} ${RULES}`;
+const STYLE_SUFFIX = styleSuffix('flat');
 
 function buildRequest(item, cfg) {
   const body = {
     model: cfg.model,
-    prompt: `${item.prompt.trim()}\n\n${STYLE_SUFFIX}`,
+    prompt: `${item.prompt.trim()}\n\n${styleSuffix(item.style)}`,
     size: item.size || cfg.size,
     n: 1,
   };
@@ -86,6 +93,7 @@ function validatePlan(plan) {
     if (!it.file.startsWith('input/images/generated/')) {
       throw new Error(`images.json[${i}]: 생성 이미지는 input/images/generated/ 아래에만 저장합니다 (${it.file}).`);
     }
+    if (it.style && !STYLES[it.style]) throw new Error(`images.json[${i}]: style은 ${Object.keys(STYLES).join('/')} 중 하나입니다.`);
   });
 }
 
@@ -99,7 +107,7 @@ function writeManualPrompts(planFile, plan) {
     '',
   ];
   plan.forEach((it, i) => {
-    lines.push(`## ${i + 1}. ${it.role || '이미지'} → \`${it.file}\``, '', '```', `${it.prompt.trim()}\n\n${STYLE_SUFFIX}`, '```', '');
+    lines.push(`## ${i + 1}. ${it.role || '이미지'} → \`${it.file}\``, '', '```', `${it.prompt.trim()}\n\n${styleSuffix(it.style)}`, '```', '');
   });
   fs.writeFileSync(out, lines.join('\n'));
   return out;
@@ -145,4 +153,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { buildRequest, generateOne, validatePlan, writeManualPrompts, loadEnv, STYLE_SUFFIX };
+module.exports = { buildRequest, generateOne, validatePlan, writeManualPrompts, loadEnv, STYLE_SUFFIX, styleSuffix };

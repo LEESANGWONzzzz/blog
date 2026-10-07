@@ -39,3 +39,24 @@ test('실제 PNG 렌더링, 넘치는 글자는 실패', async () => {
     fs.rmSync(abs, { force: true });
   }
 });
+
+test('새 카드 종류: table·compare·chart 계획 검사', () => {
+  const base = { file: 'input/images/cards/_test-02.png', title: '제목' };
+  assert.doesNotThrow(() => validatePlan([{ ...base, kind: 'table', theme: 'navy', rows: [['원금', '360만 원']], formula: ['360만 원', '×', '3.0%', '=', '10.8만 원'] }]));
+  assert.throws(() => validatePlan([{ ...base, kind: 'table' }]), /rows/);
+  assert.throws(() => validatePlan([{ ...base, kind: 'list', items: ['a'], theme: 'pink' }]), /theme/);
+  assert.throws(() => validatePlan([{ ...base, kind: 'list', items: ['a'], bg: 'input/images/generated/x.png' }]), /bg/);
+  assert.throws(() => validatePlan([{ ...base, kind: 'compare', left: { title: 'A', items: ['x'] } }]), /right/);
+  const chart = { ...base, kind: 'chart', chart: { type: 'bar', unit: '%', points: [{ label: '2024', value: '3.0' }, { label: '2025', value: 2.5 }] }, note: '출처: 한국은행 · 2025-12-31' };
+  assert.doesNotThrow(() => validatePlan([chart]));
+  assert.throws(() => validatePlan([{ ...chart, note: undefined }]), /출처/);
+  assert.throws(() => validatePlan([{ ...chart, chart: { type: 'pie', points: chart.chart.points } }]), /bar/);
+});
+
+test('표·계산식·그래프 숫자도 본문 대조', () => {
+  const draft = { blocks: [{ type: 'text', content: '2024년 3.0%에서 2025년 2.5%로 내려갔습니다. 원금은 360만 원입니다.' }] };
+  const chart = { file: 'input/images/cards/_t.png', kind: 'chart', title: '금리', chart: { type: 'line', unit: '%', points: [{ label: '2024년', value: '3.0' }, { label: '2025년', value: '2.5' }] } };
+  assert.deepStrictEqual(checkAgainstDraft([chart], draft), []);
+  const table = { file: 'input/images/cards/_t.png', kind: 'table', title: '계산', rows: [['원금', '360만 원']], formula: ['360만 원', '×', '4.0%'] };
+  assert.deepStrictEqual(checkAgainstDraft([table], draft), ['input/images/cards/_t.png: "4.0%"']);
+});
