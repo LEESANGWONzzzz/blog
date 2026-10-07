@@ -22,6 +22,7 @@ argument-hint: 소재: … , 한줄 메모: … [, 제목: …] [, 큰 틀: 소�
 - 사진이 4장보다 적으면 나머지는 이미지로 채운다 (규칙 5-8):
   - **정보 카드(기본):** 5번에서 draft.json을 쓴 뒤 `drafts/<글폴더>/cards.json`을 쓰고
     `node scripts/make_cards.js --plan drafts/<글폴더>/cards.json --draft drafts/<글폴더>/draft.json`을 실행한다.
+    카드 종류·테마는 `docs/image-style.md`를 따라 섞는다 (계산은 table, 비교는 compare, 추이는 chart).
     숫자 불일치로 실패하면 카드 쪽을 본문에 맞춘다 (본문은 확인된 값이 기준). 만든 카드는 Read 도구로 열어 본다.
   - 공식 자료: 출처 기관 페이지에서 공공누리 제1유형 표시를 확인한 카드뉴스·인포그래픽만 `input/images/official/`에 받고 `.source.txt`를 남긴다.
   - AI 일러스트(선택): `.env`에 OPENAI_API_KEY가 있을 때만 `node scripts/generate_image.js --plan …`. 키가 없으면(종료 코드 3) 만들지 않고 카드로 대신한다.

@@ -66,9 +66,20 @@ function compareInOrder(expectedPieces, actualText) {
   }
   return missing;
 }
-function expectedPieces(draft) {
+// 글 맨 끝에 붙이는 태그 문단 ("#태그1 #태그2 …"). 해시태그는 띄어쓰기를 못 쓰므로 공백을 지운다.
+// data/config.json의 "tagsInBody": false 이면 붙이지 않는다.
+function tagLine(tags) {
+  const list = (tags || []).map((t) => String(t).replace(/^#/, '').replace(/\s+/g, '')).filter(Boolean);
+  return list.length ? list.map((t) => `#${t}`).join(' ') : '';
+}
+function editorBlocks(draft, { tagsInBody = true } = {}) {
+  const line = tagsInBody && !draft.test ? tagLine(draft.tags) : '';
+  return line ? [...draft.blocks, { type: 'text', content: line }] : draft.blocks;
+}
+
+function expectedPieces(draft, blocks = draft.blocks) {
   const pieces = [];
-  for (const b of draft.blocks) {
+  for (const b of blocks) {
     if (b.type === 'text' || b.type === 'subtitle') pieces.push(normalizeBlockText(b.content));
     if (b.type === 'image' && b.caption) pieces.push(b.caption.trim());
   }
@@ -367,14 +378,16 @@ async function main() {
     }
   }
 
+  const blocks = editorBlocks(draft, { tagsInBody: loadConfig().tagsInBody });
+
   if (dryRun) {
     console.log('\n[dry-run] 입력 순서:');
     console.log(`  제목: ${draft.title}`);
-    draft.blocks.forEach((b, i) => {
+    blocks.forEach((b, i) => {
       const preview = b.type === 'image' ? `${b.path}${b.caption ? ` (캡션: ${b.caption})` : ''}` : (b.content || '').replace(/\n/g, ' ⏎ ').slice(0, 40);
       console.log(`  ${String(i).padStart(2)} ${b.type.padEnd(8)} ${preview}`);
     });
-    console.log(`  태그(발행 시 사람이 입력): ${(draft.tags || []).join(', ')}`);
+    console.log(`  태그(본문 끝 문단 + 발행 설정 확인): ${tagLine(draft.tags)}`);
     return;
   }
 
@@ -420,16 +433,17 @@ async function main() {
     // 4. 본문
     current = 'body';
     await (await first(frame, SEL.bodyParagraph)).click();
-    for (let i = 0; i < draft.blocks.length; i += 1) {
+    for (let i = 0; i < blocks.length; i += 1) {
       try {
-        await insertBlock(page, frame, draft.blocks[i], i);
+        await insertBlock(page, frame, blocks[i], i);
       } catch (e) {
-        throw new Error(`blocks[${i}] (${draft.blocks[i].type}) 입력 실패: ${e.message}`);
+        const label = i < draft.blocks.length ? `blocks[${i}]` : '태그 문단';
+        throw new Error(`${label} (${blocks[i].type}) 입력 실패: ${e.message}`);
       }
     }
     // 구조 검사 — 틀리면 저장하지 않는다 (글자만 맞고 위치가 틀린 경우를 잡기 위해)
     const structure = await actualStructure(frame);
-    const structureIssues = [...structure.problems, ...compareStructure(expectedStructure(draft.blocks), structure.types)];
+    const structureIssues = [...structure.problems, ...compareStructure(expectedStructure(blocks), structure.types)];
     const dumped = await saveDebug(page, structureIssues.length ? 'body-structure-mismatch' : 'body-ok');
     if (structureIssues.length) {
       throw new Error(`본문 구조가 초안과 다릅니다 — 저장하지 않았습니다.\n  ${structureIssues.join('\n  ')}`);
@@ -450,7 +464,7 @@ async function main() {
     current = 'verify';
     const actual = await extractEditorText(frame);
     const titleText = await (await first(frame, SEL.titleRoot, { timeout: 5000 })).innerText();
-    const missing = compareInOrder(expectedPieces(draft), actual);
+    const missing = compareInOrder(expectedPieces(draft, blocks), actual);
     if (squash(titleText) !== squash(draft.title)) missing.unshift(`[제목 불일치] 에디터: "${titleText.trim()}"`);
     if (missing.length) {
       mark(draftFile, status, 'verify', false, missing);
@@ -467,7 +481,8 @@ async function main() {
       '발행 전 사람이 할 일 (자동화는 여기까지 하지 않음)',
       '1. 평소 쓰는 브라우저에서 네이버 블로그 → 글쓰기 → 임시저장함 열기',
       '2. 사진 모자이크·수치·기준일·출처 최종 확인',
-      `3. 발행 설정에서 태그 입력: ${(draft.tags || []).map((t) => `#${t}`).join(' ')}`,
+      `3. 태그: ${tagLine(draft.tags)}`,
+      '   (본문 맨 끝에도 같은 태그 문단을 넣어 둠 — 발행 설정의 태그 칸에 자동으로 들어갔는지 보고, 비어 있으면 이 줄을 붙여넣기)',
       '4. 발행 버튼은 직접 누르기',
       '5. 발행 다음 날: 댓글마다 닉네임을 불러 답글 달고, 댓글 남긴 분 블로그에 방문 댓글 (이웃 늘리기, 직접 손으로)',
       '',
@@ -496,4 +511,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { compareInOrder, expectedPieces, squash, STEPS, readStatus, statusPath, expectedStructure, compareStructure, collapseText };
+module.exports = { compareInOrder, expectedPieces, tagLine, editorBlocks, squash, STEPS, readStatus, statusPath, expectedStructure, compareStructure, collapseText };

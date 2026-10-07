@@ -48,3 +48,10 @@ test('.env 읽기 (따옴표 제거)', () => {
   fs.writeFileSync(f, 'OPENAI_API_KEY="abc"\n# 주석\nOPENAI_IMAGE_MODEL=x\n');
   assert.deepStrictEqual(loadEnv(f), { OPENAI_API_KEY: 'abc', OPENAI_IMAGE_MODEL: 'x' });
 });
+
+test('그림체: watercolor 선택, 없는 그림체는 거절', () => {
+  const body = JSON.parse(buildRequest({ ...item, style: 'watercolor' }, cfg).init.body);
+  assert.match(body.prompt, /watercolor/);
+  assert.match(body.prompt, /Do not include/);
+  assert.throws(() => validatePlan([{ ...item, style: 'oil' }]), /style/);
+});
