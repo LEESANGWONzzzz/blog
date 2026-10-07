@@ -22,6 +22,8 @@ function loadConfig() {
     dailySaveLimit: Number(fileConfig.dailySaveLimit || 2),
     // 특정 날짜만 상한을 바꾼다 ({"2026-10-07": 5}). 그날이 지나면 자동으로 dailySaveLimit로 돌아간다.
     dailySaveLimitOverrides: fileConfig.dailySaveLimitOverrides || {},
+    // 본문 맨 끝에 "#태그" 문단을 자동으로 붙인다 (false로 끄기)
+    tagsInBody: fileConfig.tagsInBody !== false,
     // 예약 발행 계획 기본값 (plan_schedule.js)
     schedule: { start: '07:00', every: 120, end: '21:00', ...(fileConfig.schedule || {}) },
   };
