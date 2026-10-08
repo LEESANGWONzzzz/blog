@@ -11,6 +11,32 @@ function localDate(d) {
   return `${x.getFullYear()}-${pad(x.getMonth() + 1)}-${pad(x.getDate())}`;
 }
 
+// 계획표 기본 날짜: 내일 (전날 저녁에 임시저장하고 예약해 두는 루틴)
+function nextDate(d = new Date()) {
+  const x = new Date(d);
+  x.setDate(x.getDate() + 1);
+  return localDate(x);
+}
+
+// 블로그 RSS에서 공개된 글 제목 뽑기 (CDATA·HTML 엔티티 처리)
+function rssTitles(xml) {
+  const items = String(xml).match(/<item>[\s\S]*?<\/item>/g) || [];
+  return items.map((it) => {
+    const m = it.match(/<title>([\s\S]*?)<\/title>/);
+    if (!m) return '';
+    return m[1].replace(/^<!\[CDATA\[|\]\]>$/g, '')
+      .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&')
+      .trim();
+  }).filter(Boolean);
+}
+
+// 임시저장했고 발행 표시가 없는데, 제목이 이미 블로그에 공개된 글 → 발행된 것으로 본다
+const squashTitle = (t) => String(t).replace(/\s+/g, '');
+function publishedByRss(entries, titles) {
+  const live = new Set(titles.map(squashTitle));
+  return entries.filter((e) => !e.d.test && e.s.saved && !e.s.published && live.has(squashTitle(e.d.title)));
+}
+
 function readAllStatus(dir = DRAFTS_DIR) {
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir)
@@ -61,4 +87,4 @@ function assignSlots(entries, slots) {
   };
 }
 
-module.exports = { localDate, readAllStatus, countSavesOn, saveLimitFor, buildSlots, assignSlots, toMinutes };
+module.exports = { localDate, nextDate, rssTitles, publishedByRss, readAllStatus, countSavesOn, saveLimitFor, buildSlots, assignSlots, toMinutes };

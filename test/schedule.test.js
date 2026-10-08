@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert');
-const { localDate, countSavesOn, saveLimitFor, buildSlots, assignSlots } = require('../scripts/lib/schedule');
+const { localDate, nextDate, rssTitles, publishedByRss, countSavesOn, saveLimitFor, buildSlots, assignSlots } = require('../scripts/lib/schedule');
 
 const entry = (title, at, extra = {}) => ({
   d: { title, tags: ['a'], ...(extra.d || {}) },
@@ -52,4 +52,24 @@ test('저장 상한: 그날짜 예외값만 적용, 다른 날은 기본값', ()
   assert.strictEqual(saveLimitFor('2026-10-07', cfg), 5);
   assert.strictEqual(saveLimitFor('2026-10-08', cfg), 4);
   assert.strictEqual(saveLimitFor('2026-10-08', { dailySaveLimit: 4 }), 4);
+});
+
+test('계획표 기본 날짜는 내일 (월말·연말 넘김 포함)', () => {
+  assert.strictEqual(nextDate(new Date(2026, 9, 8, 21, 0)), '2026-10-09');
+  assert.strictEqual(nextDate(new Date(2026, 9, 31, 21, 0)), '2026-11-01');
+  assert.strictEqual(nextDate(new Date(2026, 11, 31, 21, 0)), '2027-01-01');
+});
+
+test('RSS 제목으로 이미 공개된 글을 찾는다', () => {
+  const xml = `<rss><channel><title>월급날 전에 읽는 경제</title>
+    <item><title><![CDATA[적금 우대금리 조건 &amp; 함정]]></title></item>
+    <item><title>유류세 인하 연장</title></item></channel></rss>`;
+  assert.deepStrictEqual(rssTitles(xml), ['적금 우대금리 조건 & 함정', '유류세 인하 연장']);
+  const entries = [
+    entry('적금 우대금리 조건 & 함정', '2026-10-08T01:10:00'),
+    entry('유류세  인하 연장', '2026-10-08T01:12:00'),
+    entry('독감 무료접종', '2026-10-08T22:00:00'),
+    entry('유류세 인하 연장', '2026-10-08T01:12:00', { s: { published: true } }),
+  ];
+  assert.deepStrictEqual(publishedByRss(entries, rssTitles(xml)).map((e) => e.d.title), ['적금 우대금리 조건 & 함정', '유류세  인하 연장']);
 });

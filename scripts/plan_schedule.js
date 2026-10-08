@@ -3,35 +3,54 @@
 // 발행은 사람이 한다: 이 표를 보고 네이버 발행 설정에서 "예약"으로 직접 시각을 넣는다.
 //
 // 사용:
-//   node scripts/plan_schedule.js                         # 오늘 남은 시각에 배정 (data/config.json의 schedule.slots, 없으면 07:00부터 120분 간격)
+//   node scripts/plan_schedule.js                         # 내일 시각에 배정 (전날 저녁 루틴 · data/config.json의 schedule.slots)
+//   node scripts/plan_schedule.js --today                 # 오늘 남은 시각에 배정
 //   node scripts/plan_schedule.js --date 2026-10-08 --start 07:00 --every 120 --end 21:00
+//   --no-rss                                              # 블로그 RSS로 발행 여부 확인을 건너뜀
 //   node scripts/plan_schedule.js --published drafts/<글폴더>/draft.json   # 예약·발행 완료 표시 (계획에서 빠짐)
 
 const fs = require('fs');
 const path = require('path');
 const { ROOT, DRAFTS_DIR, loadConfig, resolveFromRoot } = require('./lib/config');
-const { localDate, readAllStatus, buildSlots, assignSlots } = require('./lib/schedule');
+const { localDate, nextDate, rssTitles, publishedByRss, readAllStatus, buildSlots, assignSlots } = require('./lib/schedule');
 
 const pad = (n) => String(n).padStart(2, '0');
 const hhmm = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
 
-function markPublished(draftFile) {
+function markPublished(draftFile, note) {
   const statusFile = path.join(path.dirname(resolveFromRoot(draftFile)), 'status.json');
   if (!fs.existsSync(statusFile)) throw new Error(`status.json이 없습니다: ${statusFile}`);
   const s = JSON.parse(fs.readFileSync(statusFile, 'utf8'));
   if (!s.saved) throw new Error('아직 임시저장되지 않은 초안입니다.');
   s.published = true;
   s.publishedMarkedAt = new Date().toISOString();
+  if (note) s.publishedNote = note;
   fs.writeFileSync(statusFile, `${JSON.stringify(s, null, 2)}\n`);
   console.log(`✓ 예약·발행 완료로 표시: ${path.relative(ROOT, statusFile)}`);
 }
 
-function main() {
+// 블로그에 이미 공개된 글은 자동으로 발행 표시 (표시를 잊어 다음 날 계획에 남는 일 방지).
+// 예약만 하고 아직 공개 전인 글은 RSS에 없으므로 --published로 직접 표시한다.
+async function syncFromRss(blogId) {
+  if (!blogId) return;
+  try {
+    const res = await fetch(`https://rss.blog.naver.com/${blogId}.xml`, { signal: AbortSignal.timeout(10000) });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const found = publishedByRss(readAllStatus(), rssTitles(await res.text()));
+    for (const e of found) markPublished(e.draft, '블로그 RSS에서 공개 확인');
+  } catch (e) {
+    console.warn(`⚠ 블로그 RSS 확인 실패(${e.message}) — 이미 발행한 글은 --published로 직접 표시하세요.`);
+  }
+}
+
+async function main() {
   const args = process.argv.slice(2);
   const arg = (n) => { const i = args.indexOf(n); return i === -1 ? null : args[i + 1]; };
   if (arg('--published')) return markPublished(arg('--published'));
 
-  const cfg = loadConfig().schedule;
+  const config = loadConfig();
+  if (!args.includes('--no-rss')) await syncFromRss(config.blogId);
+  const cfg = config.schedule;
   const custom = arg('--start') || arg('--every') || arg('--end');
   const opts = {
     start: arg('--start') || cfg.start,
@@ -43,7 +62,7 @@ function main() {
   const label = opts.slots && opts.slots.length
     ? `시각 ${opts.slots.join('·')}`
     : `${opts.start}부터 ${opts.every}분 간격, ${opts.end}까지`;
-  const date = arg('--date') || localDate(new Date());
+  const date = arg('--date') || (args.includes('--today') ? localDate(new Date()) : nextDate());
   const slots = buildSlots(date, opts);
   const { plan, overflow } = assignSlots(readAllStatus(), slots);
 
@@ -71,10 +90,8 @@ function main() {
 }
 
 if (require.main === module) {
-  try {
-    main();
-  } catch (e) {
+  main().catch((e) => {
     console.error(`✖ ${e.message}`);
     process.exit(1);
-  }
+  });
 }

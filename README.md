@@ -167,7 +167,9 @@ node scripts/draft_status.js 결과랑 debug/ 최신 파일 보고 selectors.js�
 1. Claude가 주제를 분야별로 골라 `/auto` 절차로 한 편씩 임시저장합니다 (하루 상한까지).
 2. `drafts/publish_plan.md`에 예약 시각표가 만들어집니다 (현재 설정: 07·09·17·19시).
 3. 임시저장함에서 글마다 확인 → 발행 설정에서 태그 입력 → **예약**에 시각 입력 → 직접 예약 버튼.
-4. 예약한 글 표시: `node scripts/plan_schedule.js --published drafts/<글폴더>/draft.json`
+4. 예약한 글 표시: `node scripts/plan_schedule.js --published drafts/<글폴더>/draft.json` (이미 블로그에 공개된 글은 계획표를 만들 때 RSS로 자동 표시됨)
+
+> 루틴: **전날 저녁(자정 전)** `/batch 4` → 자기 전에 임시저장함 확인·예약. `plan_schedule.js`의 기본 날짜는 내일이다.
 
 하루 자동 임시저장 상한은 `data/config.json`의 `"dailySaveLimit"`(기본 2)입니다. 2시간 간격으로 하루 내내 올리려면 이 값을 올려야 하는데, 네이버 약관상 자동화는 회색지대라 **올릴수록 계정 위험도 커집니다.** 처음엔 3~4로 시작해 문제가 없는지 보며 늘리세요. 하루만 바꾸려면 `"dailySaveLimitOverrides": {"2026-10-07": 5}`처럼 날짜를 적으면 그날만 적용되고 다음 날 기본값으로 돌아갑니다. 시각은 `"schedule": {"slots": ["07:00", "09:00", "17:00", "19:00"]}`처럼 직접 적거나, `{"start": "07:00", "every": 120, "end": "21:00"}`처럼 간격으로 정합니다.
 
