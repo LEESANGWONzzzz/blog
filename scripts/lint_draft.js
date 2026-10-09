@@ -67,7 +67,7 @@ function bodyText(blocks) {
     .join('\n');
 }
 
-function lintDraft(draft, { baseDir, testMode = false } = {}) {
+function lintDraft(draft, { baseDir, testMode = false, categories = [] } = {}) {
   const errors = [];
   const warnings = [];
   const err = (m) => errors.push(m);
@@ -106,6 +106,11 @@ function lintDraft(draft, { baseDir, testMode = false } = {}) {
       warn('title_hook이 없습니다 — 성과 분석(analyze)에서 제목 유형을 추정으로만 볼 수 있습니다.');
     } else if (!TITLE_HOOKS.has(draft.title_hook)) {
       err(`title_hook은 ${[...TITLE_HOOKS].join(' / ')} 중 하나여야 합니다.`);
+    }
+    // 카테고리는 발행 설정에서 운영자가 고른다 — 초안에는 추천값만 적는다 (data/config.json의 categories 중 하나)
+    if (!draft.category) warn('category가 없습니다 — 발행할 때 고를 카테고리를 적어 두세요.');
+    else if (categories.length && !categories.includes(draft.category)) {
+      warn(`category "${draft.category}"는 블로그에 없는 카테고리입니다 (${categories.join(' / ')}).`);
     }
   }
   const main = draft.keywords && typeof draft.keywords.main === 'string' ? draft.keywords.main.trim() : '';
@@ -266,7 +271,7 @@ if (require.main === module) {
     process.exit(2);
   }
   const { abs, draft } = loadDraft(file);
-  const result = lintDraft(draft, { baseDir: require('./lib/config').ROOT });
+  const result = lintDraft(draft, { baseDir: require('./lib/config').ROOT, categories: require('./lib/config').loadConfig().categories });
   console.log(`검사 대상: ${path.relative(process.cwd(), abs)}`);
   printReport(result);
   process.exit(result.errors.length ? 1 : 0);

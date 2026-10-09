@@ -71,6 +71,7 @@ async function main() {
   plan.forEach(({ entry, slot }, i) => {
     const rel = path.relative(ROOT, entry.draft);
     lines.push(`## ${i + 1}. ${hhmm(slot)} — ${entry.d.title}`);
+    lines.push(`- 카테고리: ${entry.d.category || '(초안에 없음 — 직접 고르기)'}`);
     lines.push(`- 태그: ${(entry.d.tags || []).map((t) => `#${t}`).join(' ')}`);
     lines.push(`- 예약 후: \`node scripts/plan_schedule.js --published ${rel}\``);
     lines.push('');
@@ -80,7 +81,7 @@ async function main() {
   }
   const free = slots.length - plan.length;
   if (free > 0) lines.push(`> 남은 빈 시각 ${free}개: ${slots.slice(plan.length).map(hhmm).join(', ')}`, '');
-  lines.push('발행 방법: 네이버 임시저장함에서 글 열기 → 내용 확인 → 발행 설정에서 태그 입력 → "예약"에 위 시각 입력 → 발행(예약) 버튼은 직접 누르기.');
+  lines.push('발행 방법: 네이버 임시저장함에서 글 열기 → 내용 확인 → 발행 설정에서 카테고리 선택·태그 확인 → 발행 시간 "예약"에 위 시각 입력 → 발행(예약) 버튼은 직접 누르기.');
 
   const out = path.join(DRAFTS_DIR, 'publish_plan.md');
   fs.mkdirSync(DRAFTS_DIR, { recursive: true });

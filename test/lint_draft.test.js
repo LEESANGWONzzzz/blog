@@ -110,3 +110,16 @@ test('이미지 출처 규칙: 공식 자료는 출처 캡션 필수, AI 이미�
   assert.ok(r.warnings.some((w) => w.includes('AI로 만든 이미지')));
   assert.ok(r.warnings.some((w) => w.includes('허용 폴더 밖')));
 });
+
+test('카테고리: 없거나 목록 밖이면 경고만', () => {
+  const { lintDraft } = require('../scripts/lint_draft');
+  const cats = ['세금·연말정산', '저축·예적금'];
+  const base = JSON.parse(JSON.stringify(require('../drafts/example/draft.json')));
+  delete base.test;
+  const missing = lintDraft({ ...base }, { baseDir: process.cwd(), categories: cats });
+  assert.ok(missing.warnings.some((w) => w.includes('category가 없습니다')));
+  const wrong = lintDraft({ ...base, category: '부동산' }, { baseDir: process.cwd(), categories: cats });
+  assert.ok(wrong.warnings.some((w) => w.includes('없는 카테고리')));
+  const ok = lintDraft({ ...base, category: '저축·예적금' }, { baseDir: process.cwd(), categories: cats });
+  assert.ok(!ok.warnings.some((w) => w.includes('카테고리') || w.includes('category')));
+});
