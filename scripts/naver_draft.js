@@ -171,6 +171,21 @@ async function waitCursorReady(frame, timeout = 1500) {
   }
 }
 
+// 사진을 넣거나 캡션을 쓴 뒤 사진 컴포넌트가 선택된 채 남으면, 그 위의 선택 층(.se-selection)이
+// 다음 클릭을 가로챈다 (2026-10-11 부가세 글 실패). 선택을 풀고 옆에 열린 패널(라이브러리 등)을 닫는다.
+// 패널 닫기 셀렉터는 실측 전 후보값이다 — 없으면 아무것도 하지 않는다.
+async function releaseSelection(page, frame) {
+  const selected = () => frame.evaluate((sel) => [...document.querySelectorAll(sel)]
+    .some((el) => el.offsetParent !== null), SEL.selectionOverlay).catch(() => false);
+  for (let i = 0; i < 2 && (await selected()); i += 1) {
+    await page.keyboard.press('Escape');
+    await new Promise((r) => setTimeout(r, 200));
+  }
+  const close = await tryFirst(frame, SEL.sidePanelClose, 300) || await tryFirst(page, SEL.sidePanelClose, 300);
+  if (close) await safeClick(close).catch(() => {});
+  return !(await selected());
+}
+
 // 컴포넌트(인용구·구분선·사진) 삽입 뒤 커서를 그 아래 새 본문 문단으로 옮긴다.
 // 옮기지 못하면 예외 — 엉뚱한 칸(인용구 출처 등)에 글을 넣지 않는다.
 async function moveCursorBelowLastComponent(page, frame) {
@@ -182,24 +197,37 @@ async function moveCursorBelowLastComponent(page, frame) {
   const deadline = Date.now() + 2000;
   while (!(await lastIsText()) && Date.now() < deadline) await new Promise((r) => setTimeout(r, 150));
 
+  if (!(await releaseSelection(page, frame))) tried.push('사진 선택 해제 실패');
+  // 클릭이 다른 층에 가로막히면 30초씩 기다리지 않고 다음 방법으로 넘어간다.
+  const clickLastParagraph = async () => {
+    await lastComp().locator('.se-text-paragraph').last().click({ timeout: 5000 });
+    await page.keyboard.press('End');
+  };
+
   // A. 마지막이 본문 컴포넌트면 그 마지막 문단을 클릭하고 끝으로
   if (await lastIsText()) {
-    await lastComp().locator('.se-text-paragraph').last().click();
-    await page.keyboard.press('End');
-    if (await waitCursorReady(frame)) return;
-    tried.push('마지막 본문 문단 클릭');
+    try {
+      await clickLastParagraph();
+      if (await waitCursorReady(frame)) return;
+      tried.push('마지막 본문 문단 클릭');
+    } catch (e) {
+      tried.push(`마지막 본문 문단 클릭 실패(${e.message.split('\n')[0].slice(0, 80)})`);
+      await releaseSelection(page, frame);
+    }
   }
 
   // B. 본문 맨 아래 "본문 추가" 버튼 (마지막 컴포넌트 아래에 새 본문 문단을 만든다)
   const addBottom = await tryFirst(frame, SEL.canvasBottom);
   if (addBottom) {
-    await safeClick(addBottom);
-    if (await lastIsText()) {
-      await lastComp().locator('.se-text-paragraph').last().click();
-      await page.keyboard.press('End');
+    try {
+      await safeClick(addBottom, { timeout: 5000 });
+      if (await lastIsText()) await clickLastParagraph();
+      if (await waitCursorReady(frame)) return;
+      tried.push('본문 추가 버튼');
+    } catch (e) {
+      if (/publish-guard/.test(e.message)) throw e;
+      tried.push(`본문 추가 버튼 실패(${e.message.split('\n')[0].slice(0, 80)})`);
     }
-    if (await waitCursorReady(frame)) return;
-    tried.push('본문 추가 버튼');
   }
 
   // 방향키는 쓰지 않는다 — 인용구 본문에서 ↓를 누르면 출처 칸으로 들어간다 (첫 실행 때 그 칸에 글이 들어감).
