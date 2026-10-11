@@ -25,3 +25,5 @@ input/images/cards/*
 input/images/generated/*
 input/images/official/*
 !input/images/*/.gitkeep
+# 영상 학습용 자막 원본 (정리한 .md만 커밋)
+docs/learn/*.vtt
