@@ -12,7 +12,7 @@
 
 ## 작업 방식
 
-- 글쓰기는 `/write` 명령(`.claude/commands/write.md`) 절차를 따른다. 주제 선정부터 한 번에 할 때는 `/auto`, 여러 편을 미리 준비할 때는 `/batch`.
+- 글쓰기는 `/write` 명령(`.claude/commands/write.md`) 절차를 따른다. 주제 선정부터 한 번에 할 때는 `/auto`, 여러 편을 미리 준비할 때는 `/batch`. 매일 저녁 루틴(내일 4편)은 `/daily`.
 - 초안은 `drafts/YYYYMMDD-<영문슬러그>/draft.json`, 검수 보고는 같은 폴더의 `review.md`에 쓴다.
 - 사진은 `input/photos/_mosaic/`에 있는 모자이크 처리된 파일만 쓴다.
 - 프로필 항목이 비어 있어 질문하고 답을 받았다면, `data/blogger-profile.md`에 기록해 다시 묻지 않는다. 사용자가 말하지 않은 내용은 채우지 않는다.
