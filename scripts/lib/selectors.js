@@ -67,11 +67,6 @@ module.exports = {
   // 인용구 본문 칸 (실측)
   lastQuoteParagraph: ['.se-quote .se-text-paragraph'],
 
-  // 사진 컴포넌트가 선택됐을 때 덮이는 층 (실측: 2026-10-11 Mac 실행 보고 — 다음 클릭을 가로챔)
-  selectionOverlay: '.se-selection',
-  // 오른쪽 사이드 패널(라이브러리 등) 닫기 — ⚠️ 실측 전 후보값. debug/ HTML을 보고 고친다.
-  sidePanelClose: ['.se-sidebar-close-button', 'button.se-sidebar-button-close', '.se-library-close-button'],
-
   // 본문 맨 아래 "본문 추가" 버튼 — 마지막 컴포넌트 아래에 새 본문 문단을 만든다 (실측)
   canvasBottom: ['button.se-canvas-bottom-button'],
 
