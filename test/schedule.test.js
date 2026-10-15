@@ -73,3 +73,16 @@ test('RSS 제목으로 이미 공개된 글을 찾는다', () => {
   ];
   assert.deepStrictEqual(publishedByRss(entries, rssTitles(xml)).map((e) => e.d.title), ['적금 우대금리 조건 & 함정', '유류세  인하 연장']);
 });
+
+test('배정: draft의 slot 지정은 그 시각에, 빈 칸으로 당겨지지 않음', () => {
+  const slots = buildSlots('2026-10-17', { slots: ['07:00', '09:00', '17:00', '19:00'] }, new Date(2026, 9, 16, 21, 0));
+  const entries = [
+    entry('연예', '2026-10-17T00:10:00'),
+    entry('수수료', '2026-10-17T00:20:00'),
+    entry('소득세', '2026-10-17T00:30:00', { d: { slot: '19:00' } }),
+  ];
+  const { plan, overflow } = assignSlots(entries, slots);
+  const at = (t) => `${String(t.getHours()).padStart(2, '0')}:00`;
+  assert.deepStrictEqual(plan.map((p) => [at(p.slot), p.entry.d.title]), [['07:00', '연예'], ['09:00', '수수료'], ['19:00', '소득세']]);
+  assert.strictEqual(overflow.length, 0);
+});

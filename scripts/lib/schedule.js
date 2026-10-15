@@ -76,15 +76,26 @@ function buildSlots(date, { start, every, end, slots: fixed }, now = new Date())
   return slots;
 }
 
-// 임시저장됐고 아직 발행 안 된 글을 저장 순서대로 시각에 배정
+// 임시저장됐고 아직 발행 안 된 글을 시각에 배정.
+// draft.json에 "slot": "19:00"이 있으면 그 시각에 먼저 넣고 (빈 칸이 있어도 당겨지지 않게),
+// 나머지는 저장 순서대로 남은 시각을 채운다.
 function assignSlots(entries, slots) {
+  const hhmm = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
   const pending = entries
     .filter((e) => !e.d.test && e.s.saved && !e.s.published)
     .sort((a, b) => String(a.s.steps.save.at).localeCompare(String(b.s.steps.save.at)));
-  return {
-    plan: pending.slice(0, slots.length).map((e, i) => ({ entry: e, slot: slots[i] })),
-    overflow: pending.slice(slots.length),
-  };
+  const free = [...slots];
+  const plan = [];
+  const rest = [];
+  for (const e of pending) {
+    const i = e.d.slot ? free.findIndex((t) => hhmm(t) === e.d.slot) : -1;
+    if (i >= 0) plan.push({ entry: e, slot: free.splice(i, 1)[0] });
+    else rest.push(e);
+  }
+  rest.forEach((e) => { if (free.length) plan.push({ entry: e, slot: free.shift() }); });
+  const placed = new Set(plan.map((p) => p.entry));
+  plan.sort((a, b) => a.slot - b.slot);
+  return { plan, overflow: pending.filter((e) => !placed.has(e)) };
 }
 
 module.exports = { localDate, nextDate, rssTitles, publishedByRss, readAllStatus, countSavesOn, saveLimitFor, buildSlots, assignSlots, toMinutes };
