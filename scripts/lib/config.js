@@ -24,6 +24,8 @@ function loadConfig() {
     dailySaveLimitOverrides: fileConfig.dailySaveLimitOverrides || {},
     // 블로그 카테고리 이름 (발행 설정에서 고르는 목록과 글자까지 같게)
     categories: Array.isArray(fileConfig.categories) ? fileConfig.categories : [],
+    // 카테고리 → 발행 설정의 네이버 "주제" 추천 (주제별 홈판·검색 분류에 쓰임)
+    naverTopics: fileConfig.naverTopics || {},
     // 본문 맨 끝에 "#태그" 문단을 자동으로 붙인다 (false로 끄기)
     tagsInBody: fileConfig.tagsInBody !== false,
     // 예약 발행 계획 기본값 (plan_schedule.js)
