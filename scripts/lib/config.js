@@ -19,7 +19,9 @@ function loadConfig() {
     headless: process.env.HEADLESS === '1',
     slowMo: Number(process.env.SLOW_MO || fileConfig.slowMo || 60),
     // 하루 자동 임시저장 상한 (네이버 약관상 자동화는 회색지대 — 올릴수록 위험도 커진다)
-    dailySaveLimit: Number(fileConfig.dailySaveLimit || 2),
+    // 0이면 제한 없음 (운영자 결정 2026-10-16). 값이 없으면 2.
+    dailySaveLimit: Number(fileConfig.dailySaveLimit ?? 2),
+    batchSize: Number(fileConfig.batchSize || 4),
     // 특정 날짜만 상한을 바꾼다 ({"2026-10-07": 5}). 그날이 지나면 자동으로 dailySaveLimit로 돌아간다.
     dailySaveLimitOverrides: fileConfig.dailySaveLimitOverrides || {},
     // 블로그 카테고리 이름 (발행 설정에서 고르는 목록과 글자까지 같게)

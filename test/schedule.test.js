@@ -86,3 +86,22 @@ test('배정: draft의 slot 지정은 그 시각에, 빈 칸으로 당겨지지 
   assert.deepStrictEqual(plan.map((p) => [at(p.slot), p.entry.d.title]), [['07:00', '연예'], ['09:00', '수수료'], ['19:00', '소득세']]);
   assert.strictEqual(overflow.length, 0);
 });
+
+test('빈 예약 칸: 지난 칸·이미 찬 칸을 건너뛰고 여러 날에 걸쳐 n개', () => {
+  const { freeSlots } = require('../scripts/lib/schedule');
+  const now = new Date(2026, 9, 16, 23, 0);
+  const entries = [
+    entry('연예', '2026-10-16T01:03:00', { d: { slot: '07:00' } }),
+    entry('수수료', '2026-10-16T01:04:00', { d: { slot: '09:00' } }),
+    entry('소득세', '2026-10-16T01:05:00', { d: { slot: '19:00' } }),
+    entry('미리', '2026-10-16T22:00:00', { d: { publish_at: '2026-10-18 07:00' } }),
+  ];
+  const got = freeSlots(entries, ['07:00', '09:00', '17:00', '19:00'], 6, { now });
+  assert.deepStrictEqual(got.map((x) => x.key), ['2026-10-17 17:00', '2026-10-18 09:00', '2026-10-18 17:00', '2026-10-18 19:00', '2026-10-19 07:00', '2026-10-19 09:00']);
+  assert.strictEqual(got[0].oddDay, true);
+  assert.strictEqual(got[1].oddDay, false);
+});
+
+test('저장 상한 0 = 제한 없음', () => {
+  assert.strictEqual(saveLimitFor('2026-10-17', { dailySaveLimit: 0, dailySaveLimitOverrides: {} }), 0);
+});

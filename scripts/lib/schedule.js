@@ -98,4 +98,32 @@ function assignSlots(entries, slots) {
   return { plan, overflow: pending.filter((e) => !placed.has(e)) };
 }
 
-module.exports = { localDate, nextDate, rssTitles, publishedByRss, readAllStatus, countSavesOn, saveLimitFor, buildSlots, assignSlots, toMinutes };
+// ---- 여러 날에 걸친 예약 (draft.json의 "publish_at": "YYYY-MM-DD HH:MM") ----
+// publish_at이 없고 slot만 있는 예전 초안은 defaultDate(보통 내일)의 그 시각을 차지한 것으로 본다.
+function pendingKey(e, defaultDate) {
+  if (e.d.publish_at) return e.d.publish_at;
+  return e.d.slot ? `${defaultDate} ${e.d.slot}` : null;
+}
+const isPending = (e) => !e.d.test && e.s.saved && !e.s.published;
+
+// 지금 이후 비어 있는 예약 칸을 앞에서부터 count개 (오늘 남은 칸 → 내일 → 모레 …).
+// marginMin: 지금부터 이 시간(분) 안의 칸은 건너뛴다 (예약 넣을 시간 확보).
+function freeSlots(entries, slotTimes, count, { now = new Date(), defaultDate = nextDate(now), marginMin = 60 } = {}) {
+  const taken = new Set(entries.filter(isPending).map((e) => pendingKey(e, defaultDate)).filter(Boolean));
+  const times = [...slotTimes].sort();
+  const out = [];
+  for (let d = 0; out.length < count && d < 60; d += 1) {
+    const day = new Date(now); day.setDate(day.getDate() + d);
+    const date = localDate(day);
+    for (const t of times) {
+      if (out.length >= count) break;
+      const at = new Date(`${date}T${t}:00`);
+      if (at - now < marginMin * 60000) continue;
+      const key = `${date} ${t}`;
+      if (!taken.has(key)) out.push({ key, date, time: t, oddDay: at.getDate() % 2 === 1 });
+    }
+  }
+  return out;
+}
+
+module.exports = { pendingKey, freeSlots, isPending, localDate, nextDate, rssTitles, publishedByRss, readAllStatus, countSavesOn, saveLimitFor, buildSlots, assignSlots, toMinutes };

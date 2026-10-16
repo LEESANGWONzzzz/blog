@@ -382,12 +382,12 @@ async function main() {
     return;
   }
 
-  // 하루 자동 임시저장 상한 (data/config.json의 dailySaveLimit, 기본 2)
+  // 하루 자동 임시저장 상한 (data/config.json의 dailySaveLimit, 0이면 제한 없음)
   if (!dryRun && !draft.test) {
     const today = localDate(new Date());
     const dailySaveLimit = saveLimitFor(today, loadConfig());
     const used = countSavesOn(today, readAllStatus());
-    if (used >= dailySaveLimit) {
+    if (dailySaveLimit > 0 && used >= dailySaveLimit) {
       console.error(`\n✖ 오늘(${today}) 자동 임시저장 ${used}건 — 하루 상한 ${dailySaveLimit}건에 도달했습니다. 내일 다시 실행하세요.`);
       console.error('  상한은 data/config.json의 dailySaveLimit(그날만: dailySaveLimitOverrides)에서 바꿀 수 있습니다 (올릴수록 계정 위험도 커짐).');
       process.exit(1);
