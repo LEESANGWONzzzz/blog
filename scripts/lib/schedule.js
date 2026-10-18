@@ -110,7 +110,9 @@ const isPending = (e) => !e.d.test && e.s.saved && !e.s.published;
 // marginMin: 지금부터 이 시간(분) 안의 칸은 건너뛴다 (예약 넣을 시간 확보).
 // from: 'YYYY-MM-DD'이면 그 날짜 이전 칸은 건너뛴다 ("19일 글부터"처럼 시작일을 정할 때).
 function freeSlots(entries, slotTimes, count, { now = new Date(), defaultDate = nextDate(now), marginMin = 60, from = '' } = {}) {
-  const taken = new Set(entries.filter(isPending).map((e) => pendingKey(e, defaultDate)).filter(Boolean));
+  // 예약을 마쳐 발행 표시된 글도 publish_at 칸은 그대로 차지한다 (같은 시각 중복 예약 방지).
+  const reserved = entries.filter((e) => !e.d.test && e.s.saved && e.s.published && e.d.publish_at);
+  const taken = new Set([...entries.filter(isPending), ...reserved].map((e) => pendingKey(e, defaultDate)).filter(Boolean));
   const times = [...slotTimes].sort();
   const out = [];
   for (let d = 0; out.length < count && d < 60; d += 1) {

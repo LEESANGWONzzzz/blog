@@ -101,6 +101,17 @@ test('빈 예약 칸: 지난 칸·이미 찬 칸을 건너뛰고 여러 날에 �
   assert.strictEqual(got[1].oddDay, false);
 });
 
+test('빈 칸: 예약을 마쳐 발행 표시된 글도 publish_at 칸을 차지', () => {
+  const now = new Date(2026, 9, 17, 0, 10);
+  const entries = [
+    entry('예약됨', '2026-10-16T23:50:00', { d: { publish_at: '2026-10-17 07:00' }, s: { published: true } }),
+    entry('대기', '2026-10-16T23:51:00', { d: { publish_at: '2026-10-17 09:00' } }),
+    entry('예전글', '2026-10-10T01:00:00', { d: { slot: '17:00' }, s: { published: true } }),
+  ];
+  const got = freeSlots(entries, ['07:00', '09:00', '17:00', '19:00'], 2, { now });
+  assert.deepStrictEqual(got.map((x) => x.key), ['2026-10-17 17:00', '2026-10-17 19:00']);
+});
+
 test('저장 상한 0 = 제한 없음', () => {
   assert.strictEqual(saveLimitFor('2026-10-17', { dailySaveLimit: 0, dailySaveLimitOverrides: {} }), 0);
 });
