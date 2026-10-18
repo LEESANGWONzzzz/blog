@@ -13,6 +13,15 @@ const { execSync } = require('child_process');
 const { ROOT, loadConfig } = require('./lib/config');
 const { localDate, readAllStatus, freeSlots } = require('./lib/schedule');
 
+// advisor_trends.js가 받아 둔 최근 트렌드 파일 (2일 이내). 없으면 빈 문자열.
+function latestTrends() {
+  const dir = path.join(ROOT, 'data', 'trends');
+  if (!fs.existsSync(dir)) return '';
+  const file = fs.readdirSync(dir).filter((f) => /^\d{4}-\d{2}-\d{2}\.md$/.test(f)).sort().pop();
+  if (!file || Date.now() - fs.statSync(path.join(dir, file)).mtimeMs > 2 * 86400000) return '';
+  return fs.readFileSync(path.join(dir, file), 'utf8').trim();
+}
+
 function build(args) {
   if (args.includes('--money')) return '작업 G.';
   if (args.includes('--review')) {
@@ -28,7 +37,7 @@ function build(args) {
   return [
     `작업 F. 조사일 ${localDate(new Date())}. 칸 목록:`,
     ...slots.map((s) => `- ${s.key} (${s.oddDay ? '홀수일' : '짝수일'})`),
-    '트렌드: (크리에이터 어드바이저 메인/검색 유입 1~20위가 있으면 여기에 붙여넣기, 없으면 이 줄 지우기)',
+    latestTrends() ? `트렌드:\n${latestTrends()}` : '트렌드: (먼저 node scripts/advisor_trends.js 를 돌리면 자동으로 들어감. 없으면 이 줄 지우기)',
     `최근 발행·저장 주제(겹치지 않게): ${recent.join(' / ') || '없음'}`,
   ].join('\n');
 }

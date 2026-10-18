@@ -29,6 +29,7 @@
 | `node scripts/generate_image.js --plan <images.json>` | AI 일러스트 생성 (키 없으면 수동용 프롬프트 파일) |
 | `node scripts/plan_schedule.js [--today\|--date …]` | 임시저장된 글을 내일(기본) 예약 시각에 배정 → `drafts/publish_plan.md`. 블로그에 공개된 글은 RSS로 자동 제외 (`/batch`) |
 | `node scripts/analyze_performance.js <csv>` | 조회수 상위 글의 교집합 분석 → `data/analysis-latest.md` (`/analyze`) |
+| `node scripts/advisor_trends.js` | 내 계정 크리에이터 어드바이저 트렌드(주제별 인기유입검색어·홈판 상위 글 제목) → `data/trends/<날짜>.md`. 읽기 전용 (`/daily`가 먼저 돌림) |
 | `node scripts/gpt_prompt.js [--review\|--money]` | GPT에 보낼 작업 F(빈 칸 6개)·H·G 메시지를 만들어 클립보드에 복사 |
 | `npm test` | 형식 검사·발행 가드·성과 분석 테스트 |
 
