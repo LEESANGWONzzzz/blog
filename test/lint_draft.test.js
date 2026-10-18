@@ -123,3 +123,12 @@ test('카테고리: 없거나 목록 밖이면 경고만', () => {
   const ok = lintDraft({ ...base, category: '저축·예적금' }, { baseDir: process.cwd(), categories: cats });
   assert.ok(!ok.warnings.some((w) => w.includes('카테고리') || w.includes('category')));
 });
+
+test('마크다운 기호는 오류, "#태그" 같은 일반 # 은 통과', () => {
+  const r = lintDraft({ title: 'x', test: true, tags: ['a'], blocks: [
+    { type: 'text', content: '**굵게** 문장입니다.' },
+    { type: 'text', content: '## 제목' },
+    { type: 'text', content: '#태그 문장입니다.' },
+  ] }, { testMode: true });
+  assert.strictEqual(r.errors.filter((e) => e.includes('마크다운')).length, 2);
+});

@@ -30,6 +30,7 @@ argument-hint: [주제 또는 GPT 작업 A/C 결과 붙여넣기 — 비우면 �
 
 ## 4. 글쓰기·검사·임시저장
 - `write.md` 5~7번을 그대로 진행한다 (draft.json, review.md, lint, `node scripts/naver_draft.js`).
+- 저장 뒤 `node scripts/export_manuscript.js <draft.json>`으로 복사용 원고 `manuscript.txt`를 남긴다 (5-12).
 - review.md에 facts.md 대조 결과와 이미지 목록(종류·출처·확인 결과)을 포함한다.
 
 ## 5. 보고 (짧게)

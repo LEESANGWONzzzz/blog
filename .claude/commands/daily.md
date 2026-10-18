@@ -44,6 +44,9 @@ argument-hint: [선택: 꼭 넣을 주제나 GPT 작업 F 결과]
 - 다른 블로그는 주제만 참고하고 문장·구성·이미지는 새로 만든다.
 - 한 편이 막히면 그 편만 건너뛰고 다음 편으로 간다 (그 칸은 비워 두고 다음 `/daily`가 채운다).
 
+- 이미지는 대표·설명·활용 세 역할을 모두 넣는다 (5-12). 면책 앞에 `출처:` 문단을 둔다.
+- 저장한 편마다 `node scripts/export_manuscript.js <draft.json>`으로 `manuscript.txt`를 남긴다.
+
 ## 3. 마무리
 - `node scripts/plan_schedule.js`로 계획표(`drafts/publish_plan.md`, 날짜별)를 만든다.
 - 보고 (짧게, 표 하나 + 줄 몇 개):
