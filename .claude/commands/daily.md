@@ -12,7 +12,7 @@ argument-hint: [선택: 꼭 넣을 주제나 GPT 작업 F 결과]
 - `date`로 지금 시각을 본다.
 - `git pull`로 최신 규칙을 받는다 (충돌이 나면 멈추고 보고).
 - `node scripts/advisor_trends.js`로 크리에이터 어드바이저 트렌드(어제 기준 주제별 인기유입검색어 1~20위 · 홈판 상위 글 제목 · 메인 유입률)를 `data/trends/<날짜>.md`에 받는다. 실패하면 오류만 보고에 적고 계속한다 (입력에 붙여 넣은 트렌드나 웹 검색으로 대신).
-- `node scripts/draft_status.js`로 상태를 보고, `node scripts/plan_schedule.js --next 6`으로 **다음 빈 예약 칸 6개**(날짜·시각·홀짝일)를 받는다. RSS로 발행된 글은 자동 제외된다.
+- `node scripts/draft_status.js`로 상태를 보고, `node scripts/plan_schedule.js --next 6`으로 **다음 빈 예약 칸 6개**(날짜·시각·홀짝일)를 받는다. 입력에 `2026-10-19부터`처럼 시작일이 있으면 `--next 6 --from 2026-10-19`로 받는다 (그 전 빈 칸은 이번에 채우지 않는다). RSS로 발행된 글은 자동 제외된다.
   - 이번에 쓰는 글은 이 칸들에 하나씩 대응시킨다. 칸마다 분야는 시각으로 정한다 (아래 구성).
   - `dailySaveLimit`이 0이 아니면 오늘 남은 저장 수만큼만 저장한다.
 

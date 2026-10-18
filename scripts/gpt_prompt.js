@@ -4,6 +4,7 @@
 // 사용:
 //   node scripts/gpt_prompt.js          # 작업 F — 다음 빈 예약 칸 6개 기획 요청
 //   node scripts/gpt_prompt.js 4        # 칸 4개만
+//   node scripts/gpt_prompt.js --from 2026-10-19  # 그 날짜 칸부터
 //   node scripts/gpt_prompt.js --review # 작업 H — 주간 성과 리뷰 (실험 기록표 첨부)
 //   node scripts/gpt_prompt.js --money  # 작업 G — 수익화 경로 조사
 
@@ -29,8 +30,10 @@ function build(args) {
     return `작업 H.\n${table}`;
   }
   const n = Number(args.find((a) => /^\d+$/.test(a)) || loadConfig().batchSize || 6);
+  const fromIdx = args.indexOf('--from');
+  const from = fromIdx >= 0 ? args[fromIdx + 1] : '';
   const entries = readAllStatus();
-  const slots = freeSlots(entries, loadConfig().schedule.slots || [], n);
+  const slots = freeSlots(entries, loadConfig().schedule.slots || [], n, { from });
   const recent = entries.filter((e) => !e.d.test && e.s.saved)
     .sort((a, b) => String(b.s.steps.save.at).localeCompare(String(a.s.steps.save.at)))
     .slice(0, 20).map((e) => e.d.title);

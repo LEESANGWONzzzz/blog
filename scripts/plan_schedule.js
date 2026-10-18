@@ -52,9 +52,9 @@ async function main() {
   if (!args.includes('--no-rss')) await syncFromRss(config.blogId);
   const cfg = config.schedule;
 
-  // --next N: 다음 빈 예약 칸 N개 (/daily가 글마다 publish_at을 정할 때 쓴다)
+  // --next N: 다음 빈 예약 칸 N개 (/daily가 글마다 publish_at을 정할 때 쓴다). --from YYYY-MM-DD로 시작일 지정
   if (arg('--next')) {
-    const list = freeSlots(readAllStatus(), cfg.slots || [], Number(arg('--next')));
+    const list = freeSlots(readAllStatus(), cfg.slots || [], Number(arg('--next')), { from: arg('--from') || '' });
     list.forEach((x) => console.log(`${x.key}\t${x.oddDay ? '홀수일' : '짝수일'}`));
     return;
   }

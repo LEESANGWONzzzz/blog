@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert');
-const { localDate, nextDate, rssTitles, publishedByRss, countSavesOn, saveLimitFor, buildSlots, assignSlots } = require('../scripts/lib/schedule');
+const { localDate, nextDate, rssTitles, publishedByRss, countSavesOn, saveLimitFor, buildSlots, assignSlots, freeSlots } = require('../scripts/lib/schedule');
 
 const entry = (title, at, extra = {}) => ({
   d: { title, tags: ['a'], ...(extra.d || {}) },
@@ -88,7 +88,6 @@ test('배정: draft의 slot 지정은 그 시각에, 빈 칸으로 당겨지지 
 });
 
 test('빈 예약 칸: 지난 칸·이미 찬 칸을 건너뛰고 여러 날에 걸쳐 n개', () => {
-  const { freeSlots } = require('../scripts/lib/schedule');
   const now = new Date(2026, 9, 16, 23, 0);
   const entries = [
     entry('연예', '2026-10-16T01:03:00', { d: { slot: '07:00' } }),
@@ -104,4 +103,12 @@ test('빈 예약 칸: 지난 칸·이미 찬 칸을 건너뛰고 여러 날에 �
 
 test('저장 상한 0 = 제한 없음', () => {
   assert.strictEqual(saveLimitFor('2026-10-17', { dailySaveLimit: 0, dailySaveLimitOverrides: {} }), 0);
+});
+
+test('freeSlots: from 이전 날짜 칸은 건너뛴다', () => {
+  const now = new Date('2026-10-18T10:00:00');
+  const list = freeSlots([], ['07:00', '09:00', '17:00', '19:00'], 6, { now, from: '2026-10-19' });
+  assert.deepStrictEqual(list.map((x) => x.key), [
+    '2026-10-19 07:00', '2026-10-19 09:00', '2026-10-19 17:00', '2026-10-19 19:00', '2026-10-20 07:00', '2026-10-20 09:00',
+  ]);
 });

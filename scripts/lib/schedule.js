@@ -108,13 +108,15 @@ const isPending = (e) => !e.d.test && e.s.saved && !e.s.published;
 
 // 지금 이후 비어 있는 예약 칸을 앞에서부터 count개 (오늘 남은 칸 → 내일 → 모레 …).
 // marginMin: 지금부터 이 시간(분) 안의 칸은 건너뛴다 (예약 넣을 시간 확보).
-function freeSlots(entries, slotTimes, count, { now = new Date(), defaultDate = nextDate(now), marginMin = 60 } = {}) {
+// from: 'YYYY-MM-DD'이면 그 날짜 이전 칸은 건너뛴다 ("19일 글부터"처럼 시작일을 정할 때).
+function freeSlots(entries, slotTimes, count, { now = new Date(), defaultDate = nextDate(now), marginMin = 60, from = '' } = {}) {
   const taken = new Set(entries.filter(isPending).map((e) => pendingKey(e, defaultDate)).filter(Boolean));
   const times = [...slotTimes].sort();
   const out = [];
   for (let d = 0; out.length < count && d < 60; d += 1) {
     const day = new Date(now); day.setDate(day.getDate() + d);
     const date = localDate(day);
+    if (from && date < from) continue;
     for (const t of times) {
       if (out.length >= count) break;
       const at = new Date(`${date}T${t}:00`);
