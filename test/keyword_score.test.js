@@ -21,5 +21,11 @@ test('경쟁도: 문서 수 ÷ 검색량 낮은 순, 검색량 적은 키워드�
     { keyword: '너무적음', searches: 50, docs: 10 },
   ]);
   assert.deepStrictEqual(scored.map((r) => r.keyword), ['기회', '경쟁심함']);
-  assert.match(toMarkdown(scored, { date: '2026-10-19', hints: ['a'] }), /\| 1 \| 기회 \| 3,000 \| 3,000 \| 1\.0 \|/);
+  assert.match(toMarkdown(scored, { date: '2026-10-19', hints: ['a'] }), /\| 1 \| 기회 \| 3,000 \| 3,000 \| 1\.0 \|  \|/);
+});
+
+test('행동형 검색어 표시', () => {
+  const { isAction } = require('../scripts/keyword_score');
+  assert.strictEqual(isAction('근로장려금신청기간'), true);
+  assert.strictEqual(isAction('근로장려금뜻'), false);
 });

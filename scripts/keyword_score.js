@@ -25,6 +25,10 @@ function signature(timestamp, method, uri, secret) {
   return crypto.createHmac('sha256', secret).update(`${timestamp}.${method}.${uri}`).digest('base64');
 }
 
+// 검색한 사람이 다음에 할 행동(신청·조회·비용 확인)을 담은 검색어. 이런 키워드가 제목감이다 (writing-rules 5-7).
+const ACTION_WORDS = /신청|기간|지급일|지급|방법|비용|가격|요금|조회|대상|조건|자격|서류|날짜|일정|예매|환급|보상|계산/;
+const isAction = (k) => ACTION_WORDS.test(k);
+
 // 검색량이 아주 적으면 API가 "< 10"을 준다 → 5로 본다.
 function parseCount(v) {
   if (typeof v === 'number') return v;
@@ -47,10 +51,12 @@ function toMarkdown(scored, { date, hints }) {
     '- 월간 검색량: 네이버 검색광고 키워드도구(PC+모바일, 최근 30일). 문서 수: 네이버 검색 API 블로그 total.',
     '- 경쟁도 = 블로그 문서 수 ÷ 월간 검색량. 낮을수록 글이 적은데 찾는 사람은 많다. 상위 노출을 보장하는 숫자는 아니다.',
     '',
-    '| 순위 | 키워드 | 월간 검색량 | 블로그 문서 수 | 경쟁도 |',
-    '|---|---|---|---|---|',
+    '- 행동형 ✔ = 신청·기간·지급일·비용처럼 검색한 사람의 다음 행동이 담긴 검색어 (제목 우선 후보).',
+    '',
+    '| 순위 | 키워드 | 월간 검색량 | 블로그 문서 수 | 경쟁도 | 행동형 |',
+    '|---|---|---|---|---|---|',
   ];
-  scored.forEach((r, i) => lines.push(`| ${i + 1} | ${r.keyword} | ${r.searches.toLocaleString()} | ${r.docs.toLocaleString()} | ${r.ratio.toFixed(1)} |`));
+  scored.forEach((r, i) => lines.push(`| ${i + 1} | ${r.keyword} | ${r.searches.toLocaleString()} | ${r.docs.toLocaleString()} | ${r.ratio.toFixed(1)} | ${isAction(r.keyword) ? '✔' : ''} |`));
   return `${lines.join('\n')}\n`;
 }
 
@@ -136,4 +142,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { signature, parseCount, scoreRows, toMarkdown, latestTrendQueries };
+module.exports = { signature, parseCount, scoreRows, toMarkdown, latestTrendQueries, isAction };
