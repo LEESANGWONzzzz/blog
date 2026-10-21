@@ -25,6 +25,10 @@ function signature(timestamp, method, uri, secret) {
   return crypto.createHmac('sha256', secret).update(`${timestamp}.${method}.${uri}`).digest('base64');
 }
 
+// 검색한 사람이 다음에 할 행동(신청·조회·비용 확인)을 담은 검색어. 이런 키워드가 제목감이다 (writing-rules 5-7).
+const ACTION_WORDS = /신청|기간|지급일|지급|방법|비용|가격|요금|조회|대상|조건|자격|서류|날짜|일정|예매|환급|보상|계산/;
+const isAction = (k) => ACTION_WORDS.test(k);
+
 // 검색량이 아주 적으면 API가 "< 10"을 준다 → 5로 본다.
 function parseCount(v) {
   if (typeof v === 'number') return v;
@@ -47,28 +51,32 @@ function toMarkdown(scored, { date, hints }) {
     '- 월간 검색량: 네이버 검색광고 키워드도구(PC+모바일, 최근 30일). 문서 수: 네이버 검색 API 블로그 total.',
     '- 경쟁도 = 블로그 문서 수 ÷ 월간 검색량. 낮을수록 글이 적은데 찾는 사람은 많다. 상위 노출을 보장하는 숫자는 아니다.',
     '',
-    '| 순위 | 키워드 | 월간 검색량 | 블로그 문서 수 | 경쟁도 |',
-    '|---|---|---|---|---|',
+    '- 행동형 ✔ = 신청·기간·지급일·비용처럼 검색한 사람의 다음 행동이 담긴 검색어 (제목 우선 후보).',
+    '',
+    '| 순위 | 키워드 | 월간 검색량 | 블로그 문서 수 | 경쟁도 | 행동형 |',
+    '|---|---|---|---|---|---|',
   ];
-  scored.forEach((r, i) => lines.push(`| ${i + 1} | ${r.keyword} | ${r.searches.toLocaleString()} | ${r.docs.toLocaleString()} | ${r.ratio.toFixed(1)} |`));
+  scored.forEach((r, i) => lines.push(`| ${i + 1} | ${r.keyword} | ${r.searches.toLocaleString()} | ${r.docs.toLocaleString()} | ${r.ratio.toFixed(1)} | ${isAction(r.keyword) ? '✔' : ''} |`));
   return `${lines.join('\n')}\n`;
 }
 
-function latestTrendQueries(topics = ['비즈니스·경제']) {
-  const dir = path.join(ROOT, 'data', 'trends');
-  if (!fs.existsSync(dir)) return [];
-  const file = fs.readdirSync(dir).filter((f) => /^\d{4}-\d{2}-\d{2}\.md$/.test(f)).sort().pop();
-  if (!file) return [];
-  const out = [];
-  let on = false;
+// 최신 트렌드 파일의 검색어. 비즈니스·경제 주제가 없으면(어드바이저 주제 설정에 따라 빠질 수 있음) 모든 주제의 검색어를 쓴다.
+function latestTrendQueries(topics = ['비즈니스·경제'], dir = path.join(ROOT, 'data', 'trends')) {
+  const file = fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => /^\d{4}-\d{2}-\d{2}\.md$/.test(f)).sort().pop() : null;
+  if (!file) return { file: null, queries: [] };
+  const byTopic = new Map();
+  let cur = null;
   for (const line of fs.readFileSync(path.join(dir, file), 'utf8').split('\n')) {
-    if (line.startsWith('### ')) on = topics.includes(line.slice(4).trim());
-    else if (on) {
+    if (line.startsWith('### ')) {
+      cur = line.slice(4).trim();
+      byTopic.set(cur, []);
+    } else if (cur) {
       const m = line.match(/^\d+\.\s+(.+?)\s+\(/);
-      if (m) out.push(m[1]);
+      if (m) byTopic.get(cur).push(m[1]);
     }
   }
-  return out;
+  const wanted = topics.flatMap((t) => byTopic.get(t) || []);
+  return { file, queries: wanted.length ? wanted : [...byTopic.values()].flat() };
 }
 
 async function relatedKeywords(hints, env) {
@@ -101,8 +109,15 @@ async function blogDocCount(keyword, env) {
 
 async function main() {
   const args = process.argv.slice(2);
-  const hints = args.includes('--from-trends') ? latestTrendQueries().slice(0, 10) : args.filter((a) => !a.startsWith('--'));
-  if (!hints.length) throw new Error('힌트 키워드를 주거나 --from-trends 를 쓰세요 (트렌드 파일이 없으면 advisor_trends.js 먼저).');
+  let hints = args.filter((a) => !a.startsWith('--'));
+  if (args.includes('--from-trends')) {
+    const { file, queries } = latestTrendQueries();
+    if (!file) throw new Error('data/trends/ 에 트렌드 파일이 없습니다. 먼저 node scripts/advisor_trends.js 를 실행하세요.');
+    if (!queries.length) throw new Error(`data/trends/${file} 에 검색어 목록이 없습니다. 파일을 열어 "주제별 인기유입검색어"가 비었는지 확인하세요.`);
+    console.log(`트렌드 파일: data/trends/${file}`);
+    hints = queries.slice(0, 10);
+  }
+  if (!hints.length) throw new Error('힌트 키워드를 주거나 --from-trends 를 쓰세요.');
   const env = { ...loadEnv(), ...process.env };
   const need = ['NAVER_SEARCHAD_API_KEY', 'NAVER_SEARCHAD_SECRET', 'NAVER_SEARCHAD_CUSTOMER_ID', 'NAVER_CLIENT_ID', 'NAVER_CLIENT_SECRET'];
   const missing = need.filter((k) => !env[k]);
@@ -136,4 +151,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { signature, parseCount, scoreRows, toMarkdown, latestTrendQueries };
+module.exports = { signature, parseCount, scoreRows, toMarkdown, latestTrendQueries, isAction };
