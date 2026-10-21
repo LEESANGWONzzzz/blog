@@ -60,21 +60,23 @@ function toMarkdown(scored, { date, hints }) {
   return `${lines.join('\n')}\n`;
 }
 
-function latestTrendQueries(topics = ['비즈니스·경제']) {
-  const dir = path.join(ROOT, 'data', 'trends');
-  if (!fs.existsSync(dir)) return [];
-  const file = fs.readdirSync(dir).filter((f) => /^\d{4}-\d{2}-\d{2}\.md$/.test(f)).sort().pop();
-  if (!file) return [];
-  const out = [];
-  let on = false;
+// 최신 트렌드 파일의 검색어. 비즈니스·경제 주제가 없으면(어드바이저 주제 설정에 따라 빠질 수 있음) 모든 주제의 검색어를 쓴다.
+function latestTrendQueries(topics = ['비즈니스·경제'], dir = path.join(ROOT, 'data', 'trends')) {
+  const file = fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => /^\d{4}-\d{2}-\d{2}\.md$/.test(f)).sort().pop() : null;
+  if (!file) return { file: null, queries: [] };
+  const byTopic = new Map();
+  let cur = null;
   for (const line of fs.readFileSync(path.join(dir, file), 'utf8').split('\n')) {
-    if (line.startsWith('### ')) on = topics.includes(line.slice(4).trim());
-    else if (on) {
+    if (line.startsWith('### ')) {
+      cur = line.slice(4).trim();
+      byTopic.set(cur, []);
+    } else if (cur) {
       const m = line.match(/^\d+\.\s+(.+?)\s+\(/);
-      if (m) out.push(m[1]);
+      if (m) byTopic.get(cur).push(m[1]);
     }
   }
-  return out;
+  const wanted = topics.flatMap((t) => byTopic.get(t) || []);
+  return { file, queries: wanted.length ? wanted : [...byTopic.values()].flat() };
 }
 
 async function relatedKeywords(hints, env) {
@@ -107,8 +109,15 @@ async function blogDocCount(keyword, env) {
 
 async function main() {
   const args = process.argv.slice(2);
-  const hints = args.includes('--from-trends') ? latestTrendQueries().slice(0, 10) : args.filter((a) => !a.startsWith('--'));
-  if (!hints.length) throw new Error('힌트 키워드를 주거나 --from-trends 를 쓰세요 (트렌드 파일이 없으면 advisor_trends.js 먼저).');
+  let hints = args.filter((a) => !a.startsWith('--'));
+  if (args.includes('--from-trends')) {
+    const { file, queries } = latestTrendQueries();
+    if (!file) throw new Error('data/trends/ 에 트렌드 파일이 없습니다. 먼저 node scripts/advisor_trends.js 를 실행하세요.');
+    if (!queries.length) throw new Error(`data/trends/${file} 에 검색어 목록이 없습니다. 파일을 열어 "주제별 인기유입검색어"가 비었는지 확인하세요.`);
+    console.log(`트렌드 파일: data/trends/${file}`);
+    hints = queries.slice(0, 10);
+  }
+  if (!hints.length) throw new Error('힌트 키워드를 주거나 --from-trends 를 쓰세요.');
   const env = { ...loadEnv(), ...process.env };
   const need = ['NAVER_SEARCHAD_API_KEY', 'NAVER_SEARCHAD_SECRET', 'NAVER_SEARCHAD_CUSTOMER_ID', 'NAVER_CLIENT_ID', 'NAVER_CLIENT_SECRET'];
   const missing = need.filter((k) => !env[k]);

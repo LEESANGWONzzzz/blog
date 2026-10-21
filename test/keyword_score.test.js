@@ -29,3 +29,16 @@ test('행동형 검색어 표시', () => {
   assert.strictEqual(isAction('근로장려금신청기간'), true);
   assert.strictEqual(isAction('근로장려금뜻'), false);
 });
+
+test('트렌드 검색어: 비즈니스·경제가 없으면 모든 주제 검색어', () => {
+  const fs = require('fs');
+  const os = require('os');
+  const path = require('path');
+  const { latestTrendQueries } = require('../scripts/keyword_score');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'trends-'));
+  assert.deepStrictEqual(latestTrendQueries(undefined, dir), { file: null, queries: [] });
+  fs.writeFileSync(path.join(dir, '2026-10-20.md'), '### 스타·연예인\n1. 하영 (-)\n2. 안상호 (▼1)\n');
+  assert.deepStrictEqual(latestTrendQueries(undefined, dir).queries, ['하영', '안상호']);
+  fs.writeFileSync(path.join(dir, '2026-10-21.md'), '### 스타·연예인\n1. 하영 (-)\n### 비즈니스·경제\n1. 근로장려금 (▲2)\n');
+  assert.deepStrictEqual(latestTrendQueries(undefined, dir), { file: '2026-10-21.md', queries: ['근로장려금'] });
+});
