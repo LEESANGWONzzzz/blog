@@ -246,6 +246,11 @@ function lintDraft(draft, { baseDir, testMode = false, categories = [] } = {}) {
   if (generated > 0 && !blocks.some((b) => b.type === 'text' && /AI로 (만든|생성|제작)/.test(b.content || ''))) {
     warn('AI 생성 이미지가 있습니다 — 본문(보통 마지막 문단)에 "AI로 만든 이미지" 안내를 넣으세요.');
   }
+  // 검색형 칸(09·11·13·15시)은 도입 뒤 "✔ 항목 — 내용" 핵심 요약 체크리스트를 둔다 (writing-rules 5-12)
+  if (!testMode && ['09:00', '11:00', '13:00', '15:00'].includes(draft.slot)
+    && !blocks.some((b) => b.type === 'text' && /^✔/m.test(b.content || ''))) {
+    warn('검색형 칸인데 "✔ 항목 — 내용" 핵심 요약 체크리스트가 없습니다 — 도입 바로 뒤에 넣어 주세요.');
+  }
   if (!testMode && !blocks.some((b) => b.type === 'text' && /^출처\s*[:：]/.test((b.content || '').trim()))) {
     warn('"출처:"로 시작하는 문단이 없습니다 — 면책 문구 바로 앞에 확인한 기관·페이지·확인일을 적어 주세요.');
   }

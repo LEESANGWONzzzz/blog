@@ -132,3 +132,11 @@ test('마크다운 기호는 오류, "#태그" 같은 일반 # 은 통과', () =
   ] }, { testMode: true });
   assert.strictEqual(r.errors.filter((e) => e.includes('마크다운')).length, 2);
 });
+
+test('검색형 칸은 ✔ 핵심 요약 체크리스트가 없으면 경고', () => {
+  const base = { title: '테스트 제목입니다', tags: ['a'], blocks: [{ type: 'text', content: '첫 문단입니다.' }] };
+  const has = (d) => lintDraft(d).warnings.some((w) => w.includes('핵심 요약 체크리스트'));
+  assert.strictEqual(has({ ...base, slot: '11:00' }), true);
+  assert.strictEqual(has({ ...base, slot: '07:00' }), false);
+  assert.strictEqual(has({ ...base, slot: '11:00', blocks: [{ type: 'text', content: '✔ 대상 — 직장인\n✔ 기한 — 10월 31일' }] }), false);
+});
