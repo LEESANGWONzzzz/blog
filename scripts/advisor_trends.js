@@ -6,7 +6,8 @@
 // 결과: data/trends/<날짜>.md (+ 원본 JSON은 debug/advisor-<날짜>.json)
 //
 // 읽기 전용이다. 내 계정 통계 화면만 열고, 목록에 나온 남의 글은 열지 않는다 (크롤링 금지).
-// 사용: node scripts/advisor_trends.js            (화면 기본 날짜 = 보통 어제)
+// 사용: node scripts/advisor_trends.js            (어제 날짜 — 오늘 데이터는 집계 전이라 비어 있음)
+//       node scripts/advisor_trends.js 2026-10-22 (날짜 지정)
 //       HEADLESS=0 node scripts/advisor_trends.js  (창을 띄워 확인)
 
 const fs = require('fs');
@@ -79,6 +80,19 @@ function formatTrends(captured, { date = '', fetchedAt = '' } = {}) {
   return { markdown: lines.join('\n'), counts: { topics: ordered.length, mainContents: mainContents.length } };
 }
 
+// 오늘 날짜 데이터는 아직 집계 전이라 비어 있다 ("조회한 기간의 데이터가 없습니다"). 기본은 어제.
+function yesterday() {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  const p = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+
+// 받은 응답 중 실제 목록이 하나라도 있는지
+function hasData(captured) {
+  return Object.entries(captured).some(([k, b]) => k.startsWith('/trend/') && Array.isArray(b?.data) && b.data.length > 0);
+}
+
 function today() {
   const d = new Date();
   const p = (n) => String(n).padStart(2, '0');
@@ -109,7 +123,17 @@ async function main() {
       try { captured[u.pathname.replace('/api/v6', '') + u.search] = await res.json(); } catch { /* 본문 없는 응답 */ }
     });
 
-    await page.goto(`${BASE}/naver_blog/${config.blogId}/trends`, { waitUntil: 'networkidle', timeout: 45000 });
+    const day = (process.argv.find((a) => /^\d{4}-\d{2}-\d{2}$/.test(a))) || yesterday();
+    const qs = new URLSearchParams({ interval: 'day', startDate: day, endDate: day });
+    await page.goto(`${BASE}/naver_blog/${config.blogId}/trends?${qs}`, { waitUntil: 'networkidle', timeout: 45000 });
+    // 주소의 날짜가 무시돼 오늘(빈 데이터)로 열렸으면 "이전 기간 조회"를 한 번 누른다.
+    const prev = page.getByText('이전 기간 조회', { exact: true }).first();
+    if (!hasData(captured) && await prev.count()) {
+      for (const k of Object.keys(captured)) delete captured[k];
+      await safeClick(prev);
+      await page.waitForLoadState('networkidle').catch(() => {});
+      await page.waitForTimeout(1500);
+    }
     if (/introduction|nidlogin/.test(page.url())) throw new Error(`트렌드 화면 대신 ${page.url()} 로 이동했습니다. 로그인 또는 블로그 연결을 확인하세요.`);
     texts.search = await page.locator('body').innerText().catch(() => '');
 
@@ -155,4 +179,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { formatTrends };
+module.exports = { formatTrends, hasData };

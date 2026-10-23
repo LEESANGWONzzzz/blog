@@ -36,3 +36,9 @@ test('formatTrends: 데이터가 없으면 받지 못함 표시', () => {
   assert.deepStrictEqual(counts, { topics: 0, mainContents: 0 });
   assert.match(markdown, /받지 못함/);
 });
+
+test('hasData: 빈 목록만 받았으면 false', () => {
+  const { hasData } = require('../scripts/advisor_trends');
+  assert.strictEqual(hasData({ '/trend/main-inflow-content-ranks?date=2026-10-23': { data: [] } }), false);
+  assert.strictEqual(hasData({ '/trend/main-inflow-content-ranks?date=2026-10-22': { data: [{ title: 'a' }] } }), true);
+});
