@@ -125,7 +125,17 @@ async function main() {
 
     const day = (process.argv.find((a) => /^\d{4}-\d{2}-\d{2}$/.test(a))) || yesterday();
     const qs = new URLSearchParams({ interval: 'day', startDate: day, endDate: day });
-    await page.goto(`${BASE}/naver_blog/${config.blogId}/trends?${qs}`, { waitUntil: 'networkidle', timeout: 45000 });
+    const target = `${BASE}/naver_blog/${config.blogId}/trends?${qs}`;
+    await page.goto(target, { waitUntil: 'networkidle', timeout: 45000 });
+    // 어드바이저 자체 세션이 끊기면 소개 페이지로 보낸다. 네이버 로그인 쿠키가 살아 있으면
+    // 로그인 페이지를 거쳐 돌아오는 것만으로 다시 연결된다 (비밀번호는 입력하지 않는다).
+    if (/introduction/.test(page.url())) {
+      await page.goto(`https://nid.naver.com/nidlogin.login?url=${encodeURIComponent(target)}`, { waitUntil: 'networkidle', timeout: 45000 }).catch(() => {});
+      if (/nid\.naver\.com/.test(page.url())) {
+        throw new Error('네이버 로그인이 만료됐습니다. node scripts/naver_login.js 로 다시 로그인하세요 ("로그인 상태 유지" 체크).');
+      }
+      if (!page.url().startsWith(target.split('?')[0])) await page.goto(target, { waitUntil: 'networkidle', timeout: 45000 });
+    }
     // 주소의 날짜가 무시돼 오늘(빈 데이터)로 열렸으면 "이전 기간 조회"를 한 번 누른다.
     const prev = page.getByText('이전 기간 조회', { exact: true }).first();
     if (!hasData(captured) && await prev.count()) {
