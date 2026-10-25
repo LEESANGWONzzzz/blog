@@ -48,11 +48,14 @@ argument-hint: [선택: 꼭 넣을 주제나 GPT 작업 F 결과]
 - 이미지는 대표·설명·활용 세 역할을 모두 넣는다 (5-12). 면책 앞에 `출처:` 문단을 둔다.
 - 저장한 편마다 `node scripts/export_manuscript.js <draft.json>`으로 `manuscript.txt`를 남긴다.
 
+- 편마다 draft.json에 `owner_note_prompt`(운영자가 직접 넣을 경험·생각 한 줄의 질문과 위치)를 적는다 (writing-rules 5-12 "운영자 한 줄").
+
 ## 3. 마무리
 - `node scripts/plan_schedule.js`로 계획표(`drafts/publish_plan.md`, 날짜별)를 만든다.
 - 보고 (짧게, 표 하나 + 줄 몇 개):
   - 날짜·시각 · 제목 · 분야 · 카테고리 · 태그 · 제작 시간(분)
   - 건너뛴 편과 이유, 확인 못 한 값
+  - 편마다 운영자 한 줄 질문(`owner_note_prompt`) — 예약할 때 에디터에 직접 쓰도록
   - 태그 문단이 본문 끝에 들어갔는지, 쓴 카드 종류, RSS 확인 경고 여부
   - 단계별 걸린 시간 한 줄 (주제 선정 · 수치 확인 · 작성·카드 · 저장)
   - `drafts/`의 발행된 글이 10편을 넘었고 최근 7일 안에 `/analyze`를 안 했으면 "이번 주 `/analyze` 권장" 한 줄
