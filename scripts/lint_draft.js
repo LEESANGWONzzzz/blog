@@ -15,12 +15,17 @@ const TITLE_HOOKS = new Set(['숫자형', '비교형', '손실회피형', '질�
 const PERSONA_KEYS = ['연령직군', '소득구간', '자산단계', '투자경험', '현재감정'];
 const MARKER = /\[\[확인필요:[^\]]*\]\]/g;
 const TITLE_ALLOWED = /^[가-힣ㄱ-ㅎA-Za-z0-9 ]+$/;
+// 홈판형 칸(07·17시)은 따옴표·말줄임표·물음표·쉼표를 허용한다 (writing-rules 5-11, 2026-10-25).
+// 느낌표·괄호·이모지는 여전히 금지 (과장·낚시 방지).
+const HOME_SLOTS = new Set(['07:00', '17:00']);
+const TITLE_HOME_ALLOWED = /^[가-힣ㄱ-ㅎA-Za-z0-9 "'“”‘’…?.,·]+$/;
 
 const LIMITS = {
   titleMin: 25,
   titleMax: 32,
   bodyMin: 1800,
   bodyMax: 2200,
+  homeBodyMin: 1200,
   bodyHardMax: 3000,
   textRunFail: 500,
   textRunWarn: 400,
@@ -90,7 +95,9 @@ function lintDraft(draft, { baseDir, testMode = false, categories = [] } = {}) {
     if (!testMode && (title.length < LIMITS.titleMin || title.length > LIMITS.titleMax)) {
       err(`title 길이 ${title.length}자 — ${LIMITS.titleMin}~${LIMITS.titleMax}자여야 합니다.`);
     }
-    if (!TITLE_ALLOWED.test(title)) err('title에 특수문자가 있습니다 (한글·영문·숫자·공백만 허용).');
+    if (HOME_SLOTS.has(draft.slot)) {
+      if (!TITLE_HOME_ALLOWED.test(title)) err('title에 허용되지 않은 기호가 있습니다 (홈판형은 따옴표·말줄임표·물음표·쉼표까지만 허용).');
+    } else if (!TITLE_ALLOWED.test(title)) err('title에 특수문자가 있습니다 (한글·영문·숫자·공백만 허용).');
   }
 
   // 3. 페르소나·키워드·후킹
@@ -197,10 +204,13 @@ function lintDraft(draft, { baseDir, testMode = false, categories = [] } = {}) {
   const body = bodyText(blocks);
   const withSpaces = body.replace(/\n/g, '').length;
   const noSpaces = body.replace(/\s/g, '').length;
+  // 홈판형은 글자 수를 억지로 채우지 않는다 — 하한만 1,200자로 낮춘다
+  const home = HOME_SLOTS.has(draft.slot);
+  const bodyMin = home ? LIMITS.homeBodyMin : LIMITS.bodyMin;
   if (!testMode) {
     if (withSpaces > LIMITS.bodyHardMax) err(`본문 ${withSpaces}자 — ${LIMITS.bodyHardMax}자를 넘으면 안 됩니다.`);
-    else if (withSpaces < LIMITS.bodyMin || withSpaces > LIMITS.bodyMax) {
-      warn(`본문 ${withSpaces}자(공백 포함) — 기본 ${LIMITS.bodyMin}~${LIMITS.bodyMax}자.`);
+    else if (withSpaces < bodyMin || withSpaces > LIMITS.bodyMax) {
+      warn(`본문 ${withSpaces}자(공백 포함) — 기본 ${bodyMin}~${LIMITS.bodyMax}자.`);
     }
   }
 
@@ -211,9 +221,10 @@ function lintDraft(draft, { baseDir, testMode = false, categories = [] } = {}) {
     if (exact > LIMITS.keywordMax) warn(`메인 키워드가 ${exact}회 — 5~7회 권장 (과다 반복 주의).`);
     const head = title.slice(0, Math.ceil(title.length / 2));
     const firstWord = main.split(/\s+/)[0];
-    if (title && !head.includes(firstWord)) warn('메인 키워드가 제목 앞쪽에 없습니다.');
+    // 홈판형 제목은 후킹이 우선이라 키워드 위치 경고를 하지 않는다
+    if (title && !home && !head.includes(firstWord)) warn('메인 키워드가 제목 앞쪽에 없습니다.');
     const texts = blocks.filter((b) => b.type === 'text');
-    if (texts.length && !texts.slice(0, 2).some((b) => b.content.includes(firstWord))) {
+    if (!home && texts.length && !texts.slice(0, 2).some((b) => b.content.includes(firstWord))) {
       warn('첫 문단 근처에 메인 키워드가 없습니다.');
     }
     for (const s of subs) {

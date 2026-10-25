@@ -140,3 +140,11 @@ test('검색형 칸은 ✔ 핵심 요약 체크리스트가 없으면 경고', (
   assert.strictEqual(has({ ...base, slot: '07:00' }), false);
   assert.strictEqual(has({ ...base, slot: '11:00', blocks: [{ type: 'text', content: '✔ 대상 — 직장인\n✔ 기한 — 10월 31일' }] }), false);
 });
+
+test('홈판형 칸(07·17시) 제목은 따옴표·말줄임표·물음표 허용, 느낌표는 금지', () => {
+  const base = { title: '"9개월 만에 이게 웬일…" 연봉 8천 직장인 국민연금 계산?', tags: ['a'], blocks: [{ type: 'text', content: '첫 문단입니다.' }], test: true };
+  const titleErr = (d) => lintDraft(d).errors.some((e) => e.includes('title에'));
+  assert.strictEqual(titleErr({ ...base, slot: '07:00' }), false);
+  assert.strictEqual(titleErr({ ...base, slot: '09:00' }), true);
+  assert.strictEqual(titleErr({ ...base, slot: '17:00', title: '대박 소식!' }), true);
+});
