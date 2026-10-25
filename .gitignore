@@ -32,3 +32,6 @@ data/trends/
 drafts/example/manuscript.txt
 # 키워드 조사 결과 (커밋하지 않음)
 data/keywords/
+# 다른 도구·임시 파일 (커밋하지 않음)
+.bkit/
+scripts/.tmp_*
