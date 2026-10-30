@@ -148,3 +148,10 @@ test('홈판형 칸(07·17시) 제목은 따옴표·말줄임표·물음표 허�
   assert.strictEqual(titleErr({ ...base, slot: '09:00' }), true);
   assert.strictEqual(titleErr({ ...base, slot: '17:00', title: '대박 소식!' }), true);
 });
+
+test('출처 문단에 원문 주소가 없으면 경고', () => {
+  const base = { title: '테스트 제목입니다', tags: ['a'] };
+  const warned = (content) => lintDraft({ ...base, blocks: [{ type: 'text', content }] }).warnings.some((w) => w.includes('원문 주소'));
+  assert.strictEqual(warned('출처: 국세청 연말정산 안내(2026-10-30 확인)'), true);
+  assert.strictEqual(warned('출처: 국세청 연말정산 안내(2026-10-30 확인) https://www.nts.go.kr'), false);
+});
