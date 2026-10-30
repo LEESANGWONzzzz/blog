@@ -48,3 +48,28 @@ test('테마: 카테고리별 기본값과 --theme 지정', () => {
     assert.match(html({ kind: 'cover', title: '60일 지나면', big: '60일' }, 0, 5, 1, t), /class="tn">60일</);
   }
 });
+
+test('이미지: 글에 들어간 사진은 표지, 소제목 구간 이미지는 그 Q 카드에. 아이콘은 키워드로', () => {
+  const d = {
+    title: '전세 보증금 60일 안에 돌려받을까요',
+    category: '부동산·주거',
+    blocks: [
+      { type: 'text', content: '첫 문장이에요.' },
+      { type: 'image', path: 'input/photos/_mosaic/a.jpg', caption: '' },
+      { type: 'subtitle', content: '언제까지 신청하나요?' },
+      { type: 'text', content: '10월 26일까지 신청합니다.' },
+      { type: 'image', path: 'input/images/cards/b.png', caption: '출처: 기관' },
+      { type: 'subtitle', content: '얼마인가요?' },
+      { type: 'text', content: '최대 1천만원이 이어집니다.' },
+      { type: 'text', content: '면책' },
+    ],
+  };
+  const cards = planFromDraft(d);
+  assert.strictEqual(cards[0].image.path, 'input/photos/_mosaic/a.jpg');
+  const [q1, q2] = cards.filter((c) => /^Q/.test(c.label || ''));
+  assert.strictEqual(q1.image.path, 'input/images/cards/b.png');
+  assert.strictEqual(q2.image, null);
+  assert.strictEqual(cards[0].icon, 'calendar');
+  assert.strictEqual(q1.icon, 'doc'); // 표지와 같은 아이콘은 피함
+  assert.notStrictEqual(q2.icon, 'house'); // "이어집니다"의 '집'에 걸리지 않게
+});
