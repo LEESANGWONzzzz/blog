@@ -372,4 +372,4 @@ async function main() {
 
 if (require.main === module) main().catch((e) => { console.error(`✖ ${e.message}`); process.exit(1); });
 
-module.exports = { planFromDraft, caption, sentences, html, themeFor, THEMES };
+module.exports = { planFromDraft, caption, sentences, html, themeFor, THEMES, pickIcon, iconSvg, imageData, isChecklist, isSource, NUM, esc, FONT, BRAND };

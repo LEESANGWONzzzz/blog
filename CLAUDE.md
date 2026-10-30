@@ -25,7 +25,8 @@
 | `node scripts/lint_draft.js <draft.json>` | 형식 검사. 오류가 있으면 저장 불가 |
 | `node scripts/naver_draft.js <draft.json>` | 검사 → 에디터 입력 → 임시저장 → 텍스트 전문 대조 1회 |
 | `node scripts/export_manuscript.js <draft.json>` | 복사용 원고 `manuscript.txt` (제목 → 본문 → [이미지 n 삽입] → 태그) |
-| `node scripts/insta_cards.js --all [--theme mint\|night\|purple]` | 발행한 글을 인스타 카드뉴스(1080×1350)와 캡션으로 (테마는 카테고리별 기본값) → `output/insta/<카테고리>/<글폴더>/`. 본문 문장만 옮김, 업로드는 운영자 |
+| `node scripts/insta_daily.js --all [--date YYYY-MM-DD]` | **인스타 기본**: 하루치 발행 글을 신문형 "월급날 브리핑" 카드뉴스 1세트로 (1면 목록 → 이슈별 1장 → 오늘 챙길 것) → `output/insta/daily/<날짜>/`. 본문 문장·글 속 이미지만 씀, 업로드는 운영자 |
+| `node scripts/insta_cards.js --all [--theme mint\|night\|purple]` | (글 1편 = 1세트가 필요할 때) 발행한 글을 인스타 카드뉴스(1080×1350)와 캡션으로 (테마는 카테고리별 기본값) → `output/insta/<카테고리>/<글폴더>/`. 본문 문장만 옮김, 업로드는 운영자 |
 | `node scripts/draft_status.js [draft.json]` | 단계별 진행 상황과 재개 지점 |
 | `node scripts/make_cards.js --plan <cards.json> --draft <draft.json>` | 정보 카드 이미지 (기본, API 키 불필요) |
 | `node scripts/generate_image.js --plan <images.json>` | AI 일러스트 생성 (키 없으면 수동용 프롬프트 파일) |
