@@ -36,3 +36,15 @@ test('캡션: 답 문장·기준일·해시태그(띄어쓰기 제거)', () => {
 test('문장 나누기', () => {
   assert.deepStrictEqual(sentences('가요. 나요?\n다'), ['가요.', '나요?', '다']);
 });
+
+test('테마: 카테고리별 기본값과 --theme 지정', () => {
+  const { themeFor, html } = require('../scripts/insta_cards');
+  assert.strictEqual(themeFor('정책·지원금'), 'mint');
+  assert.strictEqual(themeFor('경제 뉴스 해설'), 'night');
+  assert.strictEqual(themeFor('방송·연예'), 'purple');
+  assert.strictEqual(themeFor('방송·연예', 'mint'), 'mint');
+  assert.strictEqual(themeFor('없는 카테고리'), 'mint');
+  for (const t of ['mint', 'night', 'purple']) {
+    assert.match(html({ kind: 'cover', title: '60일 지나면', big: '60일' }, 0, 5, 1, t), /class="tn">60일</);
+  }
+});
