@@ -246,8 +246,8 @@ function compareStructure(expected, actual) {
 }
 
 async function actualStructure(frame) {
-  const raw = await frame.evaluate(({ titleSel, types, citeSel, placeholderSel }) => {
-    const comps = [...document.querySelectorAll('.se-component')].filter((c) => !c.matches(titleSel));
+  const raw = await frame.evaluate(({ titleSel, autoSel, types, citeSel, placeholderSel }) => {
+    const comps = [...document.querySelectorAll('.se-component')].filter((c) => !c.matches(titleSel) && !c.matches(autoSel));
     return comps.map((c) => {
       const type = Object.keys(types).find((k) => c.matches(types[k])) || `unknown(${c.className})`;
       let cite = '';
@@ -260,7 +260,7 @@ async function actualStructure(frame) {
       }
       return { type, empty: type === 'text' && !(c.innerText || '').trim(), cite };
     });
-  }, { titleSel: SEL.titleComponent, types: SEL.componentTypes, citeSel: SEL.quoteCite, placeholderSel: SEL.placeholder });
+  }, { titleSel: SEL.titleComponent, autoSel: SEL.autoComponents, types: SEL.componentTypes, citeSel: SEL.quoteCite, placeholderSel: SEL.placeholder });
   const problems = raw.filter((c) => c.cite).map((c) => `인용구 출처 칸에 글이 들어갔습니다: "${c.cite.slice(0, 30)}"`);
   return { types: collapseText(raw.filter((c) => !c.empty).map((c) => c.type)), problems };
 }
