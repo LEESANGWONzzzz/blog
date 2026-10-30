@@ -35,3 +35,5 @@ data/keywords/
 # 다른 도구·임시 파일 (커밋하지 않음)
 .bkit/
 scripts/.tmp_*
+# 인스타 카드뉴스 출력물 (Drive에 올림, 커밋하지 않음)
+output/
