@@ -38,6 +38,9 @@ module.exports = {
   // text·quotation은 debug/2026-10-04T15-04-28 HTML에서 확인. horizontalLine은 예제 글(구분선 포함) --resave가
   // 구조 검사를 통과해 확인됨 (틀렸다면 unknown으로 잡혀 저장이 멈췄을 것). image(.se-component.se-image)는 debug/2026-10-06T16-05-20 HTML에서 확인.
   titleComponent: '.se-documentTitle',
+  // 출처 문단의 원문 주소(https://…)를 보고 에디터가 스스로 붙이는 링크 미리보기 카드. 초안 블록이 아니므로 구조 검사에서 뺀다.
+  // 붙는 시점이 들쭉날쭉해 검사와 겹치면 저장이 멈췄다 (debug/2026-10-30T14-51-34-253Z-body.html).
+  autoComponents: '.se-oglink',
   componentTypes: {
     text: '.se-text',
     quotation: '.se-quotation',
