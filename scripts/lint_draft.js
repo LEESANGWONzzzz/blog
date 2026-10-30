@@ -267,7 +267,7 @@ function lintDraft(draft, { baseDir, testMode = false, categories = [] } = {}) {
     warn('"출처:"로 시작하는 문단이 없습니다 — 면책 문구 바로 앞에 확인한 기관·페이지·확인일을 적어 주세요.');
   } else if (!testMode && !/https?:\/\//.test(sourceBlock.content)) {
     // 네이버 공식 가이드: 인용했다면 원작자를 밝히고 원문 링크를 넣는다 (writing-rules 5-12)
-    warn('"출처:" 문단에 원문 주소(https://…)가 없습니다 — 독자가 직접 확인할 수 있게 핵심 출처 1~3개의 주소를 적어 주세요.');
+    warn('"출처:" 문단에 원문 주소(https://…)가 없습니다 — 독자가 직접 확인할 수 있게 가장 중요한 공식 출처 1개의 주소를 적어 주세요.');
   }
   if (!testMode && blocks.length && blocks[blocks.length - 1].type !== 'text') {
     warn('마지막 블록이 text가 아닙니다 — 투자 면책 문구 위치를 확인하세요.');
