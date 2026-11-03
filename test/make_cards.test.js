@@ -53,6 +53,22 @@ test('새 카드 종류: table·compare·chart 계획 검사', () => {
   assert.throws(() => validatePlan([{ ...chart, chart: { type: 'pie', points: chart.chart.points } }]), /bar/);
 });
 
+test('새 종류 hero·timeline, 새 테마, 그림 자동 선택', () => {
+  const { cardIcon, html } = require('../scripts/make_cards');
+  const base = { file: 'input/images/cards/_test-03.png' };
+  assert.doesNotThrow(() => validatePlan([{ ...base, kind: 'hero', theme: 'mint', title: '신청은 5분', sub: '앱에서' }]));
+  assert.doesNotThrow(() => validatePlan([{ ...base, kind: 'timeline', theme: 'night', title: '일정', items: ['11월 4일 — 신청', '12월 10일 — 지급'] }]));
+  assert.throws(() => validatePlan([{ ...base, kind: 'timeline', title: '일정', items: ['11월 4일 신청'] }]), /시점 — 내용/);
+  assert.throws(() => validatePlan([{ ...base, kind: 'hero', title: 'x', icon: 'unicorn' }]), /icon/);
+  assert.strictEqual(cardIcon({ kind: 'cover', title: '해외직구 3분기 6.3% 감소' }), 'parcel');
+  assert.strictEqual(cardIcon({ kind: 'list', title: '실손보험 청구', items: ['병원 영수증'] }), 'hospital');
+  assert.strictEqual(cardIcon({ kind: 'list', title: 'x', icon: 'none' }), null);
+  assert.match(html({ kind: 'number', title: '금액', big: '50만 원', theme: 'sunset' }), /<svg/);
+  // 타임라인 항목은 목록으로 한 번 더 나오지 않는다
+  const tl = html({ kind: 'timeline', title: '일정', items: ['11월 4일 — 신청 시작'] });
+  assert.strictEqual(tl.split('신청 시작').length - 1, 1);
+});
+
 test('표·계산식·그래프 숫자도 본문 대조', () => {
   const draft = { blocks: [{ type: 'text', content: '2024년 3.0%에서 2025년 2.5%로 내려갔습니다. 원금은 360만 원입니다.' }] };
   const chart = { file: 'input/images/cards/_t.png', kind: 'chart', title: '금리', chart: { type: 'line', unit: '%', points: [{ label: '2024년', value: '3.0' }, { label: '2025년', value: '2.5' }] } };

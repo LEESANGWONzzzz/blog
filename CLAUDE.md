@@ -28,7 +28,7 @@
 | `node scripts/insta_daily.js --all [--date YYYY-MM-DD]` | **인스타 기본**: 하루치 발행 글을 신문형 "월급날 브리핑" 카드뉴스 1세트로 (1면 목록 → 이슈별 1장 → 오늘 챙길 것) → `output/insta/daily/<날짜>/`. 본문 문장·글 속 이미지만 씀, 업로드는 운영자 |
 | `node scripts/insta_cards.js --all [--theme mint\|night\|purple]` | (글 1편 = 1세트가 필요할 때) 발행한 글을 인스타 카드뉴스(1080×1350)와 캡션으로 (테마는 카테고리별 기본값) → `output/insta/<카테고리>/<글폴더>/`. 본문 문장만 옮김, 업로드는 운영자 |
 | `node scripts/draft_status.js [draft.json]` | 단계별 진행 상황과 재개 지점 |
-| `node scripts/make_cards.js --plan <cards.json> --draft <draft.json>` | 정보 카드 이미지 (기본, API 키 불필요) |
+| `node scripts/make_cards.js --plan <cards.json> --draft <draft.json>` | 정보 카드 이미지 (기본, API 키 불필요). 내용에 맞는 그림 자동(`scripts/lib/illust.js`), 종류 9·테마 5 |
 | `node scripts/generate_image.js --plan <images.json>` | AI 일러스트 생성 (키 없으면 수동용 프롬프트 파일) |
 | `node scripts/plan_schedule.js [--today\|--date …]` | 임시저장된 글을 내일(기본) 예약 시각에 배정 → `drafts/publish_plan.md`. 블로그에 공개된 글은 RSS로 자동 제외 (`/batch`) |
 | `node scripts/analyze_performance.js <csv>` | 조회수 상위 글의 교집합 분석 → `data/analysis-latest.md` (`/analyze`) |

@@ -6,8 +6,11 @@
 //   node scripts/make_cards.js --plan drafts/<글폴더>/cards.json [--draft drafts/<글폴더>/draft.json]
 //
 // cards.json: [{ "file": "input/images/cards/<글폴더>-01.png",
-//                "kind": "cover|list|steps|number|table|compare|chart", "theme": "classic|navy",
-//                "label": "작은 머리말", "title": "제목", "items": ["…"], "big": "월 50만 원",
+//                "kind": "cover|hero|list|steps|timeline|number|table|compare|chart",
+//                "theme": "classic|navy|mint|sunset|night",
+//                "icon": "그림 이름 (scripts/lib/illust.js) — 비우면 글자 내용으로 자동 선택, \"none\"이면 그림 없음",
+//                "label": "작은 머리말", "title": "제목", "sub": "한 줄 설명 (hero·cover·number)",
+//                "items": ["…"] (timeline은 "11월 4일 — 신청 시작"처럼 "시점 — 내용"), "big": "월 50만 원",
 //                "rows": [["항목", "값"]], "formula": ["1,000주", "×", "500원", "=", "50만 원"],
 //                "left": {"title": "A안", "items": ["…"]}, "right": {...},
 //                "chart": {"type": "bar|line", "unit": "%", "points": [{"label": "2025", "value": "3.0"}]},
@@ -21,9 +24,10 @@ const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
 const { resolveFromRoot } = require('./lib/config');
+const { ICONS, pickIcon, iconSvg } = require('./lib/illust');
 
-const KINDS = new Set(['cover', 'list', 'steps', 'number', 'table', 'compare', 'chart']);
-const THEMES = new Set(['classic', 'navy']);
+const KINDS = new Set(['cover', 'hero', 'list', 'steps', 'timeline', 'number', 'table', 'compare', 'chart']);
+const THEMES = new Set(['classic', 'navy', 'mint', 'sunset', 'night']);
 const BG_DIRS = ['input/photos/_mosaic/', 'input/images/official/'];
 const FONT = "'Pretendard','Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic','WenQuanYi Zen Hei',sans-serif";
 
@@ -42,8 +46,14 @@ function validatePlan(plan) {
       throw new Error(`${at}: bg 사진은 ${BG_DIRS.join(' 또는 ')} 안의 파일만 씁니다 (직접 찍은 사진·공공누리 자료).`);
     }
     if (!c.title) throw new Error(`${at}: title이 필요합니다.`);
-    if ((c.kind === 'list' || c.kind === 'steps') && !(Array.isArray(c.items) && c.items.length)) {
+    if (['list', 'steps', 'timeline'].includes(c.kind) && !(Array.isArray(c.items) && c.items.length)) {
       throw new Error(`${at}: ${c.kind} 카드는 items가 필요합니다.`);
+    }
+    if (c.kind === 'timeline' && !c.items.every((x) => /\s—\s/.test(x))) {
+      throw new Error(`${at}: timeline items는 "11월 4일 — 신청 시작"처럼 "시점 — 내용"입니다.`);
+    }
+    if (c.icon && c.icon !== 'none' && !ICONS[c.icon]) {
+      throw new Error(`${at}: icon은 ${Object.keys(ICONS).join('/')} 또는 none 중 하나입니다.`);
     }
     if (c.kind === 'number' && !c.big) throw new Error(`${at}: number 카드는 big이 필요합니다.`);
     if (Array.isArray(c.items) && c.items.length > 5) throw new Error(`${at}: items는 5개 이하 (폰에서 읽히게).`);
@@ -84,7 +94,7 @@ function numberTokens(text) {
 const pointText = (ch, p) => `${p.value}${ch.unit || ''}`;
 
 function cardTexts(card) {
-  const parts = [card.label, card.title, card.big, ...(card.items || [])];
+  const parts = [card.label, card.title, card.sub, card.big, ...(card.items || [])];
   for (const r of card.rows || []) parts.push(...r);
   parts.push(...(card.formula || []));
   for (const side of ['left', 'right']) if (card[side]) parts.push(card[side].title, ...(card[side].items || []));
@@ -145,17 +155,40 @@ function chartSvg(ch, t) {
 }
 
 const THEME = {
-  classic: { ink: '#1B2A4A', accent: '#F2B705', soft: '#C9D3E3', hl: '#1B2A4A', page: '#FBFAF6' },
-  navy: { ink: '#1B2A4A', accent: '#E03131', soft: '#9FB3CF', hl: '#E03131', page: '#E9EEF5' },
+  classic: { ink: '#1B2A4A', accent: '#F2B705', soft: '#C9D3E3', hl: '#1B2A4A', page: '#FBFAF6', blob: '#FFE7A3', ic: { a: '#F2B705', b: '#7FB3FF', k: '#1B2A4A' } },
+  navy: { ink: '#1B2A4A', accent: '#E03131', soft: '#9FB3CF', hl: '#E03131', page: '#E9EEF5', blob: '#CFDCEE', ic: { a: '#3B82F6', b: '#FFC94D', k: '#1B2A4A' } },
+  mint: { ink: '#1F2A3A', accent: '#FFE14D', soft: '#A8DCD3', hl: '#11806F', page: '#E4F5F1', blob: '#BDE8DF', ic: { a: '#2FB59E', b: '#FFE14D', k: '#1F2A3A' } },
+  sunset: { ink: '#3A1F14', accent: '#FF8A3D', soft: '#F6C9A8', hl: '#D9480F', page: '#FFF3E8', blob: '#FFD9B8', ic: { a: '#FF8A3D', b: '#FFD43B', k: '#3A1F14' } },
+  night: { ink: '#F2E8D0', accent: '#F5C518', soft: '#5A5A60', hl: '#F5C518', page: '#232326', blob: '#3A3A40', ic: { a: '#F5C518', b: '#FF8A3D', k: '#141414' }, dark: true },
 };
+
+// 카드 글자로 그림 고르기 (icon을 적지 않았을 때)
+const cardIcon = (card) => (card.icon === 'none' ? null : card.icon || pickIcon(cardTexts(card)));
 
 function html(card) {
   const theme = card.theme || 'classic';
   const t = THEME[theme];
-  const navy = theme === 'navy';
-  const items = (card.items || []).map((x, i) => (card.kind === 'steps'
+  const kind0 = card.kind;
+  const navy = theme === 'navy' && !['cover', 'hero', 'number'].includes(kind0);
+  const navyTheme = theme === 'navy';
+  const dark = !!t.dark;
+  const panel = dark ? '#2E2E32' : '#fff';
+  const icon = cardIcon(card);
+  const ill = (size) => (icon ? iconSvg(icon, { ...t.ic, w: dark ? '#F2E8D0' : '#FFFFFF' }, size) : '');
+  const kind = card.kind;
+  // 내용이 적은 카드는 아래쪽 빈자리에 큰 그림, 많은 카드는 제목 옆 작은 그림
+  const amount = Math.max((card.items || []).length, (card.rows || []).length);
+  const sparse = ['list', 'steps', 'timeline', 'compare', 'table'].includes(kind) && amount <= 3 && !card.formula;
+  const sticker = icon && !['cover', 'hero', 'number'].includes(kind) && !sparse
+    ? `<div class="sticker">${ill(118)}</div>` : '';
+  const corner = icon && sparse ? `<div class="corner"><div class="halo"></div>${ill(250)}</div>` : '';
+  const items = (kind === 'timeline' ? [] : card.items || []).map((x, i) => (kind === 'steps'
     ? `<li><span class="n">${i + 1}</span><span>${esc(x)}</span></li>`
     : `<li><span class="dot"></span><span>${esc(x)}</span></li>`)).join('');
+  const timeline = kind === 'timeline' ? `<div class="tl">${card.items.map((x) => {
+    const [when, ...what] = x.split(/\s—\s/);
+    return `<div class="te"><div class="tw">${esc(when)}</div><div class="tx">${esc(what.join(' — '))}</div></div>`;
+  }).join('')}</div>` : '';
   const rows = (card.rows || []).map(([k, v]) => `<div class="row"><span class="k">${esc(k)}</span><span class="v">${esc(v)}</span></div>`).join('');
   const formula = card.formula
     ? `<div class="formula">${card.formula.map((f, i) => {
@@ -163,56 +196,88 @@ function html(card) {
       return `<span class="${op ? 'op' : i === card.formula.length - 1 ? 'res' : 'term'}">${esc(f)}</span>`;
     }).join('')}</div>` : '';
   const side = (v, cls) => `<div class="side ${cls}"><div class="sh">${esc(v.title)}</div><ul>${v.items.map((x) => `<li><span class="dot"></span><span>${esc(x)}</span></li>`).join('')}</ul></div>`;
-  const compare = card.kind === 'compare' ? `<div class="cmp">${side(card.left, 'a')}<div class="vs">VS</div>${side(card.right, 'b')}</div>` : '';
-  const chart = card.kind === 'chart' ? `<div class="chart">${chartSvg(card.chart, t)}</div>` : '';
+  const compare = kind === 'compare' ? `<div class="cmp">${side(card.left, 'a')}<div class="vs">VS</div>${side(card.right, 'b')}</div>` : '';
+  const chart = kind === 'chart' ? `<div class="chart">${chartSvg(card.chart, t)}</div>` : '';
   const bg = card.bg ? `background-image:linear-gradient(rgba(255,255,255,.86),rgba(255,255,255,.86)),url('${bgDataUri(card.bg)}');background-size:cover;background-position:center;`
-    : navy ? 'background:repeating-linear-gradient(135deg,rgba(255,255,255,.35) 0 2px,transparent 2px 26px),linear-gradient(160deg,#F4F7FB,#D9E2EE);' : `background:${t.page};`;
-  const titleSize = card.kind === 'cover' ? 86 : ['table', 'chart', 'compare'].includes(card.kind) ? 54 : 64;
+    : navyTheme ? 'background:repeating-linear-gradient(135deg,rgba(255,255,255,.35) 0 2px,transparent 2px 26px),linear-gradient(160deg,#F4F7FB,#D9E2EE);'
+      : `background:radial-gradient(circle at 88% 12%,${t.blob} 0 150px,transparent 151px),radial-gradient(circle at 6% 94%,${t.blob} 0 110px,transparent 111px),radial-gradient(${dark ? 'rgba(255,255,255,.05)' : 'rgba(27,42,74,.06)'} 2px,transparent 2px) 0 0/26px 26px,${t.page};`;
+  const titleSize = kind === 'cover' ? 82 : kind === 'hero' ? 68 : ['table', 'chart', 'compare'].includes(kind) ? 54 : 62;
+  const sub = card.sub ? `<div class="sub">${esc(card.sub)}</div>` : '';
+  const big = card.big ? `<div class="big"><em>${esc(card.big)}</em></div>` : '';
+  let body;
+  if (kind === 'cover') {
+    body = `${card.label ? `<div class="label">${esc(card.label)}</div>` : ''}<h1>${esc(card.title)}</h1>${sub}${big}
+      <div class="spacer"></div>${icon ? `<div class="scene"><div class="halo"></div><div class="main-ill">${ill(330)}</div>
+      <div class="deco d1">${iconSvg('sparkle', t.ic, 70)}</div><div class="deco d2">${iconSvg('coin', t.ic, 84)}</div></div>` : ''}`;
+  } else if (kind === 'hero') {
+    body = `<div class="hero-ill"><div class="halo"></div>${ill(380)}</div>${card.label ? `<div class="label c">${esc(card.label)}</div>` : ''}<h1 class="c">${esc(card.title)}</h1>${sub}<div class="spacer"></div>`;
+  } else if (kind === 'number') {
+    body = `${card.label ? `<div class="label">${esc(card.label)}</div>` : ''}<h1>${esc(card.title)}</h1>
+      <div class="numrow">${big}${icon ? `<div class="num-ill">${ill(250)}</div>` : ''}</div>${sub}${items ? `<ul>${items}</ul>` : ''}<div class="spacer"></div>`;
+  } else {
+    body = `${!navy && card.label ? `<div class="label">${esc(card.label)}</div>` : ''}${!navy ? `<h1 class="sh-pad">${esc(card.title)}</h1>` : ''}
+      ${sub}${big}${items ? `<ul>${items}</ul>` : ''}${timeline}${rows ? `<div class="rows">${rows}</div>` : ''}${formula}${compare}${chart}<div class="spacer"></div>${corner}`;
+  }
   return `<!doctype html><html><head><meta charset="utf-8"><style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{width:1080px;height:1080px;${bg}font-family:${FONT};color:${t.ink}}
-  .card{position:absolute;inset:56px;background:${navy ? 'rgba(255,255,255,.92)' : '#fff'};${navy ? 'box-shadow:0 18px 50px rgba(27,42,74,.18);' : `border:4px solid ${t.ink};`}border-radius:36px;padding:${navy ? '0 0 64px' : '72px 80px'};display:flex;flex-direction:column;overflow:hidden}
-  .inner{padding:${navy ? '40px 64px 0' : '0'};display:flex;flex-direction:column;flex:1}
-  .label{display:inline-block;align-self:flex-start;background:${navy ? '#DCE6F3' : t.accent};color:${t.ink};font-weight:800;font-size:32px;padding:10px 26px;border-radius:999px;margin-bottom:${navy ? 24 : 36}px}
+  .card{position:absolute;inset:56px;background:${navy ? 'rgba(255,255,255,.92)' : dark ? 'rgba(46,46,50,.94)' : 'rgba(255,255,255,.94)'};${navy ? 'box-shadow:0 18px 50px rgba(27,42,74,.18);' : `border:4px solid ${dark ? '#4A4A50' : t.ink};box-shadow:10px 10px 0 ${dark ? '#000' : t.soft};`}border-radius:36px;padding:${navy ? '0 0 64px' : '72px 80px'};display:flex;flex-direction:column;overflow:hidden}
+  .inner{position:relative;padding:${navy ? '40px 64px 0' : '0'};display:flex;flex-direction:column;flex:1}
+  .label{display:inline-block;align-self:flex-start;background:${navy ? '#DCE6F3' : t.accent};color:${dark ? '#141414' : t.ink};font-weight:800;font-size:32px;padding:10px 26px;border-radius:999px;margin-bottom:${navy ? 24 : 32}px}
+  .label.c{align-self:center}
   h1{font-size:${titleSize}px;line-height:1.25;font-weight:900;letter-spacing:-1px;word-break:keep-all}
-  .band{background:${t.ink};color:#fff;padding:36px 64px 34px;border-left:14px solid #3B82F6}
+  h1.c{text-align:center}
+  h1.sh-pad{padding-right:${sticker ? 150 : 0}px}
+  .sub{margin-top:18px;font-size:38px;line-height:1.4;font-weight:700;color:${dark ? '#CFC6B0' : '#4A5670'};word-break:keep-all}
+  .hero-ill+.label+h1.c+.sub,.hero-ill+h1.c+.sub{text-align:center}
+  .band{position:relative;background:${t.ink};color:#fff;padding:36px ${sticker ? 200 : 64}px 34px 64px;border-left:14px solid #3B82F6}
   .band .label{background:rgba(255,255,255,.16);color:#fff}
-  .big{margin-top:44px;font-size:120px;font-weight:900;color:${t.hl};letter-spacing:-2px}
-  .big em{font-style:normal;${navy ? '' : `background:linear-gradient(transparent 62%,${t.accent} 62%)`}}
-  ul{list-style:none;margin-top:44px;display:flex;flex-direction:column;gap:28px}
+  .sticker{position:absolute;right:${navy ? 40 : 0}px;top:${navy ? 26 : 0}px;width:150px;height:150px;border-radius:50%;background:${dark ? '#3A3A40' : t.blob};display:flex;align-items:center;justify-content:center;${navy ? 'border:4px solid #fff;' : ''}}
+  .big{margin-top:36px;font-size:116px;font-weight:900;color:${t.hl};letter-spacing:-2px;line-height:1.1;word-break:keep-all}
+  .big em{font-style:normal;${navy || dark ? '' : `background:linear-gradient(transparent 62%,${t.accent} 62%)`}}
+  .numrow{display:flex;align-items:center;justify-content:space-between;gap:20px}
+  .num-ill{flex:none;margin-top:30px;width:270px;height:270px;border-radius:50%;background:${dark ? '#3A3A40' : t.blob};display:flex;align-items:center;justify-content:center}
+  .scene{position:relative;height:320px;margin:-30px -20px 44px auto;width:440px}
+  .corner{position:absolute;right:-10px;bottom:36px;width:280px;height:280px;display:flex;align-items:center;justify-content:center}
+  .corner .halo{inset:10px}
+  .corner svg{position:relative}
+  .halo{position:absolute;inset:20px 30px 0 40px;border-radius:50%;background:${dark ? '#3A3A40' : t.blob}}
+  .main-ill{position:absolute;right:30px;bottom:0}
+  .deco{position:absolute}.d1{left:0;top:30px}.d2{left:40px;bottom:10px}
+  .hero-ill{position:relative;align-self:center;width:440px;height:440px;display:flex;align-items:center;justify-content:center;margin:-20px 0 10px}
+  .hero-ill .halo{inset:20px}
+  .hero-ill svg{position:relative}
+  ul{list-style:none;margin-top:40px;display:flex;flex-direction:column;gap:26px}
   li{display:flex;gap:22px;align-items:flex-start;font-size:42px;line-height:1.35;font-weight:700;word-break:keep-all}
   .dot{flex:none;width:20px;height:20px;margin-top:16px;border-radius:50%;background:${navy ? '#3B82F6' : t.accent}}
-  .n{flex:none;width:58px;height:58px;border-radius:50%;background:${t.ink};color:#fff;font-size:34px;display:flex;align-items:center;justify-content:center}
-  .rows{margin-top:30px;border:3px solid #D5DCE6;border-radius:20px;overflow:hidden}
+  .n{flex:none;width:58px;height:58px;border-radius:50%;background:${dark ? t.accent : t.ink};color:${dark ? '#141414' : '#fff'};font-size:34px;display:flex;align-items:center;justify-content:center}
+  .tl{margin-top:44px;display:flex;flex-direction:column;gap:30px;border-left:8px solid ${t.accent};margin-left:18px;padding-left:44px}
+  .te{position:relative}
+  .te:before{content:'';position:absolute;left:-64px;top:8px;width:32px;height:32px;border-radius:50%;background:${panel};border:8px solid ${t.hl}}
+  .tw{font-size:36px;font-weight:900;color:${t.hl}}
+  .tx{font-size:40px;font-weight:700;line-height:1.35;word-break:keep-all}
+  .rows{margin-top:30px;border:3px solid #D5DCE6;border-radius:20px;overflow:hidden;background:${panel}}
   .row{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:18px 30px;font-size:38px;border-top:3px solid #E3E8EF}
   .row:first-child{border-top:none}
-  .k{font-weight:700;color:#3A475F;background:transparent;word-break:keep-all}
+  .k{font-weight:700;color:${dark ? '#CFC6B0' : '#3A475F'};background:transparent;word-break:keep-all}
   .v{font-weight:900;text-align:right;white-space:nowrap}
-  .formula{margin-top:32px;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;padding:24px;border:3px solid #D5DCE6;border-radius:20px;background:#fff;font-weight:900}
+  .formula{margin-top:32px;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;padding:24px;border:3px solid #D5DCE6;border-radius:20px;background:${panel};font-weight:900}
   .term{font-size:44px}.op{font-size:44px;color:#7A8599}.res{font-size:56px;color:${t.hl}}
   .cmp{margin-top:40px;display:flex;align-items:stretch;gap:44px;position:relative}
-  .side{flex:1;border-radius:24px;padding:30px 30px 36px;background:#F3F6FA;border:3px solid #D5DCE6}
-  .side.b{background:${navy ? '#FFF1F1' : '#FFF8E1'};border-color:${navy ? '#F3C0C0' : '#F2D675'}}
+  .side{flex:1;border-radius:24px;padding:30px 30px 36px;background:${dark ? '#3A3A40' : '#F3F6FA'};border:3px solid ${dark ? '#55555C' : '#D5DCE6'}}
+  .side.b{background:${dark ? '#4A3A20' : navy ? '#FFF1F1' : '#FFF8E1'};border-color:${navy ? '#F3C0C0' : '#F2D675'}}
   .sh{font-size:40px;font-weight:900;margin-bottom:6px;word-break:keep-all}
   .side ul{margin-top:18px;gap:18px}.side li{font-size:32px}.side .dot{width:16px;height:16px;margin-top:14px}
-  .vs{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;background:${t.ink};color:#fff;font-weight:900;font-size:26px;display:flex;align-items:center;justify-content:center}
+  .vs{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;background:${dark ? t.accent : t.ink};color:${dark ? '#141414' : '#fff'};font-weight:900;font-size:26px;display:flex;align-items:center;justify-content:center}
   .chart{margin-top:24px}
-  .cl{font-size:30px;font-weight:700;fill:#55617A}.cv{font-size:32px;font-weight:900;fill:${t.ink};paint-order:stroke;stroke:#fff;stroke-width:10px;stroke-linejoin:round}.cv.hl{fill:${t.hl}}
+  .cl{font-size:30px;font-weight:700;fill:${dark ? '#CFC6B0' : '#55617A'}}.cv{font-size:32px;font-weight:900;fill:${t.ink};paint-order:stroke;stroke:${panel};stroke-width:10px;stroke-linejoin:round}.cv.hl{fill:${t.hl}}
   .spacer{flex:1}
   .foot{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding:${navy ? '0 64px' : '0'}}
-  .note{font-size:26px;color:#6B7486;font-weight:600}
+  .note{font-size:26px;color:${dark ? '#A89F8C' : '#6B7486'};font-weight:600}
   .brand{font-size:26px;font-weight:800;color:${t.ink};white-space:nowrap}
   </style></head><body><div class="card">
-  ${navy ? `<div class="band">${card.label ? `<div class="label">${esc(card.label)}</div>` : ''}<h1>${esc(card.title)}</h1></div>` : ''}
-  <div class="inner">
-  ${!navy && card.label ? `<div class="label">${esc(card.label)}</div>` : ''}
-  ${!navy ? `<h1>${esc(card.title)}</h1>` : ''}
-  ${card.big ? `<div class="big"><em>${esc(card.big)}</em></div>` : ''}
-  ${items ? `<ul>${items}</ul>` : ''}
-  ${rows ? `<div class="rows">${rows}</div>` : ''}
-  ${formula}${compare}${chart}
-  <div class="spacer"></div>
-  </div>
+  ${navy ? `<div class="band">${card.label ? `<div class="label">${esc(card.label)}</div>` : ''}<h1>${esc(card.title)}</h1>${sticker}</div>` : ''}
+  <div class="inner">${navy ? '' : sticker}${body}</div>
   <div class="foot"><div class="note">${card.note ? esc(card.note) : ''}</div><div class="brand">월급날 전에 읽는 경제</div></div>
   </div></body></html>`;
 }
@@ -268,4 +333,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { validatePlan, numberTokens, checkAgainstDraft, html, render };
+module.exports = { validatePlan, numberTokens, checkAgainstDraft, html, render, cardIcon };
