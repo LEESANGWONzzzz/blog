@@ -471,8 +471,18 @@ async function main() {
     await dismissPopups(frame);
     await assertGuard(frame, 'editor');
     const saveBtn = (await tryFirst(frame, SEL.saveButton, 5000)) || (await first(page, SEL.saveButton));
+    await page.waitForTimeout(3000); // 출처 URL 링크 미리보기 카드가 늦게 붙는 동안 누른 저장이 무시되는 경우가 있음
     await safeClick(saveBtn);
-    const toast = (await tryFirst(frame, SEL.saveToast, 8000)) || (await tryFirst(page, SEL.saveToast, 2000));
+    let toast = (await tryFirst(frame, SEL.saveToast, 8000)) || (await tryFirst(page, SEL.saveToast, 2000));
+    if (!toast) {
+      // 같은 에디터 문서의 임시저장 버튼을 한 번 더 누른다 (새 글이 아니라 같은 임시저장 글 갱신)
+      await dismissPopups(frame);
+      await assertGuard(frame, 'editor');
+      await page.waitForTimeout(3000);
+      await safeClick((await tryFirst(frame, SEL.saveButton, 5000)) || (await first(page, SEL.saveButton)));
+      toast = (await tryFirst(frame, SEL.saveToast, 8000)) || (await tryFirst(page, SEL.saveToast, 2000));
+      await saveDebug(page, toast ? 'save-retry-ok' : 'save-no-toast');
+    }
     status.saved = true;
     mark(draftFile, status, 'save', true, toast ? undefined : '저장 알림을 확인하지 못함 — 임시저장함에서 직접 확인 필요');
 
