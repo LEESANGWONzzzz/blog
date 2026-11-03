@@ -147,6 +147,8 @@ test('홈판형 칸(07·17시) 제목은 따옴표·말줄임표·물음표 허�
   assert.strictEqual(titleErr({ ...base, slot: '07:00' }), false);
   assert.strictEqual(titleErr({ ...base, slot: '09:00' }), true);
   assert.strictEqual(titleErr({ ...base, slot: '17:00', title: '대박 소식!' }), true);
+  // 2026-11-05부터 13시도 홈판형
+  assert.strictEqual(titleErr({ ...base, slot: '13:00' }), false);
 });
 
 test('출처 문단에 원문 주소가 없으면 경고', () => {
