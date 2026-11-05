@@ -42,3 +42,38 @@ test('hasData: 빈 목록만 받았으면 false', () => {
   assert.strictEqual(hasData({ '/trend/main-inflow-content-ranks?date=2026-10-23': { data: [] } }), false);
   assert.strictEqual(hasData({ '/trend/main-inflow-content-ranks?date=2026-10-22': { data: [{ title: 'a' }] } }), true);
 });
+
+test('formatOwnRanks: 우리 글 조회수 목록을 찾고 트렌드(남의 글)는 뺀다', () => {
+  const { formatOwnRanks } = require('../scripts/advisor_trends');
+  const own = {
+    '/trend/main-inflow-content-ranks?date=2026-11-04': { data: [{ title: '남의 홈판 글', cv: 999 }] },
+    '/blog/menu?x=1': { data: [{ title: '메뉴', id: 1 }] },
+    '/stats/cv-ranks?date=2026-11-04': {
+      data: { list: [
+        { title: '성시경 연말 콘서트 일반예매 12일 8시', cv: 42, publishDate: '2026-11-04 07:00' },
+        { title: '종합소득세 중간예납 11월 30일까지', cv: 9 },
+      ] },
+    },
+  };
+  const { markdown, count } = formatOwnRanks(own);
+  assert.strictEqual(count, 2);
+  assert.match(markdown, /1\. 성시경 연말 콘서트 일반예매 12일 8시 — 조회 42 \(2026-11-04 07:00\)/);
+  assert.match(markdown, /2\. 종합소득세 중간예납 11월 30일까지 — 조회 9/);
+  assert.doesNotMatch(markdown, /남의 홈판 글/);
+});
+
+test('formatOwnRanks: 목록이 없으면 화면 글자를 남긴다', () => {
+  const { formatOwnRanks } = require('../scripts/advisor_trends');
+  const { markdown, count } = formatOwnRanks({}, { screenText: '조회수 순위\n1 글 42' });
+  assert.strictEqual(count, 0);
+  assert.match(markdown, /화면 글자를 그대로/);
+  assert.match(markdown, /1 글 42/);
+});
+
+test('trend_summary는 우리 글 조회수 섹션을 홈판 제목으로 읽지 않는다', () => {
+  const { parseTrendFile } = require('../scripts/trend_summary');
+  const { formatOwnRanks } = require('../scripts/advisor_trends');
+  const md = formatTrends({ '/trend/main-inflow-content-ranks?date=2026-11-04': { data: [{ title: '홈판 글' }] } }, {}).markdown
+    + '\n' + formatOwnRanks({ '/cv-ranks': { data: [{ title: '우리 글', cv: 3 }] } }).markdown;
+  assert.deepStrictEqual(parseTrendFile(md).titles, ['홈판 글']);
+});

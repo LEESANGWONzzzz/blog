@@ -3,6 +3,7 @@
 //   - 주제별 인기유입검색어 (검색 유입 트렌드) — 주제마다 1~20위 검색어와 순위 변동
 //   - 네이버 메인에서 많이 유입된 콘텐츠 (메인 유입 트렌드) — 홈판 상위 글 제목
 //   - 네이버 메인 유입률
+//   - 우리 글 조회수 순위 (통합 데이터 > 조회수 순위, integrated-analysis#cv-ranks) — 2026-11-05 추가
 // 결과: data/trends/<날짜>.md (+ 원본 JSON은 debug/advisor-<날짜>.json)
 //
 // 읽기 전용이다. 내 계정 통계 화면만 열고, 목록에 나온 남의 글은 열지 않는다 (크롤링 금지).
@@ -80,6 +81,59 @@ function formatTrends(captured, { date = '', fetchedAt = '' } = {}) {
   return { markdown: lines.join('\n'), counts: { topics: ordered.length, mainContents: mainContents.length } };
 }
 
+// ── 우리 글 조회수 순위 (통합 데이터 > 조회수 순위) ──────────────────────────
+// API 형식을 아직 모르므로(2026-11-05 첫 연결) 응답 JSON에서 "제목 + 숫자"가 든 목록을 찾아 쓴다.
+// 트렌드(/trend/) 응답은 남의 글 제목이라 여기서 제외한다.
+const TITLE_KEYS = ['title', 'contentTitle', 'subject', 'postTitle', 'documentTitle'];
+const VIEW_KEY = /^(cv|pv|views?|viewCount|viewCnt|readCount|hit|hits|cnt|count|value)$/i;
+const DATE_KEY = /(publish|created|write|reg|add).*(date|time|at)|^date$/i;
+
+function titleOf(o) {
+  for (const k of TITLE_KEYS) if (typeof o?.[k] === 'string' && o[k].trim()) return o[k].trim();
+  return '';
+}
+
+function viewOf(o) {
+  const keys = Object.keys(o || {});
+  const named = keys.find((k) => VIEW_KEY.test(k) && Number.isFinite(Number(o[k])) && o[k] !== '' && typeof o[k] !== 'boolean');
+  return named === undefined ? null : Number(o[named]);
+}
+
+function rankLists(node, key, out) {
+  if (Array.isArray(node)) {
+    const rows = node.filter((x) => x && typeof x === 'object' && titleOf(x));
+    if (rows.length && rows.length >= node.length / 2) out.push({ key, rows });
+    node.forEach((x) => rankLists(x, key, out));
+  } else if (node && typeof node === 'object') {
+    for (const v of Object.values(node)) rankLists(v, key, out);
+  }
+  return out;
+}
+
+function formatOwnRanks(captured, { screenText = '' } = {}) {
+  const lists = [];
+  for (const [key, body] of Object.entries(captured)) {
+    if (key.startsWith('/trend/')) continue;
+    rankLists(body, key, lists);
+  }
+  // 조회수 숫자가 있는 목록 → 주소에 rank·cv가 든 목록 → 긴 목록 순
+  const score = (l) => (l.rows.some((r) => viewOf(r) !== null) ? 4 : 0) + (/rank|cv|view/i.test(l.key) ? 2 : 0);
+  lists.sort((a, b) => score(b) - score(a) || b.rows.length - a.rows.length);
+  const best = lists[0];
+  const lines = ['## 우리 글 조회수 순위 (통합 데이터 > 조회수 순위)', ''];
+  if (best) {
+    best.rows.slice(0, 30).forEach((r, i) => {
+      const v = viewOf(r);
+      const dk = Object.keys(r).find((k) => DATE_KEY.test(k) && typeof r[k] === 'string');
+      lines.push(`${i + 1}. ${titleOf(r)}${v === null ? '' : ` — 조회 ${v}`}${dk ? ` (${r[dk]})` : ''}`);
+    });
+    lines.push('', `- 원본 응답: ${best.key.split('?')[0]} (형식이 이상하면 debug/advisor-*.json 의 own 항목을 Claude에게 보여 주세요)`);
+  } else if (screenText.trim()) {
+    lines.push('(API에서 목록을 찾지 못해 화면 글자를 그대로 남긴다)', '', screenText.trim().slice(0, 4000));
+  } else lines.push('(받지 못함)');
+  return { markdown: lines.join('\n') + '\n', count: best ? best.rows.length : 0 };
+}
+
 // 오늘 날짜 데이터는 아직 집계 전이라 비어 있다 ("조회한 기간의 데이터가 없습니다"). 기본은 어제.
 function yesterday() {
   const d = new Date();
@@ -112,15 +166,22 @@ async function main() {
   });
   await installGuard(context);
   const captured = {};
+  const own = {};
   const texts = {};
+  let ownStage = false;
   try {
     if (!(await sessionStatus(context)).ok) throw new Error('로그인 세션이 없습니다. node scripts/naver_login.js 로 다시 로그인하세요.');
     const page = context.pages()[0] || (await context.newPage());
     page.on('response', async (res) => {
       const u = new URL(res.url());
       if (!u.pathname.startsWith('/api/v6/')) return;
+      const key = u.pathname.replace('/api/v6', '') + u.search;
+      if (ownStage) {
+        if (!key.startsWith('/trend/')) try { own[key] = await res.json(); } catch { /* 본문 없는 응답 */ }
+        return;
+      }
       if (!/\/trend\/|\/accounts\/preferred-category\//.test(u.pathname)) return;
-      try { captured[u.pathname.replace('/api/v6', '') + u.search] = await res.json(); } catch { /* 본문 없는 응답 */ }
+      try { captured[key] = await res.json(); } catch { /* 본문 없는 응답 */ }
     });
 
     const day = (process.argv.find((a) => /^\d{4}-\d{2}-\d{2}$/.test(a))) || yesterday();
@@ -154,6 +215,22 @@ async function main() {
       await page.waitForTimeout(1500);
       texts.main = await page.locator('body').innerText().catch(() => '');
     }
+
+    // 우리 글 조회수 순위. 실패해도 트렌드 저장은 계속한다.
+    try {
+      ownStage = true;
+      await page.goto(`${BASE}/naver_blog/${config.blogId}/integrated-analysis?${qs}#cv-ranks`, { waitUntil: 'networkidle', timeout: 45000 });
+      await page.waitForTimeout(1500);
+      const rankTab = page.getByText('조회수 순위', { exact: true }).first();
+      if (await rankTab.count()) {
+        await safeClick(rankTab);
+        await page.waitForLoadState('networkidle').catch(() => {});
+        await page.waitForTimeout(1500);
+      }
+      texts.own = await page.locator('body').innerText().catch(() => '');
+    } catch (e) {
+      texts.ownError = e.message;
+    }
   } catch (e) {
     fs.mkdirSync(DEBUG_DIR, { recursive: true });
     const p = context.pages()[0];
@@ -167,15 +244,18 @@ async function main() {
   const { markdown, counts } = formatTrends(captured, { date: dateKey, fetchedAt: new Date().toLocaleString('ko-KR') });
   fs.mkdirSync(TRENDS_DIR, { recursive: true });
   fs.mkdirSync(DEBUG_DIR, { recursive: true });
-  fs.writeFileSync(path.join(DEBUG_DIR, `advisor-${dateKey}.json`), JSON.stringify({ captured, texts }, null, 2));
+  fs.writeFileSync(path.join(DEBUG_DIR, `advisor-${dateKey}.json`), JSON.stringify({ captured, own, texts }, null, 2));
   let out = markdown;
+  const ownRanks = formatOwnRanks(own, { screenText: texts.own || '' });
+  out += `\n${ownRanks.markdown}`;
   // API 형식이 바뀌어 표를 못 만들었으면 화면 글자라도 남긴다.
   if (!counts.topics && !counts.mainContents) {
     out += `\n## 화면 글자 (자동 정리 실패 — 원본)\n\n${texts.search || ''}\n\n${texts.main || ''}\n`;
   }
   const file = path.join(TRENDS_DIR, `${dateKey}.md`);
   fs.writeFileSync(file, out);
-  console.log(`✔ ${path.relative(ROOT, file)} (주제 ${counts.topics}개 · 홈판 상위 글 ${counts.mainContents}개)`);
+  console.log(`✔ ${path.relative(ROOT, file)} (주제 ${counts.topics}개 · 홈판 상위 글 ${counts.mainContents}개 · 우리 글 조회수 ${ownRanks.count}편)`);
+  if (!ownRanks.count) console.log(`⚠ 우리 글 조회수 목록을 정리하지 못했습니다${texts.ownError ? ` (${texts.ownError})` : ''}. 화면 글자를 대신 남겼습니다.`);
   if (!counts.topics && !counts.mainContents) {
     console.log('⚠ 데이터를 정리하지 못해 화면 글자만 저장했습니다. debug/advisor-*.json 을 Claude에게 보여 주세요.');
     process.exitCode = 2;
@@ -189,4 +269,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { formatTrends, hasData };
+module.exports = { formatTrends, formatOwnRanks, hasData };
