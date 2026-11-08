@@ -22,19 +22,28 @@ if (-not (git config user.email)) { git config user.email 'sangwon5275@gmail.com
 git pull --no-rebase --no-edit
 
 Write-Host "`n===== 1. Codex 초안 작성 =====" -ForegroundColor Cyan
-codex exec --full-auto "docs/parenting/codex-overnight-prompt.md 파일을 읽고 그 지시를 끝까지 수행해. 운영자는 자고 있으니 질문하지 말고 진행해."
+# PowerShell 5.1 기록(Transcript)은 프로그램 출력을 그대로 담지 않아서 | ForEach-Object 로 넘겨 기록에 남긴다
+if (-not (Get-Command codex -ErrorAction SilentlyContinue)) {
+  Write-Host 'codex 명령이 없습니다 → npm install -g @openai/codex 후, codex 를 한 번 실행해 로그인하세요. Codex 단계 건너뜀.' -ForegroundColor Red
+} else {
+  codex exec --full-auto "docs/parenting/codex-overnight-prompt.md 파일을 읽고 그 지시를 끝까지 수행해. 운영자는 자고 있으니 질문하지 말고 진행해." 2>&1 | ForEach-Object { "$_" }
+  Write-Host "codex 종료 코드: $LASTEXITCODE"
+}
 
 Write-Host "`n===== 2. 검사 통과한 초안만 임시저장 =====" -ForegroundColor Cyan
-Get-ChildItem drafts-easypapa -Directory | ForEach-Object {
+node scripts/session_check.js 2>&1 | ForEach-Object { "$_" }
+$loggedIn = ($LASTEXITCODE -eq 0)
+if (-not $loggedIn) { Write-Host '이지파파 네이버 로그인이 없어 임시저장을 건너뜁니다. 아침에 naver_login.js 로 다시 로그인하세요.' -ForegroundColor Red }
+if ($loggedIn) { Get-ChildItem drafts-easypapa -Directory | ForEach-Object {
   $d = $_.FullName
   Write-Host "`n--- $($_.Name)" -ForegroundColor Yellow
   if (-not (Test-Path "$d\draft.json") -or -not (Test-Path "$d\cards.json")) { Write-Host '초안 파일 없음 → 건너뜀'; return }
-  node scripts/make_cards.js --plan "$d\cards.json" --draft "$d\draft.json"
+  node scripts/make_cards.js --plan "$d\cards.json" --draft "$d\draft.json" 2>&1 | ForEach-Object { "$_" }
   if ($LASTEXITCODE -ne 0) { Write-Host '카드 실패 → 건너뜀'; return }
-  node scripts/naver_draft.js "$d\draft.json"
+  node scripts/naver_draft.js "$d\draft.json" 2>&1 | ForEach-Object { "$_" }
   if ($LASTEXITCODE -eq 0) { node scripts/export_manuscript.js "$d\draft.json" } else { Write-Host '저장 안 함 (검사 오류·확인필요·로그인 문제)' }
-}
-node scripts/draft_status.js
+} }
+node scripts/draft_status.js 2>&1 | ForEach-Object { "$_" }
 
 Write-Host "`n===== 3. 커밋·push =====" -ForegroundColor Cyan
 git add drafts-easypapa docs/parenting

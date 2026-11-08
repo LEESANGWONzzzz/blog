@@ -29,6 +29,7 @@
 | `BLOG_ACCOUNT=easypapa node scripts/naver_draft.js <draft.json>` | 에디터 입력 → 임시저장 → 텍스트 대조 1회 |
 | `BLOG_ACCOUNT=easypapa node scripts/export_manuscript.js <draft.json>` | 복사용 원고 `manuscript.txt` |
 | `BLOG_ACCOUNT=easypapa node scripts/draft_status.js` | 단계별 진행·재개 지점 |
+| `BLOG_ACCOUNT=easypapa node scripts/session_check.js` | 저장된 네이버 로그인이 살아 있는지 확인만 (0=있음, 1=없음) |
 | `npm test` | 도구 테스트 (BLOG_ACCOUNT 없이) |
 
 ### Windows PowerShell에서 실행할 때 (2026-11-08, 운영자 Windows PC)
