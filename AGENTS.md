@@ -31,6 +31,25 @@
 | `BLOG_ACCOUNT=easypapa node scripts/draft_status.js` | 단계별 진행·재개 지점 |
 | `npm test` | 도구 테스트 (BLOG_ACCOUNT 없이) |
 
+### Windows PowerShell에서 실행할 때 (2026-11-08, 운영자 Windows PC)
+위 표의 `BLOG_ACCOUNT=easypapa node …` 는 Mac/Linux 문법이다. PowerShell에서는 창마다 먼저 한 번:
+```powershell
+$env:BLOG_ACCOUNT = "easypapa"
+node scripts/lint_draft.js drafts-easypapa/20261108-hub/draft.json
+```
+여러 편 저장 (운영자가 "저장해"라고 했을 때만):
+```powershell
+$env:BLOG_ACCOUNT = "easypapa"
+Get-ChildItem drafts-easypapa -Directory | ForEach-Object {
+  $d = $_.FullName
+  node scripts/make_cards.js --plan "$d\cards.json" --draft "$d\draft.json"
+  if ($LASTEXITCODE -eq 0) { node scripts/naver_draft.js "$d\draft.json" }
+  if ($LASTEXITCODE -eq 0) { node scripts/export_manuscript.js "$d\draft.json" }
+}
+```
+- 이미 저장된 글은 naver_draft.js가 알아서 건너뛴다 (중복 저장 방지).
+- 작업이 끝나면 `Remove-Item Env:BLOG_ACCOUNT` 또는 창을 닫는다.
+
 실패하면 초안을 다시 쓰지 말고 `draft_status.js`로 실패 단계만 고쳐 다시 돌린다.
 
 ## 3. 이지파파 목소리 (요약 — 자세히는 voice-easypapa.md)
