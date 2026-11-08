@@ -69,3 +69,40 @@
 3. A-8~A-11 상시 글.
 4. C는 한 편씩 공식 원문 확인 후 새로 씀 (확인 안 되는 부분은 빼고).
 5. B 자녀장려금은 경제 블로그에 12월 1일 전에.
+
+## 노션 원문 주소 (운영자가 2026-11-08 준 링크)
+| 분류 | 제목 | 주소 |
+|---|---|---|
+| 허브 | 이지파파 육아 체크리스트 모음 | https://app.notion.com/p/3ff5b361ed4f81e792fdc97200ab8e87 |
+| A | 영유아 독감 예방접종 | https://app.notion.com/p/3ff5b361ed4f81f59ba0dd78f5b07359 |
+| A | 아기 열·열경련 응급 카드 | https://app.notion.com/p/3ff5b361ed4f81a78cecf24213c9eb88 |
+| A | 겨울 아기 목욕·보습 | https://app.notion.com/p/3ff5b361ed4f815b818df0df3b9935ab |
+| A | 아기 크리스마스 사진 | https://app.notion.com/p/3ff5b361ed4f8175a66ccba75d1d8125 |
+| A | 겨울 아기방 습도·가습기 | https://app.notion.com/p/3ff5b361ed4f81999237c962969882da |
+| A | 아기 코막힘 | https://app.notion.com/p/3fe5b361ed4f8186a9c5d4f3462dc32b |
+| A | 월령별 아기 양치 | https://app.notion.com/p/3fc5b361ed4f81928ee4d21eeaf97aef |
+| A | 돌 이후 생우유 | https://app.notion.com/p/3fc5b361ed4f81eba0c8d2c7e76dc075 |
+| A | 겨울 외출·카시트 | https://app.notion.com/p/3fa5b361ed4f81c19ce6e0562d9389e1 |
+| A | 낮잠표·1번 전환 | https://app.notion.com/p/3fa5b361ed4f8147a8cbc7335880b65d |
+| A | 편식 아기 2주 | https://app.notion.com/p/3f85b361ed4f815bbdaffea439a61c25 |
+| B | 2026 자녀장려금 (경제 블로그용) | https://app.notion.com/p/34d5b361ed4f8077a7dac0d7d8d65672 |
+| B | 2026 유보통합 (경제 블로그용) | https://app.notion.com/p/2e45b361ed4f80ce834ac81a336df8a4 |
+| C | 신생아 수유량·수유텀 | https://app.notion.com/p/2535b361ed4f801eaed4dbb6574902a1 |
+| C | 6~12주 먹고자고 습관 | https://app.notion.com/p/2555b361ed4f809c87a0c32c820a2b4b |
+| C | 밤중 수유 끊기 | https://app.notion.com/p/2635b361ed4f800ba449eb64a611bac5 |
+| C | 아기 수면 퇴행 | https://app.notion.com/p/2c45b361ed4f801c9afdd16b47a6a07a |
+| C | 이유식 완전 마스터 | https://app.notion.com/p/25e5b361ed4f8020b7a3c8d93733b42e |
+| C | 이유식 알레르기 검사·형태 | https://app.notion.com/p/2a25b361ed4f80a89b5ceccbb3761fc9 |
+| C | 핑거푸드 | https://app.notion.com/p/2965b361ed4f80d98dd1fafd45fa126a |
+| C | 이앓이 | https://app.notion.com/p/25a5b361ed4f8072894ac2dc041eeaf2 |
+| C | 피부 발진·기저귀 발진 | https://app.notion.com/p/24f5b361ed4f80ed84b8e28017f4c708 |
+| C | 구강건강 (양치 글과 합침) | https://app.notion.com/p/2715b361ed4f8097b21ff6d90220a90c |
+| C | 책읽기 중요성 | https://app.notion.com/p/2695b361ed4f80949ef9c614d666413e |
+| C | 신생아 손빨기 | https://app.notion.com/p/2485b361ed4f805f9dbfe85fe35feac0 |
+| C | 낯가림·떼쓰기 | https://app.notion.com/p/28a5b361ed4f8072b293e8ff8975c0fc |
+| C | 월령별 분리불안 | https://app.notion.com/p/3185b361ed4f80cab5fbdb79cf2eeb47 |
+| C | 분유 찾기 | https://app.notion.com/p/2415b361ed4f80e2941ce0b3b726f921 |
+| D | 쇼핑몰 A to Z (타인 글 — 쓰지 않음) | https://app.notion.com/p/34b5b361ed4f80d2a8a1d6bcaecde995 |
+| D | 알집매트 확인방법 | https://app.notion.com/p/3cb5b361ed4f80539f9afb3437a8e0fb |
+| D | 아기랑 가기 좋은 카페 | https://app.notion.com/p/3415b361ed4f8014b810c017b8db3b27 |
+| D | 아기 선크림 (여름, 광고 표시 필요) | https://app.notion.com/p/36a5b361ed4f80978ec1c7b719d5f92b |
