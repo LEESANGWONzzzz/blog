@@ -1,0 +1,127 @@
+{
+  "title": "아기 코막힘 식염수부터 넣는 순서 하루 흡입 횟수까지",
+  "persona": {
+    "연령직군": "돌 전후 아기를 키우는 30대 부모",
+    "소득구간": "해당 없음 (육아 정보 글)",
+    "자산단계": "해당 없음",
+    "투자경험": "해당 없음",
+    "현재감정": "콧물을 하루 종일 빼주는데 이게 맞나 걱정됨"
+  },
+  "keywords": {
+    "main": "아기 코막힘",
+    "sub": [
+      "순서",
+      "흡입 횟수"
+    ]
+  },
+  "hook_pattern": "공감형",
+  "title_hook": "비교형",
+  "category": "감기·건강",
+  "naver_topic": "육아·결혼",
+  "sponsored": null,
+  "blocks": [
+    {
+      "type": "text",
+      "content": "콧물 때문에 아기가 밤새 킁킁대면 하루 종일 빼주게 되죠. 그런데 너무 자주 빼도 괜찮은 건지 저도 늘 헷갈렸어요."
+    },
+    {
+      "type": "text",
+      "content": "미국소아과학회와 어린이 병원 자료를 확인해 보니, 아기 코막힘은 순서와 횟수가 핵심이더라고요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-nasal-congestion-01.png"
+    },
+    {
+      "type": "subtitle",
+      "content": "아기 코막힘은 어떤 순서로 풀어 주나요?"
+    },
+    {
+      "type": "text",
+      "content": "먼저 식염수를 콧구멍마다 2~3방울 넣어요. 딱딱한 코딱지가 불어서 잘 빠져요."
+    },
+    {
+      "type": "text",
+      "content": "넣자마자 빼지 말고 잠깐 기다려 주세요. 그다음 살살 흡입하면 돼요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-nasal-congestion-02.png"
+    },
+    {
+      "type": "text",
+      "content": "흡입기 종류별 사용법은 제품 설명서를 꼭 확인하세요. 제품마다 세기와 방법이 달라요."
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "subtitle",
+      "content": "흡입 횟수는 하루 몇 번이 좋나요?"
+    },
+    {
+      "type": "text",
+      "content": "흡입은 하루 2~3번 정도까지가 좋아요. 너무 자주 빼면 코 속이 붓고 헐 수 있어요."
+    },
+    {
+      "type": "text",
+      "content": "자료마다 하루 2~4번으로 조금씩 달라서, 이 글에는 보수적으로 2~3번으로 적었어요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-nasal-congestion-03.png",
+      "caption": "아기 코막힘은 식염수 먼저, 흡입은 하루 2~3번 정도까지"
+    },
+    {
+      "type": "subtitle",
+      "content": "가습기와 감기약은 어떻게 하나요?"
+    },
+    {
+      "type": "text",
+      "content": "방에 찬 바람이 나오는 가습기를 두면 코가 덜 말라요. 아기 손이 닿지 않는 곳에 두고, 물은 매일 갈아 주세요."
+    },
+    {
+      "type": "text",
+      "content": "주의: 두 돌 전 아기는 감기약을 임의로 먹이지 마세요. 꼭 진료를 받고 먹여요."
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "subtitle",
+      "content": "어떤 때 바로 소아과에 가야 하나요?"
+    },
+    {
+      "type": "text",
+      "content": "숨쉬기 힘들어하거나, 수유나 식사를 거부하거나, 열이 나면 바로 진료를 받으세요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-nasal-congestion-04.png"
+    },
+    {
+      "type": "text",
+      "content": "할 일: 흡입 전에 식염수를 넣었는지, 오늘 몇 번 뺐는지만 체크해 보세요. 여러분은 콧물 뺄 때 어떤 방법을 쓰세요?"
+    },
+    {
+      "type": "text",
+      "content": "출처: 미국소아과학회 HealthyChildren Cough and Cold Survival Kit · KidsHealth How to Use a Bulb Syringe(2026-11-08 확인) https://www.healthychildren.org"
+    },
+    {
+      "type": "text",
+      "content": "이 글은 공식 자료를 확인해 정리한 일반 육아 정보예요. 아기마다 다를 수 있으니 걱정되면 소아청소년과 전문의와 꼭 상담하세요.\n💪 이지파파가 육아 동지님의 씩씩한 일상을 응원합니다! 인스타그램 @easy__papa"
+    }
+  ],
+  "tags": [
+    "아기코막힘",
+    "아기콧물",
+    "코흡입기",
+    "식염수",
+    "아기감기",
+    "이지파파"
+  ],
+  "place": null,
+  "video": null,
+  "owner_note_prompt": "세 번째 소제목 아래: 우리 집에서 콧물 뺄 때 쓰는 방법이나 아기 반응 한 줄",
+  "source_note": "이지파파 노션 체크리스트(2026-10, 운영자 작성)를 블로그용으로 새로 씀"
+}

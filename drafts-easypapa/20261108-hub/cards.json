@@ -1,0 +1,49 @@
+[
+  {
+    "file": "input/images/cards/easypapa-hub-01.png",
+    "kind": "cover",
+    "theme": "mint",
+    "label": "여기 다 모아뒀어요",
+    "title": "이지파파 체크리스트 모음",
+    "sub": "접종 · 열 · 겨울 생활 · 먹기 자기",
+    "icon": "check"
+  },
+  {
+    "file": "input/images/cards/easypapa-hub-02.png",
+    "kind": "list",
+    "theme": "sunset",
+    "title": "지금 꼭 보세요",
+    "items": [
+      "영유아 독감 예방접종",
+      "아기 열경련 응급 카드"
+    ],
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-hub-03.png",
+    "kind": "list",
+    "theme": "classic",
+    "title": "감기와 겨울 생활",
+    "items": [
+      "코막힘 순서",
+      "아기방 습도",
+      "겨울 카시트",
+      "겨울 목욕",
+      "크리스마스 사진"
+    ],
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-hub-04.png",
+    "kind": "list",
+    "theme": "navy",
+    "title": "먹기 자기 양치",
+    "items": [
+      "돌 이후 생우유",
+      "아기 치약 양",
+      "낮잠 1번 전환",
+      "편식 2주 체크리스트"
+    ],
+    "icon": "none"
+  }
+]

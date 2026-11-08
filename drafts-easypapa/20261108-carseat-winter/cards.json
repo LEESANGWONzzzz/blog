@@ -1,0 +1,59 @@
+[
+  {
+    "file": "input/images/cards/easypapa-carseat-winter-01.png",
+    "kind": "hero",
+    "theme": "navy",
+    "label": "외출 전에",
+    "title": "카시트엔 패딩 벗기기",
+    "sub": "벨트 먼저, 외투는 그 위에",
+    "icon": "car"
+  },
+  {
+    "file": "input/images/cards/easypapa-carseat-winter-02.png",
+    "kind": "compare",
+    "theme": "classic",
+    "title": "이렇게 하지 말고 이렇게",
+    "left": {
+      "title": "하지 말기",
+      "items": [
+        "패딩 입힌 채 벨트",
+        "벨트 안쪽에 담요",
+        "정품 아닌 패드"
+      ]
+    },
+    "right": {
+      "title": "이렇게",
+      "items": [
+        "얇은 옷 여러 겹",
+        "벨트 위에 덮기",
+        "몸 아래 층 없게"
+      ]
+    },
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-carseat-winter-03.png",
+    "kind": "steps",
+    "theme": "mint",
+    "title": "핀치 테스트",
+    "items": [
+      "벨트를 꽉 채우기",
+      "쇄골 높이에서 집어보기",
+      "집히면 다시 조이기"
+    ],
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-carseat-winter-04.png",
+    "kind": "list",
+    "theme": "sunset",
+    "title": "출발 전 체크리스트",
+    "items": [
+      "패딩 벗기고 태웠나요",
+      "얇은 옷 여러 겹인가요",
+      "담요는 벨트 위인가요",
+      "얼굴은 덮지 않았나요"
+    ],
+    "icon": "none"
+  }
+]

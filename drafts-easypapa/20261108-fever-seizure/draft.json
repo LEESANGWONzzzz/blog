@@ -1,0 +1,131 @@
+{
+  "title": "아기 열경련 왔을 때 바로 119 불러야 하는 6가지 기준",
+  "persona": {
+    "연령직군": "돌 전후 아기를 키우는 30대 부모",
+    "소득구간": "해당 없음 (육아 정보 글)",
+    "자산단계": "해당 없음",
+    "투자경험": "해당 없음",
+    "현재감정": "아기가 열이 나서 혹시 경련이 오면 어쩌나 불안함"
+  },
+  "keywords": {
+    "main": "아기 열경련",
+    "sub": [
+      "바로 119",
+      "하지 말아야 할 것"
+    ]
+  },
+  "hook_pattern": "현장몰입형",
+  "title_hook": "숫자형",
+  "category": "지금 꼭 보세요",
+  "naver_topic": "육아·결혼",
+  "sponsored": null,
+  "blocks": [
+    {
+      "type": "text",
+      "content": "아기 열이 오르면 밤새 체온계만 보게 되죠. 혹시 경련이 오면 어떡하나, 그 생각에 더 잠이 안 오더라고요."
+    },
+    {
+      "type": "text",
+      "content": "그래서 영국 국민보건서비스(NHS)와 응급처치 기관 자료를 확인해서 응급 카드로 정리했어요. 아기 열경련은 순서만 알면 덜 당황할 수 있어요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-fever-seizure-01.png"
+    },
+    {
+      "type": "subtitle",
+      "content": "아기 열경련이 오면 무엇부터 하나요?"
+    },
+    {
+      "type": "text",
+      "content": "경련이 시작되면 주변의 위험한 물건부터 치우고 머리 밑에 부드러운 것을 받쳐 주세요. 억지로 붙잡거나 옮기지 않아요."
+    },
+    {
+      "type": "text",
+      "content": "입에는 손가락, 숟가락, 약 모두 넣지 않아요. 그리고 시작한 시간과 멈춘 시간을 재 두세요."
+    },
+    {
+      "type": "text",
+      "content": "경련이 멈추면 옆으로 눕혀 회복 자세를 만들어 주세요. 입이나 목에 막힌 것이 없는지도 확인해요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-fever-seizure-02.png"
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "subtitle",
+      "content": "어떤 때 바로 119를 불러야 하나요?"
+    },
+    {
+      "type": "text",
+      "content": "아래 중 하나라도 해당하면 바로 119에 연락하세요. 처음 겪는 경련, 5분 넘게 계속될 때, 숨쉬기 힘들어할 때예요."
+    },
+    {
+      "type": "text",
+      "content": "몸 한쪽만 굳거나 떨릴 때, 멈춘 뒤 1시간 넘게 평소보다 처질 때, 24시간 안에 2번 이상일 때도 마찬가지예요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-fever-seizure-03.png",
+      "caption": "아기 열경련 6가지 기준 중 하나라도 해당하면 바로 119예요"
+    },
+    {
+      "type": "text",
+      "content": "주의: 경련 중이거나 의식이 없으면 직접 운전해서 가지 말고 119를 부르세요."
+    },
+    {
+      "type": "subtitle",
+      "content": "열만 날 때도 바로 진료가 필요한 경우가 있나요?"
+    },
+    {
+      "type": "text",
+      "content": "생후 3개월 미만 아기가 38도 이상이면 바로 진료를 받아야 해요. 축 처지거나, 숨차하거나, 물과 우유를 거부할 때도 마찬가지예요."
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "subtitle",
+      "content": "하지 말아야 할 것은 무엇인가요?"
+    },
+    {
+      "type": "text",
+      "content": "경련 중에 붙잡거나 옮기기, 입에 무언가 넣기, 찬물이나 알코올로 닦기는 하지 않아요. 대신 주변을 치우고 시간을 재요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-fever-seizure-04.png"
+    },
+    {
+      "type": "text",
+      "content": "할 일: 이 글을 캡처해서 휴대폰이나 냉장고에 붙여 두세요. 막상 그 순간엔 검색할 여유가 없더라고요."
+    },
+    {
+      "type": "text",
+      "content": "이 글은 응급 상황의 기본 수칙이에요. 아기 상태가 걱정되면 망설이지 말고 소아과, 응급실, 119에 연락하세요. 여러분은 응급 연락처를 어디에 붙여 두셨나요?"
+    },
+    {
+      "type": "text",
+      "content": "출처: 영국 국민보건서비스(NHS) Febrile seizures · St John WA Febrile convulsions first aid(2026-11-08 확인) https://www.nhs.uk/conditions/febrile-seizures/"
+    },
+    {
+      "type": "text",
+      "content": "이 글은 공식 자료를 확인해 정리한 일반 육아 정보예요. 아기마다 다를 수 있으니 걱정되면 소아청소년과 전문의와 꼭 상담하세요.\n💪 이지파파가 육아 동지님의 씩씩한 일상을 응원합니다! 인스타그램 @easy__papa"
+    }
+  ],
+  "tags": [
+    "아기열경련",
+    "열경련대처",
+    "아기고열",
+    "영유아응급처치",
+    "아기열날때",
+    "이지파파"
+  ],
+  "place": null,
+  "video": null,
+  "owner_note_prompt": "첫 소제목 아래: 아기가 열났을 때 가장 당황했던 순간이나, 미리 해둔 준비 한 줄 (겪은 적 없으면 생략)",
+  "source_note": "이지파파 노션 체크리스트(2026-10, 운영자 작성)를 블로그용으로 새로 씀"
+}

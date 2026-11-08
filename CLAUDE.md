@@ -22,6 +22,7 @@
 | 명령 | 하는 일 |
 |---|---|
 | `node scripts/naver_login.js` | 전용 프로필(`naver-profile/`)로 로그인. 사람이 직접 입력한다 |
+| `BLOG_ACCOUNT=easypapa <명령>` | **육아 블로그(이지파파, blog.naver.com/sweattogether)** 로 같은 스크립트를 실행. 로그인 `naver-profile-easypapa/` · 설정 `data/config-easypapa.json` · 초안 `drafts-easypapa/` · 말투 `docs/parenting/voice-easypapa.md` |
 | `node scripts/lint_draft.js <draft.json>` | 형식 검사. 오류가 있으면 저장 불가 |
 | `node scripts/naver_draft.js <draft.json>` | 검사 → 에디터 입력 → 임시저장 → 텍스트 전문 대조 1회 |
 | `node scripts/export_manuscript.js <draft.json>` | 복사용 원고 `manuscript.txt` (제목 → 본문 → [이미지 n 삽입] → 태그) |

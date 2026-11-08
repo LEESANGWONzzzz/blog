@@ -1,0 +1,57 @@
+[
+  {
+    "file": "input/images/cards/easypapa-cow-milk-01.png",
+    "kind": "cover",
+    "theme": "classic",
+    "label": "돌 지났다면",
+    "title": "우유, 많을수록 좋다?",
+    "sub": "하루 2컵, 약 480ml",
+    "icon": "bowl"
+  },
+  {
+    "file": "input/images/cards/easypapa-cow-milk-02.png",
+    "kind": "number",
+    "theme": "mint",
+    "label": "미국소아과학회 · 12~24개월",
+    "title": "하루 우유 권장량",
+    "big": "약 480ml",
+    "sub": "500ml는 넘지 않게",
+    "icon": "bowl"
+  },
+  {
+    "file": "input/images/cards/easypapa-cow-milk-03.png",
+    "kind": "compare",
+    "theme": "sunset",
+    "title": "이렇게 하지 말고 이렇게",
+    "left": {
+      "title": "하지 말기",
+      "items": [
+        "돌 전에 생우유",
+        "두 돌 전 임의로 저지방",
+        "500ml 넘게 꾸준히"
+      ]
+    },
+    "right": {
+      "title": "이렇게",
+      "items": [
+        "12개월 이후 시작",
+        "일반 흰우유",
+        "하루 2컵 정도"
+      ]
+    },
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-cow-milk-04.png",
+    "kind": "list",
+    "theme": "navy",
+    "title": "전환 체크리스트",
+    "items": [
+      "12개월이 지났나요",
+      "일반 흰우유인가요",
+      "하루 약 480ml인가요",
+      "치즈·요거트도 같이 셌나요"
+    ],
+    "icon": "none"
+  }
+]

@@ -154,7 +154,7 @@ function lintDraft(draft, { baseDir, testMode = false, categories = [] } = {}) {
         warn(`${where}: 줄 앞뒤 공백이 있습니다 (모바일 들여쓰기로 보임 — 저장 시 자동 제거).`);
       }
       if (/\n\s*\n/.test(c)) warn(`${where}: 블록 안에 빈 줄이 있습니다 (문단 사이 빈 줄은 자동 삽입됨).`);
-      if (/\*\*|__|`|^\s*#{1,6}\s/m.test(c)) err(`${where}: 마크다운 기호(**, ## 등)가 있습니다 — 에디터에 기호가 그대로 보입니다.`);
+      if (/\*\*|(^|\s)__\S|`|^\s*#{1,6}\s/m.test(c)) err(`${where}: 마크다운 기호(**, ## 등)가 있습니다 — 에디터에 기호가 그대로 보입니다.`);
       if (/^\s*\|.*\|\s*$/m.test(c)) err(`${where}: 표 문법이 있습니다 — "✔ 항목 — 내용" 체크리스트로 바꾸세요.`);
 
       for (const s of splitSentences(c)) {

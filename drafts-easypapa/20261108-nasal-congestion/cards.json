@@ -1,0 +1,60 @@
+[
+  {
+    "file": "input/images/cards/easypapa-nasal-congestion-01.png",
+    "kind": "cover",
+    "theme": "mint",
+    "label": "감기철 저장",
+    "title": "아기 코막힘, 이 순서로",
+    "sub": "식염수 → 기다리기 → 살살 흡입",
+    "icon": "baby"
+  },
+  {
+    "file": "input/images/cards/easypapa-nasal-congestion-02.png",
+    "kind": "steps",
+    "theme": "classic",
+    "title": "코막힘 대처 순서",
+    "items": [
+      "식염수 콧구멍마다 2~3방울",
+      "잠깐 기다리기",
+      "살살 흡입",
+      "찬 가습기는 손 안 닿게",
+      "가습기 물은 매일 갈기"
+    ],
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-nasal-congestion-03.png",
+    "kind": "compare",
+    "theme": "sunset",
+    "title": "이렇게 하지 말고 이렇게",
+    "left": {
+      "title": "하지 말기",
+      "items": [
+        "바로 흡입",
+        "하루 종일 수시로",
+        "감기약 임의로"
+      ]
+    },
+    "right": {
+      "title": "이렇게",
+      "items": [
+        "식염수 먼저",
+        "하루 2~3번 정도",
+        "진료 후에 약"
+      ]
+    },
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-nasal-congestion-04.png",
+    "kind": "list",
+    "theme": "night",
+    "title": "이럴 땐 바로 소아과",
+    "items": [
+      "숨쉬기 힘들어해요",
+      "잘 못 먹어요",
+      "열이 나요"
+    ],
+    "icon": "none"
+  }
+]

@@ -1,0 +1,59 @@
+[
+  {
+    "file": "input/images/cards/easypapa-picky-eater-01.png",
+    "kind": "cover",
+    "theme": "mint",
+    "label": "식사 시간마다",
+    "title": "한 입만 대신 2주",
+    "sub": "8~10번 맛봐야 익숙해져요",
+    "icon": "bowl"
+  },
+  {
+    "file": "input/images/cards/easypapa-picky-eater-02.png",
+    "kind": "steps",
+    "theme": "classic",
+    "title": "편식 줄이는 5가지 원칙",
+    "items": [
+      "거부는 실패가 아니에요",
+      "좋아하는 음식 옆에 조금",
+      "부모가 먼저 맛있게",
+      "조리법·모양 바꾸기",
+      "안 먹어도 혼내지 않기"
+    ],
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-picky-eater-03.png",
+    "kind": "compare",
+    "theme": "sunset",
+    "title": "찐 게 싫다면",
+    "left": {
+      "title": "브로콜리",
+      "items": [
+        "살짝 구워 고소하게",
+        "다져서 달걀찜에"
+      ]
+    },
+    "right": {
+      "title": "당근",
+      "items": [
+        "팬에 구워 단맛",
+        "갈아서 죽·전에"
+      ]
+    },
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-picky-eater-04.png",
+    "kind": "list",
+    "theme": "navy",
+    "title": "식사 시간 체크리스트",
+    "items": [
+      "새 음식은 한두 조각만",
+      "부모도 같이 먹었나요",
+      "억지로 넣지 않았나요",
+      "반응을 기록했나요"
+    ],
+    "icon": "none"
+  }
+]

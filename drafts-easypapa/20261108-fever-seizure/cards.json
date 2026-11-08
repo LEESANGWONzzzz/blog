@@ -1,0 +1,61 @@
+[
+  {
+    "file": "input/images/cards/easypapa-fever-seizure-01.png",
+    "kind": "hero",
+    "theme": "sunset",
+    "label": "저장해두세요",
+    "title": "열경련, 당황하지 않으려면",
+    "sub": "주변 치우고 · 입에 넣지 않고 · 시간 재기",
+    "icon": "alert"
+  },
+  {
+    "file": "input/images/cards/easypapa-fever-seizure-02.png",
+    "kind": "steps",
+    "theme": "classic",
+    "title": "경련이 오면 이 순서로",
+    "items": [
+      "주변 치우고 머리 받치기",
+      "입에 아무것도 넣지 않기",
+      "시작·끝 시간 재기",
+      "멈추면 옆으로 눕히기"
+    ],
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-fever-seizure-03.png",
+    "kind": "list",
+    "theme": "night",
+    "title": "바로 119 부르세요",
+    "items": [
+      "처음 겪는 경련",
+      "5분 넘게 계속",
+      "숨쉬기 힘들어함",
+      "몸 한쪽만 떨림",
+      "24시간 안에 2번 이상"
+    ],
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-fever-seizure-04.png",
+    "kind": "compare",
+    "theme": "mint",
+    "title": "하지 마세요 vs 이렇게",
+    "left": {
+      "title": "하지 마세요",
+      "items": [
+        "붙잡거나 옮기기",
+        "입에 손가락·약",
+        "찬물·알코올로 닦기"
+      ]
+    },
+    "right": {
+      "title": "이렇게",
+      "items": [
+        "머리만 받치기",
+        "아무것도 넣지 않기",
+        "시간 재고 119"
+      ]
+    },
+    "icon": "none"
+  }
+]

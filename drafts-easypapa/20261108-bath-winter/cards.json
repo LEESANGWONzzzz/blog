@@ -1,0 +1,46 @@
+[
+  {
+    "file": "input/images/cards/easypapa-bath-winter-01.png",
+    "kind": "cover",
+    "theme": "sunset",
+    "label": "겨울 내내 저장",
+    "title": "돌 전 목욕, 주 3번",
+    "sub": "나오자마자 바로 보습",
+    "icon": "baby"
+  },
+  {
+    "file": "input/images/cards/easypapa-bath-winter-02.png",
+    "kind": "steps",
+    "theme": "mint",
+    "title": "겨울 목욕 루틴",
+    "items": [
+      "준비물 먼저 다 챙기기",
+      "손목 안쪽으로 온도 확인",
+      "미지근하게 짧게",
+      "물기 톡톡, 바로 보습",
+      "향 없는 보습제"
+    ],
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-bath-winter-03.png",
+    "kind": "list",
+    "theme": "classic",
+    "title": "안 씻는 날엔 여기만",
+    "items": [
+      "목 주름",
+      "손",
+      "기저귀 부위"
+    ],
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-bath-winter-04.png",
+    "kind": "hero",
+    "theme": "night",
+    "label": "가장 중요한 한 가지",
+    "title": "목욕 중엔 1초도 혼자 두지 않기",
+    "sub": "가지러 갈 땐 아기도 같이",
+    "icon": "shield"
+  }
+]

@@ -1,0 +1,48 @@
+[
+  {
+    "file": "input/images/cards/easypapa-xmas-photo-01.png",
+    "kind": "cover",
+    "theme": "night",
+    "label": "12월에 꼭",
+    "title": "미니 트리 하나로 셀프 촬영",
+    "sub": "스튜디오 안 가도 돼요",
+    "icon": "gift"
+  },
+  {
+    "file": "input/images/cards/easypapa-xmas-photo-02.png",
+    "kind": "steps",
+    "theme": "sunset",
+    "title": "촬영법 3가지",
+    "items": [
+      "방 불 끄고 트리 조명만",
+      "트리는 카메라 앞, 아기는 뒤",
+      "인물 모드 1배, 밝기 살짝 낮추기"
+    ],
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-xmas-photo-03.png",
+    "kind": "list",
+    "theme": "mint",
+    "title": "얼굴 공개가 싫다면",
+    "items": [
+      "장식 잡은 손",
+      "양말 신은 발",
+      "창가 뒷모습"
+    ],
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-xmas-photo-04.png",
+    "kind": "list",
+    "theme": "classic",
+    "title": "안전 체크리스트",
+    "items": [
+      "전구 선은 손 안 닿게",
+      "작은 장식은 높은 곳에",
+      "소품은 크고 안 깨지는 것",
+      "촬영 중엔 곁에서 지켜보기"
+    ],
+    "icon": "shield"
+  }
+]

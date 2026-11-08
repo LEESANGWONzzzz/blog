@@ -1,0 +1,123 @@
+{
+  "title": "겨울 아기방 습도 가습기 세게 틀수록 좋은 게 아니에요",
+  "persona": {
+    "연령직군": "돌 전후 아기를 키우는 30대 부모",
+    "소득구간": "해당 없음 (육아 정보 글)",
+    "자산단계": "해당 없음",
+    "투자경험": "해당 없음",
+    "현재감정": "난방 시작하니 아기방이 건조한데 가습기를 얼마나 틀어야 할지 모름"
+  },
+  "keywords": {
+    "main": "아기방 습도",
+    "sub": [
+      "습도",
+      "가습기 사용법"
+    ]
+  },
+  "hook_pattern": "반전형",
+  "title_hook": "반전형",
+  "category": "감기·건강",
+  "naver_topic": "육아·결혼",
+  "sponsored": null,
+  "blocks": [
+    {
+      "type": "text",
+      "content": "난방을 켜면 아기방이 금방 건조해지죠. 그래서 가습기를 세게 틀게 되는데, 많이 틀수록 좋은 건 아니더라고요."
+    },
+    {
+      "type": "text",
+      "content": "미국 환경보호청과 미국소아과학회 자료를 확인해 봤어요. 아기방 습도는 너무 높아도 문제가 생겨요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-humidity-01.png"
+    },
+    {
+      "type": "subtitle",
+      "content": "아기방 습도는 몇 %가 좋나요?"
+    },
+    {
+      "type": "text",
+      "content": "미국 환경보호청(EPA)은 실내 습도를 30~50%로 유지하라고 안내해요. 60%는 넘지 않게 맞춰 주세요."
+    },
+    {
+      "type": "text",
+      "content": "너무 습하면 곰팡이와 집먼지진드기가 늘 수 있어요. 건조함만큼 지나친 습기도 피해야 해요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-humidity-02.png",
+      "caption": "아기방 습도는 30~50%, 60%는 넘지 않게"
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "subtitle",
+      "content": "가습기 사용법은 어떻게 하나요?"
+    },
+    {
+      "type": "text",
+      "content": "감으로 맞추지 말고 습도계로 확인하세요. 창문에 물방울이 맺히면 가습기를 줄이고 환기해 주세요."
+    },
+    {
+      "type": "text",
+      "content": "물은 매일 비우고 새로 채워요. 물통은 씻어서 말려 두세요."
+    },
+    {
+      "type": "text",
+      "content": "주의: 살균제나 첨가물은 절대 넣지 마세요. 가습기마다 세척 방법이 다르니 제품 설명서를 확인하세요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-humidity-03.png"
+    },
+    {
+      "type": "subtitle",
+      "content": "가습기는 어디에 두나요?"
+    },
+    {
+      "type": "text",
+      "content": "아기 손이 닿지 않는 곳에 두고, 수증기가 얼굴로 바로 가지 않게 해 주세요. 미국소아과학회는 아이 방에 찬 바람이 나오는 가습기를 권해요."
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "subtitle",
+      "content": "매일 무엇을 확인하면 되나요?"
+    },
+    {
+      "type": "text",
+      "content": "할 일: 습도계 숫자, 창문 물방울, 가습기 물 교체 세 가지만 보면 돼요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-humidity-04.png"
+    },
+    {
+      "type": "text",
+      "content": "호흡기 증상이 걱정되면 소아청소년과 전문의와 상담하세요. 여러분 집 아기방 습도는 보통 몇 %인가요?"
+    },
+    {
+      "type": "text",
+      "content": "출처: 미국 환경보호청(EPA) Biological Pollutants Impact on Indoor Air Quality · 미국소아과학회 HealthyChildren(2026-11-08 확인) https://www.healthychildren.org"
+    },
+    {
+      "type": "text",
+      "content": "이 글은 공식 자료를 확인해 정리한 일반 육아 정보예요. 아기마다 다를 수 있으니 걱정되면 소아청소년과 전문의와 꼭 상담하세요.\n💪 이지파파가 육아 동지님의 씩씩한 일상을 응원합니다! 인스타그램 @easy__papa"
+    }
+  ],
+  "tags": [
+    "아기방습도",
+    "겨울가습기",
+    "아기가습기",
+    "적정습도",
+    "겨울육아",
+    "이지파파"
+  ],
+  "place": null,
+  "video": null,
+  "owner_note_prompt": "두 번째 소제목 아래: 우리 집 아기방 습도계 숫자가 보통 몇 %인지 한 줄",
+  "source_note": "이지파파 노션 체크리스트(2026-10, 운영자 작성)를 블로그용으로 새로 씀"
+}

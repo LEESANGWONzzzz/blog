@@ -208,7 +208,7 @@ function html(card) {
   if (kind === 'cover') {
     body = `${card.label ? `<div class="label">${esc(card.label)}</div>` : ''}<h1>${esc(card.title)}</h1>${sub}${big}
       <div class="spacer"></div>${icon ? `<div class="scene"><div class="halo"></div><div class="main-ill">${ill(330)}</div>
-      <div class="deco d1">${iconSvg('sparkle', t.ic, 70)}</div><div class="deco d2">${iconSvg('coin', t.ic, 84)}</div></div>` : ''}`;
+      <div class="deco d1">${iconSvg('sparkle', t.ic, 70)}</div><div class="deco d2">${iconSvg(require('./lib/config').loadConfig().coverDeco || 'coin', t.ic, 84)}</div></div>` : ''}`;
   } else if (kind === 'hero') {
     body = `<div class="hero-ill"><div class="halo"></div>${ill(380)}</div>${card.label ? `<div class="label c">${esc(card.label)}</div>` : ''}<h1 class="c">${esc(card.title)}</h1>${sub}<div class="spacer"></div>`;
   } else if (kind === 'number') {
@@ -278,7 +278,7 @@ function html(card) {
   </style></head><body><div class="card">
   ${navy ? `<div class="band">${card.label ? `<div class="label">${esc(card.label)}</div>` : ''}<h1>${esc(card.title)}</h1>${sticker}</div>` : ''}
   <div class="inner">${navy ? '' : sticker}${body}</div>
-  <div class="foot"><div class="note">${card.note ? esc(card.note) : ''}</div><div class="brand">월급날 전에 읽는 경제</div></div>
+  <div class="foot"><div class="note">${card.note ? esc(card.note) : ''}</div><div class="brand">${esc(require('./lib/config').loadConfig().brandName)}</div></div>
   </div></body></html>`;
 }
 

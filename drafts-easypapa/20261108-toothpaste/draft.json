@@ -1,0 +1,123 @@
+{
+  "title": "아기 치약 양 쌀알 크기와 완두콩 크기 나이별 기준 정리",
+  "persona": {
+    "연령직군": "돌 전후 아기를 키우는 30대 부모",
+    "소득구간": "해당 없음 (육아 정보 글)",
+    "자산단계": "해당 없음",
+    "투자경험": "해당 없음",
+    "현재감정": "아기 치약을 얼마나 짜야 하는지, 삼켜도 되는지 걱정됨"
+  },
+  "keywords": {
+    "main": "아기 치약 양",
+    "sub": [
+      "불소치약",
+      "하루 2번"
+    ]
+  },
+  "hook_pattern": "공감형",
+  "title_hook": "비교형",
+  "category": "먹기·자기·양치",
+  "naver_topic": "육아·결혼",
+  "sponsored": null,
+  "blocks": [
+    {
+      "type": "text",
+      "content": "아기 치약, 얼마나 짜세요? 칫솔에 듬뿍 짰다가 아기가 삼킬까 봐 놀란 적이 저도 있어요."
+    },
+    {
+      "type": "text",
+      "content": "미국소아과학회 권고와 미국 질병통제예방센터(CDC) 보고를 확인해 봤어요. 아기 치약 양은 나이로 딱 나뉘더라고요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-toothpaste-01.png"
+    },
+    {
+      "type": "subtitle",
+      "content": "아기 치약 양은 얼마인가요?"
+    },
+    {
+      "type": "text",
+      "content": "만 3세 전에는 쌀알 크기, 칫솔에 살짝 묻힌 정도면 돼요. 만 3세부터는 완두콩 크기예요."
+    },
+    {
+      "type": "text",
+      "content": "미국소아과학회는 이가 나는 시점부터 불소치약을 이 양으로 쓰도록 권해요. 국내에서도 같은 기준이 소개돼 있어요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-toothpaste-02.png",
+      "caption": "아기 치약 양은 만 3세 전 쌀알, 만 3세부터 완두콩"
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "subtitle",
+      "content": "불소치약은 언제부터 쓰나요?"
+    },
+    {
+      "type": "text",
+      "content": "이가 하나라도 나면 그때부터 양치를 시작해요. 불소치약을 시작하는 나이는 기관마다 조금 달라요."
+    },
+    {
+      "type": "text",
+      "content": "미국소아과학회는 첫 이부터, 미국 질병통제예방센터는 2세부터를 안내해요. 고민되면 소아치과에서 상담해 주세요."
+    },
+    {
+      "type": "subtitle",
+      "content": "양치는 하루 2번 언제 하나요?"
+    },
+    {
+      "type": "text",
+      "content": "아침과 자기 전, 하루 2번이에요. 특히 자기 전 양치는 빼먹지 않기로 해요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-toothpaste-03.png"
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "subtitle",
+      "content": "치약은 누가 짜나요?"
+    },
+    {
+      "type": "text",
+      "content": "치약은 엄마 아빠가 짜고 양치도 도와주세요. 아이가 혼자 짜면 양이 많아지고, 혼자 하면 치약을 삼킬 수 있어요."
+    },
+    {
+      "type": "text",
+      "content": "양치 후 치약을 뱉는 연습은 놀이처럼 일찍부터 같이 해 보세요. 치약은 아기 손이 닿지 않는 곳에 두고요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-toothpaste-04.png"
+    },
+    {
+      "type": "text",
+      "content": "이지파파 집에서는 양치 노래를 틀어주면 그나마 덜 울더라고요. 우리 집 경험이라 아이마다 다를 수 있어요. 여러분 집 양치 꿀팁은 뭐예요?"
+    },
+    {
+      "type": "text",
+      "content": "출처: 미국소아과학회 2014 불소치약 권고 보도 · 미국 CDC MMWR 2019 어린이 치약 사용 보고(2026-11-08 확인) https://www.cdc.gov/mmwr/volumes/68/wr/mm6804a3.htm"
+    },
+    {
+      "type": "text",
+      "content": "이 글은 공식 자료를 확인해 정리한 일반 육아 정보예요. 아기마다 다를 수 있으니 걱정되면 소아청소년과 전문의와 꼭 상담하세요.\n💪 이지파파가 육아 동지님의 씩씩한 일상을 응원합니다! 인스타그램 @easy__papa"
+    }
+  ],
+  "tags": [
+    "아기치약양",
+    "아기양치",
+    "불소치약",
+    "유아양치",
+    "아기치아관리",
+    "이지파파"
+  ],
+  "place": null,
+  "video": null,
+  "owner_note_prompt": "마지막 소제목 아래: 우리 집 양치 팁 한 줄 (노션에 쓴 양치 노래 이야기처럼)",
+  "source_note": "이지파파 노션 체크리스트(2026-10, 운영자 작성)를 블로그용으로 새로 씀"
+}

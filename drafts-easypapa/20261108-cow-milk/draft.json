@@ -1,0 +1,123 @@
+{
+  "title": "돌 이후 생우유 하루 얼마나 먹여야 할까 480ml 기준",
+  "persona": {
+    "연령직군": "돌 전후 아기를 키우는 30대 부모",
+    "소득구간": "해당 없음 (육아 정보 글)",
+    "자산단계": "해당 없음",
+    "투자경험": "해당 없음",
+    "현재감정": "돌 지나 우유로 바꾸는데 많이 먹일수록 좋은지 헷갈림"
+  },
+  "keywords": {
+    "main": "돌 이후 생우유",
+    "sub": [
+      "일반 흰우유",
+      "하루 양"
+    ]
+  },
+  "hook_pattern": "반전형",
+  "title_hook": "숫자형",
+  "category": "먹기·자기·양치",
+  "naver_topic": "육아·결혼",
+  "sponsored": null,
+  "blocks": [
+    {
+      "type": "text",
+      "content": "돌이 지나면 분유를 끊고 우유로 넘어가잖아요. 잘 먹으니까 더 주고 싶은데, 많이 먹일수록 좋은 건 아니더라고요."
+    },
+    {
+      "type": "text",
+      "content": "미국소아과학회 권장량과 국내 영유아 약 42만 명 연구를 확인해 봤어요. 돌 이후 생우유는 하루 2컵 정도가 기준이에요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-cow-milk-01.png"
+    },
+    {
+      "type": "subtitle",
+      "content": "돌 이후 생우유는 언제 시작하나요?"
+    },
+    {
+      "type": "text",
+      "content": "모유나 분유가 아닌 우유는 12개월 이후부터 주세요. 돌 전에는 생우유를 주지 않아요."
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "subtitle",
+      "content": "일반 흰우유와 저지방 중 무엇을 먹이나요?"
+    },
+    {
+      "type": "text",
+      "content": "미국소아과학회는 12~24개월에는 일반 흰우유를 권해요. 체중이나 가족력 때문에 저지방이 고민되면 소아과에 먼저 상담하세요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-cow-milk-03.png"
+    },
+    {
+      "type": "subtitle",
+      "content": "하루 양은 얼마가 적당한가요?"
+    },
+    {
+      "type": "text",
+      "content": "미국소아과학회 권장량은 12~24개월 하루 2컵, 약 480ml예요. 500ml는 넘지 않게 맞춰 주세요."
+    },
+    {
+      "type": "text",
+      "content": "국내 영유아 약 42만 명 자료를 분석한 연구에서, 하루 500ml 이상 마신 아이들의 철결핍빈혈 위험이 조금 높게 나타났어요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-cow-milk-02.png",
+      "caption": "돌 이후 생우유는 하루 약 480ml, 500ml는 넘지 않게"
+    },
+    {
+      "type": "text",
+      "content": "우유로 배가 부르면 밥을 덜 먹게 돼요. 그래서 너무 많으면 철분이 부족해질 위험도 커져요."
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "subtitle",
+      "content": "치즈와 요거트도 계산하나요?"
+    },
+    {
+      "type": "text",
+      "content": "치즈나 요거트를 먹은 날은 그것도 함께 생각해서 우유 양을 조절하세요. 모두 유제품이에요."
+    },
+    {
+      "type": "text",
+      "content": "물은 12~24개월에 하루 1~4컵 정도가 권장돼요. 주스는 돌 전에는 주지 않고, 과일은 그대로 먹는 게 좋아요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-cow-milk-04.png"
+    },
+    {
+      "type": "text",
+      "content": "알레르기가 있거나 체중, 성장, 빈혈이 걱정되면 소아청소년과 전문의와 먼저 상담하세요. 여러분 아기는 하루에 우유 몇 컵 마시나요?"
+    },
+    {
+      "type": "text",
+      "content": "출처: 미국소아과학회 HealthyChildren Recommended Drinks for Young Children Ages 0-5 · 국내 영유아 우유 섭취량과 철결핍빈혈 연구(PMC)(2026-11-08 확인) https://www.healthychildren.org/English/healthy-living/nutrition/Pages/Recommended-Drinks-for-Young-Children-Ages-0-5.aspx"
+    },
+    {
+      "type": "text",
+      "content": "이 글은 공식 자료를 확인해 정리한 일반 육아 정보예요. 아기마다 다를 수 있으니 걱정되면 소아청소년과 전문의와 꼭 상담하세요.\n💪 이지파파가 육아 동지님의 씩씩한 일상을 응원합니다! 인스타그램 @easy__papa"
+    }
+  ],
+  "tags": [
+    "돌이후생우유",
+    "생우유전환",
+    "아기우유양",
+    "돌아기우유",
+    "철결핍빈혈",
+    "이지파파"
+  ],
+  "place": null,
+  "video": null,
+  "owner_note_prompt": "두 번째 소제목 아래: 우리 아기는 생우유를 언제 시작했고 하루 얼마나 먹나요? 한 줄",
+  "source_note": "이지파파 노션 체크리스트(2026-10, 운영자 작성)를 블로그용으로 새로 씀"
+}

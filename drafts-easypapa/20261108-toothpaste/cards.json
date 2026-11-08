@@ -1,0 +1,59 @@
+[
+  {
+    "file": "input/images/cards/easypapa-toothpaste-01.png",
+    "kind": "cover",
+    "theme": "mint",
+    "label": "양치할 때 꺼내보세요",
+    "title": "아기 치약은 쌀알만큼",
+    "sub": "만 3세부터 완두콩만큼",
+    "icon": "check"
+  },
+  {
+    "file": "input/images/cards/easypapa-toothpaste-02.png",
+    "kind": "compare",
+    "theme": "classic",
+    "title": "나이별 치약 양",
+    "left": {
+      "title": "첫 이~만 3세 전",
+      "items": [
+        "쌀알 크기",
+        "엄마 아빠가 양치"
+      ]
+    },
+    "right": {
+      "title": "만 3세부터",
+      "items": [
+        "완두콩 크기",
+        "도와주며 확인"
+      ]
+    },
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-toothpaste-03.png",
+    "kind": "steps",
+    "theme": "sunset",
+    "title": "아기 양치 기본",
+    "items": [
+      "첫 이가 나면 시작",
+      "나이에 맞게 조금만",
+      "하루 2번, 아침·자기 전",
+      "치약은 부모가 짜기",
+      "뱉는 연습은 일찍"
+    ],
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-toothpaste-04.png",
+    "kind": "list",
+    "theme": "navy",
+    "title": "양치 체크리스트",
+    "items": [
+      "치약 양이 나이에 맞나요",
+      "자기 전 양치 했나요",
+      "치약은 손 안 닿는 곳에",
+      "뱉는 연습 해봤나요"
+    ],
+    "icon": "none"
+  }
+]

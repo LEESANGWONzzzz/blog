@@ -1,0 +1,123 @@
+{
+  "title": "겨울 카시트 패딩 입히면 안 되는 이유와 핀치 테스트",
+  "persona": {
+    "연령직군": "돌 전후 아기를 키우는 30대 부모",
+    "소득구간": "해당 없음 (육아 정보 글)",
+    "자산단계": "해당 없음",
+    "투자경험": "해당 없음",
+    "현재감정": "추운데 패딩을 벗기고 카시트에 태워도 되는지 불안함"
+  },
+  "keywords": {
+    "main": "겨울 카시트",
+    "sub": [
+      "패딩",
+      "핀치 테스트"
+    ]
+  },
+  "hook_pattern": "손실회피형",
+  "title_hook": "손실회피형",
+  "category": "겨울 생활",
+  "naver_topic": "육아·결혼",
+  "sponsored": null,
+  "blocks": [
+    {
+      "type": "text",
+      "content": "겨울엔 아기가 추울까 봐 패딩을 입힌 채로 카시트에 태우게 되죠. 저도 처음엔 그게 더 안전한 줄 알았어요."
+    },
+    {
+      "type": "text",
+      "content": "미국소아과학회 겨울 카시트 안전 안내를 확인해 보니, 겨울 카시트는 두꺼운 외투를 벗기는 게 원칙이더라고요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-carseat-winter-01.png"
+    },
+    {
+      "type": "subtitle",
+      "content": "겨울 카시트에 패딩을 입히면 왜 안 되나요?"
+    },
+    {
+      "type": "text",
+      "content": "두꺼운 패딩은 사고가 나면 솜이 확 눌려요. 꽉 맨 줄 알았던 벨트에 틈이 생기고, 그 틈으로 아기가 빠질 수 있어요."
+    },
+    {
+      "type": "text",
+      "content": "그래서 미국소아과학회는 두꺼운 외투를 카시트 벨트 안쪽에 입히지 말라고 권해요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-carseat-winter-02.png"
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "subtitle",
+      "content": "그럼 어떻게 입히고 태우나요?"
+    },
+    {
+      "type": "text",
+      "content": "두꺼운 한 벌 대신 얇은 옷을 여러 겹 입혀 주세요. 기준은 어른보다 한 겹 더예요."
+    },
+    {
+      "type": "text",
+      "content": "카시트에 앉히기 전에 패딩을 벗기고 벨트를 먼저 채워요. 외투나 담요는 벨트 위에 덮거나, 팔만 끼워 거꾸로 입혀도 돼요."
+    },
+    {
+      "type": "text",
+      "content": "주의: 카시트와 함께 판매되지 않은 패드나 이너는 아기 몸 밑에 깔지 마세요. 충돌 시험을 거치지 않았을 수 있어요."
+    },
+    {
+      "type": "subtitle",
+      "content": "핀치 테스트는 어떻게 하나요?"
+    },
+    {
+      "type": "text",
+      "content": "벨트를 채운 뒤 쇄골 높이에서 어깨 벨트를 손가락으로 집어 보세요. 벨트가 접혀서 집히면 아직 헐거운 거예요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-carseat-winter-03.png",
+      "caption": "겨울 카시트 벨트는 쇄골 높이에서 집히지 않게"
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "subtitle",
+      "content": "출발 전에 무엇을 확인하나요?"
+    },
+    {
+      "type": "text",
+      "content": "담요로 아기 얼굴은 덮지 마세요. 차 안이 따뜻해지면 담요와 외투를 걷어서 더워지지 않게 해 주세요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-carseat-winter-04.png"
+    },
+    {
+      "type": "text",
+      "content": "할 일: 벨트 높이와 조절 방법은 카시트마다 다르니 제품 설명서를 먼저 확인하세요. 여러분은 카시트 태울 때 외투를 어떻게 하세요?"
+    },
+    {
+      "type": "text",
+      "content": "출처: 미국소아과학회 HealthyChildren Winter Car Seat Safety Tips · Mayo Clinic Health System(2026-11-08 확인) https://www.healthychildren.org/English/safety-prevention/on-the-go/Pages/Winter-Car-Seat-Safety-Tips.aspx"
+    },
+    {
+      "type": "text",
+      "content": "이 글은 공식 자료를 확인해 정리한 일반 육아 정보예요. 아기마다 다를 수 있으니 걱정되면 소아청소년과 전문의와 꼭 상담하세요.\n💪 이지파파가 육아 동지님의 씩씩한 일상을 응원합니다! 인스타그램 @easy__papa"
+    }
+  ],
+  "tags": [
+    "겨울카시트",
+    "카시트패딩",
+    "핀치테스트",
+    "카시트안전",
+    "겨울외출",
+    "이지파파"
+  ],
+  "place": null,
+  "video": null,
+  "owner_note_prompt": "두 번째 소제목 아래: 우리 집은 카시트 태울 때 외투를 어떻게 하나요? 한 줄",
+  "source_note": "이지파파 노션 체크리스트(2026-10, 운영자 작성)를 블로그용으로 새로 씀"
+}

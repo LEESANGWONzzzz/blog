@@ -1,0 +1,59 @@
+[
+  {
+    "file": "input/images/cards/easypapa-nap-transition-01.png",
+    "kind": "cover",
+    "theme": "night",
+    "label": "낮잠 고민될 때",
+    "title": "낮잠 1번, 지금일까?",
+    "sub": "보통 12~24개월 사이",
+    "icon": "clock"
+  },
+  {
+    "file": "input/images/cards/easypapa-nap-transition-02.png",
+    "kind": "table",
+    "theme": "classic",
+    "title": "하루 총 수면 시간",
+    "rows": [
+      [
+        "4~12개월",
+        "12~16시간"
+      ],
+      [
+        "1~2세",
+        "11~14시간"
+      ],
+      [
+        "3~5세",
+        "10~13시간"
+      ]
+    ],
+    "note": "출처: 미국수면의학회 권고",
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-nap-transition-03.png",
+    "kind": "list",
+    "theme": "mint",
+    "title": "전환 신호 4가지",
+    "items": [
+      "오후 낮잠을 계속 거부",
+      "눕혀도 한참 놀다 잠듦",
+      "낮잠 길이가 들쭉날쭉",
+      "건너뛰어도 저녁까지 괜찮음"
+    ],
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-nap-transition-04.png",
+    "kind": "steps",
+    "theme": "sunset",
+    "title": "바꾸는 방법",
+    "items": [
+      "오전 낮잠 15~30분씩 뒤로",
+      "낮잠 30분 전 조용한 놀이",
+      "밤잠 조금 당기기",
+      "오전엔 쉬는 시간"
+    ],
+    "icon": "none"
+  }
+]

@@ -1,0 +1,58 @@
+[
+  {
+    "file": "input/images/cards/easypapa-flu-vaccine-01.png",
+    "kind": "cover",
+    "theme": "mint",
+    "label": "지금 꼭 보세요",
+    "title": "독감주사 1번? 2번?",
+    "sub": "6개월~14세 무료 접종",
+    "icon": "hospital"
+  },
+  {
+    "file": "input/images/cards/easypapa-flu-vaccine-02.png",
+    "kind": "compare",
+    "theme": "classic",
+    "title": "우리 아기는 몇 번 맞나요",
+    "left": {
+      "title": "2번 (4주 간격)",
+      "items": [
+        "9세 미만",
+        "처음 맞거나",
+        "예전에 1번만"
+      ]
+    },
+    "right": {
+      "title": "1번",
+      "items": [
+        "그 외 모든 아이"
+      ]
+    },
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-flu-vaccine-03.png",
+    "kind": "timeline",
+    "theme": "sunset",
+    "title": "2026~2027절기 일정",
+    "items": [
+      "9월 21일 — 2회 대상 시작",
+      "9월 28일 — 1회 대상 시작",
+      "2027년 4월 30일 — 무료 접종 마감"
+    ],
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-flu-vaccine-04.png",
+    "kind": "steps",
+    "theme": "navy",
+    "title": "접종 전 체크리스트",
+    "items": [
+      "예방접종도우미에서 이력 확인",
+      "1번인지 2번인지 확인",
+      "2차 날짜 달력에 적기",
+      "가까운 위탁의료기관 찾기",
+      "당일 열 없는지 보기"
+    ],
+    "icon": "none"
+  }
+]

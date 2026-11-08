@@ -3,10 +3,14 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..', '..');
-const PROFILE_DIR = path.join(ROOT, 'naver-profile');
-const DRAFTS_DIR = path.join(ROOT, 'drafts');
+// 블로그 계정 선택 (2026-11-08, 육아 블로그 추가). 비우면 기본 계정(월급날 전에 읽는 경제).
+//   BLOG_ACCOUNT=easypapa → 로그인 naver-profile-easypapa/ · 설정 data/config-easypapa.json · 초안 drafts-easypapa/
+const ACCOUNT = (process.env.BLOG_ACCOUNT || '').trim();
+if (ACCOUNT && !/^[a-z0-9_-]+$/.test(ACCOUNT)) throw new Error(`BLOG_ACCOUNT는 영문 소문자·숫자·-_만: "${ACCOUNT}"`);
+const PROFILE_DIR = path.join(ROOT, ACCOUNT ? `naver-profile-${ACCOUNT}` : 'naver-profile');
+const DRAFTS_DIR = path.join(ROOT, ACCOUNT ? `drafts-${ACCOUNT}` : 'drafts');
 const DEBUG_DIR = path.join(ROOT, 'debug');
-const CONFIG_FILE = path.join(ROOT, 'data', 'config.json');
+const CONFIG_FILE = path.join(ROOT, 'data', ACCOUNT ? `config-${ACCOUNT}.json` : 'config.json');
 
 function loadConfig() {
   let fileConfig = {};
@@ -14,6 +18,11 @@ function loadConfig() {
     fileConfig = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
   }
   return {
+    account: ACCOUNT,
+    // 카드 이미지 아래 브랜드 글자
+    brandName: fileConfig.brandName || '월급날 전에 읽는 경제',
+    // 표지 카드 작은 장식 그림 (경제 블로그 coin, 육아 블로그 baby)
+    coverDeco: fileConfig.coverDeco || 'coin',
     blogId: process.env.NAVER_BLOG_ID || fileConfig.blogId || '',
     // 사람이 화면을 보며 확인할 수 있도록 기본은 브라우저 창을 띄운다.
     headless: process.env.HEADLESS === '1',
@@ -40,4 +49,4 @@ function resolveFromRoot(p) {
   return path.isAbsolute(p) ? p : path.join(ROOT, p);
 }
 
-module.exports = { ROOT, PROFILE_DIR, DRAFTS_DIR, DEBUG_DIR, CONFIG_FILE, loadConfig, resolveFromRoot };
+module.exports = { ROOT, ACCOUNT, PROFILE_DIR, DRAFTS_DIR, DEBUG_DIR, CONFIG_FILE, loadConfig, resolveFromRoot };

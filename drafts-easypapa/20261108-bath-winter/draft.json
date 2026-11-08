@@ -1,0 +1,123 @@
+{
+  "title": "겨울 아기 목욕 매일 해야 할까 돌 전엔 주 3번이면 충분",
+  "persona": {
+    "연령직군": "돌 전후 아기를 키우는 30대 부모",
+    "소득구간": "해당 없음 (육아 정보 글)",
+    "자산단계": "해당 없음",
+    "투자경험": "해당 없음",
+    "현재감정": "겨울에 매일 씻기는데 피부가 건조해지는 것 같음"
+  },
+  "keywords": {
+    "main": "겨울 아기 목욕",
+    "sub": [
+      "목욕",
+      "보습"
+    ]
+  },
+  "hook_pattern": "공감형",
+  "title_hook": "질문형",
+  "category": "겨울 생활",
+  "naver_topic": "육아·결혼",
+  "sponsored": null,
+  "blocks": [
+    {
+      "type": "text",
+      "content": "겨울에도 아기를 매일 씻기시나요? 저도 그래야 하는 줄 알았는데, 피부가 오히려 건조해 보여서 찾아봤어요."
+    },
+    {
+      "type": "text",
+      "content": "미국소아과학회 자료를 확인해 보니 겨울 아기 목욕은 횟수보다 보습이 더 중요하더라고요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-bath-winter-01.png"
+    },
+    {
+      "type": "subtitle",
+      "content": "돌 전 아기 목욕은 몇 번이면 되나요?"
+    },
+    {
+      "type": "text",
+      "content": "미국소아과학회는 첫 1년은 주 3번 정도면 충분할 수 있다고 안내해요. 더 자주 씻기면 피부가 건조해질 수 있어요."
+    },
+    {
+      "type": "text",
+      "content": "돌 이후 아이의 목욕 횟수 기준은 이번에 확인하지 못했어요. 확인되면 이 글에 덧붙일게요."
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "subtitle",
+      "content": "겨울 아기 목욕은 어떻게 하나요?"
+    },
+    {
+      "type": "text",
+      "content": "목욕 전에 준비물을 미리 다 챙겨 두세요. 손목 안쪽이나 팔꿈치로 물 온도를 확인하고, 미지근하게 짧게 씻겨요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-bath-winter-02.png",
+      "caption": "겨울 아기 목욕은 미지근하게 짧게, 나오자마자 보습"
+    },
+    {
+      "type": "text",
+      "content": "안 씻는 날에는 목 주름, 손, 기저귀 부위만 닦아 줘도 돼요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-bath-winter-03.png"
+    },
+    {
+      "type": "subtitle",
+      "content": "보습은 언제 하나요?"
+    },
+    {
+      "type": "text",
+      "content": "목욕에서 나오자마자 물기를 톡톡 닦고 바로 보습제를 발라 주세요. 보습제는 향이 없는 걸로 골라요."
+    },
+    {
+      "type": "text",
+      "content": "주의: 피부가 빨갛게 일어나거나 진물이 나고 많이 가려워하면 소아과 진료를 받아 보세요."
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "subtitle",
+      "content": "가장 중요한 한 가지는 무엇인가요?"
+    },
+    {
+      "type": "text",
+      "content": "목욕 중에는 1초도 아기를 혼자 두지 마세요. 무언가 가지러 갈 때는 아기도 같이 데려가요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-bath-winter-04.png"
+    },
+    {
+      "type": "text",
+      "content": "할 일: 오늘 저녁엔 준비물 먼저, 목욕은 짧게, 보습은 바로. 이 세 가지만 해 보세요. 여러분 집은 일주일에 몇 번 씻기세요?"
+    },
+    {
+      "type": "text",
+      "content": "출처: 미국소아과학회 HealthyChildren Bathing Your Newborn(2026-11-08 확인) https://www.healthychildren.org/English/ages-stages/baby/bathing-skin-care/Pages/Bathing-Your-Newborn.aspx"
+    },
+    {
+      "type": "text",
+      "content": "이 글은 공식 자료를 확인해 정리한 일반 육아 정보예요. 아기마다 다를 수 있으니 걱정되면 소아청소년과 전문의와 꼭 상담하세요.\n💪 이지파파가 육아 동지님의 씩씩한 일상을 응원합니다! 인스타그램 @easy__papa"
+    }
+  ],
+  "tags": [
+    "겨울아기목욕",
+    "아기보습",
+    "아기목욕횟수",
+    "아기피부",
+    "겨울육아",
+    "이지파파"
+  ],
+  "place": null,
+  "video": null,
+  "owner_note_prompt": "두 번째 소제목 아래: 우리 집 목욕 루틴(몇 번, 몇 시) 한 줄",
+  "source_note": "이지파파 노션 체크리스트(2026-10, 운영자 작성)를 블로그용으로 새로 씀"
+}

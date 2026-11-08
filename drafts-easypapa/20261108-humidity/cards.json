@@ -1,0 +1,48 @@
+[
+  {
+    "file": "input/images/cards/easypapa-humidity-01.png",
+    "kind": "cover",
+    "theme": "navy",
+    "label": "난방 시작할 때",
+    "title": "가습기, 세게 틀면 될까?",
+    "sub": "60%는 넘지 않게",
+    "icon": "house"
+  },
+  {
+    "file": "input/images/cards/easypapa-humidity-02.png",
+    "kind": "number",
+    "theme": "mint",
+    "label": "미국 환경보호청 권장",
+    "title": "실내 습도",
+    "big": "30~50%",
+    "sub": "60%는 넘지 않게",
+    "icon": "house"
+  },
+  {
+    "file": "input/images/cards/easypapa-humidity-03.png",
+    "kind": "steps",
+    "theme": "classic",
+    "title": "가습기 사용법",
+    "items": [
+      "습도계로 확인",
+      "창문 물방울이면 줄이기",
+      "물은 매일 새로",
+      "살균제·첨가물 금지",
+      "손 안 닿는 곳에"
+    ],
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/easypapa-humidity-04.png",
+    "kind": "list",
+    "theme": "sunset",
+    "title": "오늘 체크리스트",
+    "items": [
+      "아기방에 습도계 있나요",
+      "60% 넘지 않나요",
+      "물 오늘 갈았나요",
+      "물통 씻어 말렸나요"
+    ],
+    "icon": "none"
+  }
+]

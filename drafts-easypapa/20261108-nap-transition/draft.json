@@ -1,0 +1,123 @@
+{
+  "title": "돌 아기 낮잠 1번 전환 시기와 신호 4가지 월령별 낮잠표",
+  "persona": {
+    "연령직군": "돌 전후 아기를 키우는 30대 부모",
+    "소득구간": "해당 없음 (육아 정보 글)",
+    "자산단계": "해당 없음",
+    "투자경험": "해당 없음",
+    "현재감정": "돌 지나 낮잠을 거부하는데 줄일 때가 된 건지 모르겠음"
+  },
+  "keywords": {
+    "main": "낮잠 1번 전환",
+    "sub": [
+      "신호",
+      "바꾸는 방법"
+    ]
+  },
+  "hook_pattern": "공감형",
+  "title_hook": "숫자형",
+  "category": "먹기·자기·양치",
+  "naver_topic": "육아·결혼",
+  "sponsored": null,
+  "blocks": [
+    {
+      "type": "text",
+      "content": "돌이 지나면서 낮잠을 안 자고 버티는 날이 늘었나요? 낮잠 줄일 때가 된 건지, 그냥 컨디션 탓인지 헷갈리더라고요."
+    },
+    {
+      "type": "text",
+      "content": "미국수면의학회 권고와 육아 수면 자료를 확인해서 정리했어요. 낮잠 1번 전환은 보통 12~24개월 사이에 와요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-nap-transition-01.png"
+    },
+    {
+      "type": "subtitle",
+      "content": "월령별로 하루 얼마나 자나요?"
+    },
+    {
+      "type": "text",
+      "content": "미국수면의학회 권고에 따르면 하루 총 수면은 4~12개월 12~16시간, 1~2세 11~14시간, 3~5세 10~13시간이에요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-nap-transition-02.png",
+      "caption": "월령별 하루 총 수면 시간 (낮잠 포함)"
+    },
+    {
+      "type": "text",
+      "content": "낮잠 횟수는 의학 기관의 공식 기준이 아니라 육아 수면 자료들의 공통 경향이에요. 보통 12~18개월에 1~2번, 18~24개월엔 대부분 1번이에요."
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "subtitle",
+      "content": "낮잠 1번 전환 신호는 무엇인가요?"
+    },
+    {
+      "type": "text",
+      "content": "오후 낮잠을 계속 거부하거나, 눕혀도 한참 놀다가 겨우 잠들어요. 낮잠 길이가 들쭉날쭉해지기도 해요."
+    },
+    {
+      "type": "text",
+      "content": "낮잠을 한 번 건너뛰어도 저녁까지 짜증 없이 잘 놀면 신호예요. 이런 모습이 2주 정도 계속될 때 전환을 고민해 보세요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-nap-transition-03.png"
+    },
+    {
+      "type": "subtitle",
+      "content": "바꾸는 방법은 무엇인가요?"
+    },
+    {
+      "type": "text",
+      "content": "하루아침에 끊지 않아요. 오전 낮잠을 며칠 간격으로 15~30분씩 뒤로 미뤄서 점심 먹고 한 번 자는 흐름으로 옮겨가요."
+    },
+    {
+      "type": "text",
+      "content": "낮잠 30분 전부터 조용한 놀이로 바꿔 주고, 줄어든 만큼 밤잠을 조금 당겨 주세요. 오전엔 조용히 쉬는 시간을 넣어 주면 오후까지 버티기 쉬워요."
+    },
+    {
+      "type": "image",
+      "path": "input/images/cards/easypapa-nap-transition-04.png"
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "subtitle",
+      "content": "다시 2번으로 돌아가도 괜찮나요?"
+    },
+    {
+      "type": "text",
+      "content": "1번으로 바꾼 뒤 밤에 자주 깨거나 하루 종일 피곤해 보이면 아직 이를 수 있어요. 한두 달 다시 2번으로 돌아갔다가 나중에 시도해도 돼요."
+    },
+    {
+      "type": "text",
+      "content": "저희 아기는 13개월쯤 1번으로 바꿨어요. 아기마다 시기는 달라요. 잠을 너무 못 자거나 코골이, 숨 멈춤이 보이면 소아과 상담을 받아 보세요."
+    },
+    {
+      "type": "text",
+      "content": "출처: 미국수면의학회(AASM) 소아 수면 시간 권고(2016, 미국소아과학회 지지) · 미국소아과학회 HealthyChildren(2026-11-08 확인) https://www.healthychildren.org/English/healthy-living/sleep/Pages/healthy-sleep-habits-how-many-hours-does-your-child-need.aspx"
+    },
+    {
+      "type": "text",
+      "content": "이 글은 공식 자료를 확인해 정리한 일반 육아 정보예요. 아기마다 다를 수 있으니 걱정되면 소아청소년과 전문의와 꼭 상담하세요.\n💪 이지파파가 육아 동지님의 씩씩한 일상을 응원합니다! 인스타그램 @easy__papa"
+    }
+  ],
+  "tags": [
+    "낮잠1번전환",
+    "돌아기낮잠",
+    "아기낮잠",
+    "월령별수면",
+    "아기수면",
+    "이지파파"
+  ],
+  "place": null,
+  "video": null,
+  "owner_note_prompt": "마지막 소제목 아래: 저희 아기는 13개월쯤 1번으로 바꿨어요 — 바꿀 때 힘들었던 점 한 줄",
+  "source_note": "이지파파 노션 체크리스트(2026-10, 운영자 작성)를 블로그용으로 새로 씀"
+}
