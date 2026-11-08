@@ -6,6 +6,9 @@
 # 실행: powershell -ExecutionPolicy Bypass -File scripts\easypapa_overnight.ps1
 
 $ErrorActionPreference = 'Continue'
+# node·codex 출력(UTF-8)이 깨지지 않게 (PowerShell 5.1 기본은 cp949)
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
 Set-Location (Split-Path -Parent $PSScriptRoot)
 $stamp = Get-Date -Format 'yyyyMMdd-HHmm'
 New-Item -ItemType Directory -Force debug | Out-Null
