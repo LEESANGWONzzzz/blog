@@ -57,7 +57,7 @@ test('formatOwnRanks: 우리 글 조회수 목록을 찾고 트렌드(남의 글
   };
   const { markdown, count } = formatOwnRanks(own);
   assert.strictEqual(count, 2);
-  assert.match(markdown, /1\. 성시경 연말 콘서트 일반예매 12일 8시 — 조회 42 \(2026-11-04 07:00\)/);
+  assert.match(markdown, /1\. 성시경 연말 콘서트 일반예매 12일 8시 — 조회 42 \(발행 2026-11-04 07:00\)/);
   assert.match(markdown, /2\. 종합소득세 중간예납 11월 30일까지 — 조회 9/);
   assert.doesNotMatch(markdown, /남의 홈판 글/);
 });
@@ -76,4 +76,24 @@ test('trend_summary는 우리 글 조회수 섹션을 홈판 제목으로 읽지
   const md = formatTrends({ '/trend/main-inflow-content-ranks?date=2026-11-04': { data: [{ title: '홈판 글' }] } }, {}).markdown
     + '\n' + formatOwnRanks({ '/cv-ranks': { data: [{ title: '우리 글', cv: 3 }] } }).markdown;
   assert.deepStrictEqual(parseTrendFile(md).titles, ['홈판 글']);
+});
+
+test('formatOwnRanks: 실제 cv-ranks 형식 (metricValue·createdAt ms·기준일)', () => {
+  const { formatOwnRanks } = require('../scripts/advisor_trends');
+  const own = {
+    '/integrated-analysis/cv-ranks?channelId=x&date=2026-11-07&interval=day&limit=100': {
+      path: '/api/v6/integrated-analysis/cv-ranks',
+      parameters: { date: '2026-11-07', interval: 'day' },
+      more: false,
+      data: [
+        { rank: 1, title: '백지영 콘서트 두 장', metricValue: 13, contentId: 'http://blog.naver.com/x/1', createdAt: 1793224800000 },
+        { rank: 2, title: '영탁 부산 콘서트', metricValue: 11, contentId: 'http://blog.naver.com/x/2' },
+      ],
+    },
+  };
+  const { markdown, count } = formatOwnRanks(own);
+  assert.strictEqual(count, 2);
+  assert.match(markdown, /기준: 2026-11-07 하루 조회수/);
+  assert.match(markdown, /1\. 백지영 콘서트 두 장 — 조회 13 \(발행 2026-10-29 07:00\)/);
+  assert.match(markdown, /2\. 영탁 부산 콘서트 — 조회 11$/m);
 });

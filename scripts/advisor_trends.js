@@ -85,8 +85,25 @@ function formatTrends(captured, { date = '', fetchedAt = '' } = {}) {
 // API 형식을 아직 모르므로(2026-11-05 첫 연결) 응답 JSON에서 "제목 + 숫자"가 든 목록을 찾아 쓴다.
 // 트렌드(/trend/) 응답은 남의 글 제목이라 여기서 제외한다.
 const TITLE_KEYS = ['title', 'contentTitle', 'subject', 'postTitle', 'documentTitle'];
-const VIEW_KEY = /^(cv|pv|views?|viewCount|viewCnt|readCount|hit|hits|cnt|count|value)$/i;
+// 2026-11-08 확인: cv-ranks 응답은 data[{rank, title, metricValue(=조회수), contentId, createdAt(ms)}]
+const VIEW_KEY = /^(metricValue|cv|pv|views?|viewCount|viewCnt|readCount|hit|hits|cnt|count|value)$/i;
 const DATE_KEY = /(publish|created|write|reg|add).*(date|time|at)|^date$/i;
+
+// 발행 시각: 문자열은 그대로, 밀리초 숫자는 한국 시각 'YYYY-MM-DD HH:MM'
+function dateOf(o) {
+  const k = Object.keys(o || {}).find((x) => DATE_KEY.test(x) && (typeof o[x] === 'string' || Number.isFinite(o[x])));
+  if (!k) return '';
+  const v = o[k];
+  if (typeof v === 'string') return v;
+  if (v < 1e11) return '';
+  return new Date(v).toLocaleString('sv-SE', { timeZone: 'Asia/Seoul' }).slice(0, 16);
+}
+
+// 응답의 기준일·단위 (parameters.date / interval)
+function periodOf(body) {
+  const p = body?.parameters || {};
+  return p.date ? `${p.date}${p.interval === 'day' ? ' 하루' : p.interval ? ` (${p.interval})` : ''}` : '';
+}
 
 function titleOf(o) {
   for (const k of TITLE_KEYS) if (typeof o?.[k] === 'string' && o[k].trim()) return o[k].trim();
@@ -122,10 +139,12 @@ function formatOwnRanks(captured, { screenText = '' } = {}) {
   const best = lists[0];
   const lines = ['## 우리 글 조회수 순위 (통합 데이터 > 조회수 순위)', ''];
   if (best) {
-    best.rows.slice(0, 30).forEach((r, i) => {
+    const period = periodOf(captured[best.key]);
+    if (period) lines.push(`기준: ${period} 조회수 (내 계정 통합 데이터)`, '');
+    best.rows.slice(0, 100).forEach((r, i) => {
       const v = viewOf(r);
-      const dk = Object.keys(r).find((k) => DATE_KEY.test(k) && typeof r[k] === 'string');
-      lines.push(`${i + 1}. ${titleOf(r)}${v === null ? '' : ` — 조회 ${v}`}${dk ? ` (${r[dk]})` : ''}`);
+      const d = dateOf(r);
+      lines.push(`${i + 1}. ${titleOf(r)}${v === null ? '' : ` — 조회 ${v}`}${d ? ` (발행 ${d})` : ''}`);
     });
     lines.push('', `- 원본 응답: ${best.key.split('?')[0]} (형식이 이상하면 debug/advisor-*.json 의 own 항목을 Claude에게 보여 주세요)`);
   } else if (screenText.trim()) {
