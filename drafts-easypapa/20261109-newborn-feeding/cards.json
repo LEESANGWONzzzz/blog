@@ -1,0 +1,70 @@
+[
+  {
+    "file": "input/images/cards/easypapa-newborn-feeding-01.png",
+    "kind": "cover",
+    "theme": "mint",
+    "title": "수유량보다 먼저 볼 것",
+    "icon": "baby",
+    "label": "신생아 수유 체크",
+    "sub": "배고픔 신호와 성장 상태"
+  },
+  {
+    "file": "input/images/cards/easypapa-newborn-feeding-02.png",
+    "kind": "table",
+    "theme": "navy",
+    "title": "간격은 참고로 봐요",
+    "icon": "none",
+    "rows": [
+      [
+        "모유수유 초기",
+        "하루 약 8~12회"
+      ],
+      [
+        "분유만 먹는 첫 며칠",
+        "2~3시간마다 제공 예시"
+      ],
+      [
+        "함께 확인할 것",
+        "아기 신호와 성장"
+      ]
+    ],
+    "note": "출처: CDC · 2026-11-09 확인"
+  },
+  {
+    "file": "input/images/cards/easypapa-newborn-feeding-03.png",
+    "kind": "compare",
+    "theme": "sunset",
+    "title": "아기가 보내는 신호",
+    "icon": "none",
+    "left": {
+      "title": "배고플 수 있어요",
+      "items": [
+        "손을 입으로 가져가요",
+        "젖 쪽으로 고개를 돌려요",
+        "입술을 오물거려요"
+      ]
+    },
+    "right": {
+      "title": "배부를 수 있어요",
+      "items": [
+        "입을 닫아요",
+        "고개를 돌려요",
+        "손이 편안하게 펴져요"
+      ]
+    },
+    "note": "출처: CDC · 신호를 함께 살펴요"
+  },
+  {
+    "file": "input/images/cards/easypapa-newborn-feeding-04.png",
+    "kind": "steps",
+    "theme": "classic",
+    "title": "오늘의 수유 체크",
+    "icon": "none",
+    "items": [
+      "배고픔 신호 살피기",
+      "아기 속도에 맞추기",
+      "수유와 기저귀 기록",
+      "걱정되면 소아과 상담"
+    ]
+  }
+]

@@ -1,0 +1,61 @@
+[
+  {
+    "file": "input/images/cards/easypapa-starting-solids-01.png",
+    "kind": "cover",
+    "theme": "sunset",
+    "title": "이유식 시작 전 확인",
+    "icon": "bowl",
+    "label": "날짜와 준비 신호를 함께",
+    "sub": "생후 약 6개월부터 살펴봐요",
+    "note": "출처: CDC·NHS · 2026-11-09 확인"
+  },
+  {
+    "file": "input/images/cards/easypapa-starting-solids-02.png",
+    "kind": "list",
+    "theme": "mint",
+    "title": "준비 신호가 함께 있나요",
+    "icon": "none",
+    "items": [
+      "앉아서 머리를 유지해요",
+      "눈과 손과 입을 함께 써요",
+      "음식을 밀어내기보다 삼켜요"
+    ],
+    "note": "출처: NHS · 2026-11-09 확인"
+  },
+  {
+    "file": "input/images/cards/easypapa-starting-solids-03.png",
+    "kind": "compare",
+    "theme": "navy",
+    "title": "새 재료는 이렇게 살펴요",
+    "icon": "none",
+    "left": {
+      "title": "피할 방식",
+      "items": [
+        "처음부터 여러 새 재료 섞기",
+        "양을 채우려고 억지로 먹이기",
+        "의심 반응 뒤 집에서 재시도"
+      ]
+    },
+    "right": {
+      "title": "확인할 방식",
+      "items": [
+        "한 가지씩 소량으로 시작",
+        "먹을 수 있는 형태로 준비",
+        "반응이 있으면 소아과 상담"
+      ]
+    }
+  },
+  {
+    "file": "input/images/cards/easypapa-starting-solids-04.png",
+    "kind": "steps",
+    "theme": "classic",
+    "title": "먹이기 전 체크",
+    "icon": "none",
+    "items": [
+      "준비 신호 함께 보기",
+      "새 재료와 형태 확인",
+      "바르게 앉히고 곁에서 보기",
+      "먹은 음식과 반응 기록"
+    ]
+  }
+]

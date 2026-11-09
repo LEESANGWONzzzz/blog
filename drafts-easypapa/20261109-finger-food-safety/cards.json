@@ -1,0 +1,61 @@
+[
+  {
+    "file": "input/images/cards/easypapa-finger-food-safety-01.png",
+    "kind": "cover",
+    "theme": "navy",
+    "title": "핑거푸드 안전 체크",
+    "icon": "shield",
+    "label": "먹이기 전에 먼저",
+    "sub": "크기와 질감 그리고 먹는 자세"
+  },
+  {
+    "file": "input/images/cards/easypapa-finger-food-safety-02.png",
+    "kind": "compare",
+    "theme": "mint",
+    "title": "모양과 단단함을 함께",
+    "icon": "none",
+    "left": {
+      "title": "피할 형태",
+      "items": [
+        "단단한 생당근과 생사과",
+        "통째인 둥근 과일",
+        "통견과와 팝콘"
+      ]
+    },
+    "right": {
+      "title": "준비할 방향",
+      "items": [
+        "단단한 재료는 부드럽게 익히기",
+        "둥근 모양 피해서 손질하기",
+        "아기 발달에 맞는 형태 선택"
+      ]
+    },
+    "note": "출처: NHS · 2026-11-09 확인"
+  },
+  {
+    "file": "input/images/cards/easypapa-finger-food-safety-03.png",
+    "kind": "list",
+    "theme": "sunset",
+    "title": "먹는 동안 곁에서 봐요",
+    "icon": "none",
+    "items": [
+      "깨어 있을 때 먹여요",
+      "의자에 바르게 앉혀요",
+      "억지로 입에 넣지 않아요",
+      "먹는 내내 어른이 지켜봐요"
+    ]
+  },
+  {
+    "file": "input/images/cards/easypapa-finger-food-safety-04.png",
+    "kind": "steps",
+    "theme": "classic",
+    "title": "시작 전에 확인해요",
+    "icon": "none",
+    "items": [
+      "준비 신호 살피기",
+      "음식 크기와 질감 확인",
+      "바르게 앉히고 곁에서 보기",
+      "응급처치 미리 배우기"
+    ]
+  }
+]
