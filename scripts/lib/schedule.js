@@ -109,10 +109,28 @@ const isPending = (e) => !e.d.test && e.s.saved && !e.s.published;
 // 지금 이후 비어 있는 예약 칸을 앞에서부터 count개 (오늘 남은 칸 → 내일 → 모레 …).
 // marginMin: 지금부터 이 시간(분) 안의 칸은 건너뛴다 (예약 넣을 시간 확보).
 // from: 'YYYY-MM-DD'이면 그 날짜 이전 칸은 건너뛴다 ("19일 글부터"처럼 시작일을 정할 때).
-function freeSlots(entries, slotTimes, count, { now = new Date(), defaultDate = nextDate(now), marginMin = 60, from = '' } = {}) {
+// 실험 기록표(docs/experiment-2026-10.md, 커밋됨)에 이미 적힌 '날짜 | 시각' 칸.
+// drafts/는 PC마다 따로 있어서(커밋 안 함), 다른 PC에서 예약한 칸은 이 표로만 알 수 있다 (2026-11-09, Windows PC 추가).
+function experimentTaken(text) {
+  const keys = new Set();
+  for (const m of String(text || '').matchAll(/^\|\s*(\d{4}-\d{2}-\d{2})\s*\|\s*(\d{2}:\d{2})\s*\|/gm)) keys.add(`${m[1]} ${m[2]}`);
+  return keys;
+}
+
+function readExperimentTaken() {
+  const fs = require('fs');
+  const path = require('path');
+  const { ROOT, ACCOUNT } = require('./config');
+  if (ACCOUNT) return new Set(); // 실험 기록표는 경제 블로그 것
+  const f = path.join(ROOT, 'docs', 'experiment-2026-10.md');
+  return fs.existsSync(f) ? experimentTaken(fs.readFileSync(f, 'utf8')) : new Set();
+}
+
+function freeSlots(entries, slotTimes, count, { now = new Date(), defaultDate = nextDate(now), marginMin = 60, from = '', extraTaken = new Set() } = {}) {
   // 예약을 마쳐 발행 표시된 글도 publish_at 칸은 그대로 차지한다 (같은 시각 중복 예약 방지).
   const reserved = entries.filter((e) => !e.d.test && e.s.saved && e.s.published && e.d.publish_at);
   const taken = new Set([...entries.filter(isPending), ...reserved].map((e) => pendingKey(e, defaultDate)).filter(Boolean));
+  for (const k of extraTaken) taken.add(k);
   const times = [...slotTimes].sort();
   const out = [];
   for (let d = 0; out.length < count && d < 60; d += 1) {
@@ -130,4 +148,4 @@ function freeSlots(entries, slotTimes, count, { now = new Date(), defaultDate = 
   return out;
 }
 
-module.exports = { pendingKey, freeSlots, isPending, localDate, nextDate, rssTitles, publishedByRss, readAllStatus, countSavesOn, saveLimitFor, buildSlots, assignSlots, toMinutes };
+module.exports = { experimentTaken, readExperimentTaken, pendingKey, freeSlots, isPending, localDate, nextDate, rssTitles, publishedByRss, readAllStatus, countSavesOn, saveLimitFor, buildSlots, assignSlots, toMinutes };

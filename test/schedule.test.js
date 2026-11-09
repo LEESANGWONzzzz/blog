@@ -123,3 +123,13 @@ test('freeSlots: from 이전 날짜 칸은 건너뛴다', () => {
     '2026-10-19 07:00', '2026-10-19 09:00', '2026-10-19 17:00', '2026-10-19 19:00', '2026-10-20 07:00', '2026-10-20 09:00',
   ]);
 });
+
+test('실험 기록표에 적힌 칸은 다른 PC에서 예약한 칸으로 보고 비워 둔다', () => {
+  const { experimentTaken, freeSlots } = require('../scripts/lib/schedule');
+  const md = '| 발행일 | 시각 | 분야 |\n|---|---|---|\n| 2026-11-10 | 07:00 | 방송·연예 |\n| 2026-11-10 | 09:00 | 생활경제 |\n';
+  const taken = experimentTaken(md);
+  assert.deepStrictEqual([...taken], ['2026-11-10 07:00', '2026-11-10 09:00']);
+  const now = new Date('2026-11-09T20:00:00');
+  const list = freeSlots([], ['07:00', '09:00', '11:00'], 2, { now, extraTaken: taken });
+  assert.deepStrictEqual(list.map((x) => x.key), ['2026-11-10 11:00', '2026-11-11 07:00']);
+});

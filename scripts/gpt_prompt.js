@@ -12,7 +12,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 const { ROOT, loadConfig } = require('./lib/config');
-const { localDate, readAllStatus, freeSlots } = require('./lib/schedule');
+const { localDate, readAllStatus, freeSlots, readExperimentTaken } = require('./lib/schedule');
 
 // advisor_trends.js가 받아 둔 최근 트렌드 파일 (2일 이내). 없으면 빈 문자열.
 function latestTrends() {
@@ -33,7 +33,7 @@ function build(args) {
   const fromIdx = args.indexOf('--from');
   const from = fromIdx >= 0 ? args[fromIdx + 1] : '';
   const entries = readAllStatus();
-  const slots = freeSlots(entries, loadConfig().schedule.slots || [], n, { from });
+  const slots = freeSlots(entries, loadConfig().schedule.slots || [], n, { from, extraTaken: readExperimentTaken() });
   const recent = entries.filter((e) => !e.d.test && e.s.saved)
     .sort((a, b) => String(b.s.steps.save.at).localeCompare(String(a.s.steps.save.at)))
     .slice(0, 20).map((e) => e.d.title);

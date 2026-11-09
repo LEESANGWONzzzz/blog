@@ -12,7 +12,7 @@
 const fs = require('fs');
 const path = require('path');
 const { ROOT, DRAFTS_DIR, loadConfig, resolveFromRoot } = require('./lib/config');
-const { localDate, nextDate, rssTitles, publishedByRss, readAllStatus, buildSlots, assignSlots, freeSlots, isPending } = require('./lib/schedule');
+const { localDate, nextDate, rssTitles, publishedByRss, readAllStatus, buildSlots, assignSlots, freeSlots, isPending, readExperimentTaken } = require('./lib/schedule');
 
 const pad = (n) => String(n).padStart(2, '0');
 const hhmm = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
@@ -54,7 +54,8 @@ async function main() {
 
   // --next N: 다음 빈 예약 칸 N개 (/daily가 글마다 publish_at을 정할 때 쓴다). --from YYYY-MM-DD로 시작일 지정
   if (arg('--next')) {
-    const list = freeSlots(readAllStatus(), cfg.slots || [], Number(arg('--next')), { from: arg('--from') || '' });
+    // 다른 PC에서 예약한 칸(실험 기록표)도 빼고 고른다
+    const list = freeSlots(readAllStatus(), cfg.slots || [], Number(arg('--next')), { from: arg('--from') || '', extraTaken: readExperimentTaken() });
     list.forEach((x) => console.log(`${x.key}\t${x.oddDay ? '홀수일' : '짝수일'}`));
     return;
   }
