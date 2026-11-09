@@ -1,0 +1,47 @@
+[
+  {
+    "file": "input/images/cards/fukuoka-package-01.png",
+    "kind": "cover",
+    "theme": "sunset",
+    "label": "후쿠오카 3일 패키지",
+    "title": "699,000원에 힐튼 1박",
+    "sub": "온천 1박 · 대게 무제한 · 가이드 경비 3,000엔 별도",
+    "icon": "plane"
+  },
+  {
+    "file": "input/images/cards/fukuoka-package-02.png",
+    "kind": "compare",
+    "theme": "classic",
+    "title": "포함 vs 별도",
+    "left": {
+      "title": "포함",
+      "items": [
+        "직항 항공",
+        "힐튼 1박 + 온천 1박",
+        "대게 뷔페 · 주류 60분"
+      ]
+    },
+    "right": {
+      "title": "별도",
+      "items": [
+        "가이드 경비 3,000엔",
+        "개인 식사·자유일정",
+        "쇼핑 1회 포함"
+      ]
+    },
+    "icon": "none"
+  },
+  {
+    "file": "input/images/cards/fukuoka-package-03.png",
+    "kind": "list",
+    "theme": "mint",
+    "title": "출발 전 체크리스트",
+    "items": [
+      "여권 유효기간",
+      "엔화 (가이드 경비 3,000엔)",
+      "편한 운동화",
+      "110V 어댑터는 특전"
+    ],
+    "icon": "none"
+  }
+]
