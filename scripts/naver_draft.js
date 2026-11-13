@@ -368,7 +368,7 @@ async function main() {
   const status = readStatus(draftFile);
 
   // 1. 형식 검사 — 오류(확인필요 마커 포함)가 있으면 저장하지 않는다.
-  const result = lintDraft(draft, { baseDir: ROOT });
+  const result = lintDraft(draft, { baseDir: ROOT, homeSlots: loadConfig().homeSlots });
   printReport(result);
   mark(draftFile, status, 'lint', result.errors.length === 0, result.errors.length ? result.errors : undefined);
   if (result.errors.length) {

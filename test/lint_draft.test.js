@@ -157,3 +157,12 @@ test('출처 문단에 원문 주소가 없으면 경고', () => {
   assert.strictEqual(warned('출처: 국세청 연말정산 안내(2026-10-30 확인)'), true);
   assert.strictEqual(warned('출처: 국세청 연말정산 안내(2026-10-30 확인) https://www.nts.go.kr'), false);
 });
+
+test('homeSlots 옵션: 6칸 모두 홈판형이면 09시 제목도 물음표 허용', () => {
+  const { lintDraft } = require('../scripts/lint_draft');
+  const d = { title: '엔비디아 CEO 바뀌었는데 내 반도체 ETF는 괜찮을까?', slot: '09:00', test: true, blocks: [{ type: 'text', content: '본문입니다.' }], tags: [] };
+  const strict = lintDraft(d, { testMode: true });
+  const home = lintDraft(d, { testMode: true, homeSlots: ['07:00', '09:00', '11:00', '13:00', '15:00', '17:00'] });
+  assert.ok(strict.errors.some((e) => /특수문자/.test(e)));
+  assert.ok(!home.errors.some((e) => /특수문자/.test(e)));
+});

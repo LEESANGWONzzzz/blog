@@ -17,7 +17,8 @@ const MARKER = /\[\[확인필요:[^\]]*\]\]/g;
 const TITLE_ALLOWED = /^[가-힣ㄱ-ㅎA-Za-z0-9 ]+$/;
 // 홈판형 칸(07·17시)은 따옴표·말줄임표·물음표·쉼표를 허용한다 (writing-rules 5-11, 2026-10-25).
 // 느낌표·괄호·이모지는 여전히 금지 (과장·낚시 방지).
-const HOME_SLOTS = new Set(['07:00', '13:00', '17:00']); // 2026-11-05부터 13시도 홈판형 (운영자 결정)
+// 홈판형 칸 기본값. 실제 실행에서는 data/config.json의 homeSlots를 넘긴다 (2026-11-15 운영자 결정: 6칸 모두 홈판형).
+const DEFAULT_HOME_SLOTS = ['07:00', '13:00', '17:00'];
 const TITLE_HOME_ALLOWED = /^[가-힣ㄱ-ㅎA-Za-z0-9 "'“”‘’…?.,·]+$/;
 
 const LIMITS = {
@@ -72,7 +73,8 @@ function bodyText(blocks) {
     .join('\n');
 }
 
-function lintDraft(draft, { baseDir, testMode = false, categories = [] } = {}) {
+function lintDraft(draft, { baseDir, testMode = false, categories = [], homeSlots = DEFAULT_HOME_SLOTS } = {}) {
+  const HOME_SLOTS = new Set(homeSlots && homeSlots.length ? homeSlots : DEFAULT_HOME_SLOTS);
   const errors = [];
   const warnings = [];
   const err = (m) => errors.push(m);
@@ -258,7 +260,7 @@ function lintDraft(draft, { baseDir, testMode = false, categories = [] } = {}) {
     warn('AI 생성 이미지가 있습니다 — 본문(보통 마지막 문단)에 "AI로 만든 이미지" 안내를 넣으세요.');
   }
   // 검색형 칸(09·11·15시)은 도입 뒤 "✔ 항목 — 내용" 핵심 요약 체크리스트를 둔다 (writing-rules 5-12)
-  if (!testMode && ['09:00', '11:00', '15:00'].includes(draft.slot)
+  if (!testMode && !HOME_SLOTS.has(draft.slot) && ['09:00', '11:00', '15:00'].includes(draft.slot)
     && !blocks.some((b) => b.type === 'text' && /^✔/m.test(b.content || ''))) {
     warn('검색형 칸인데 "✔ 항목 — 내용" 핵심 요약 체크리스트가 없습니다 — 도입 바로 뒤에 넣어 주세요.');
   }
@@ -295,7 +297,8 @@ if (require.main === module) {
     process.exit(2);
   }
   const { abs, draft } = loadDraft(file);
-  const result = lintDraft(draft, { baseDir: require('./lib/config').ROOT, categories: require('./lib/config').loadConfig().categories });
+  const cfg = require('./lib/config').loadConfig();
+  const result = lintDraft(draft, { baseDir: require('./lib/config').ROOT, categories: cfg.categories, homeSlots: cfg.homeSlots });
   console.log(`검사 대상: ${path.relative(process.cwd(), abs)}`);
   printReport(result);
   process.exit(result.errors.length ? 1 : 0);
