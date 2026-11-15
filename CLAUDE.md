@@ -12,6 +12,7 @@
 
 ## 작업 방식
 
+- `/daily`·`/batch`는 메인 세션이 지휘만 하고 주제는 `topic-scout`, 글은 편마다 `post-writer` 에이전트(`.claude/agents/`)가 새 컨텍스트에서 한 편씩 만든다. 진행 상황은 `drafts/daily-plan-<날짜>.md` (2026-11-15, 세션 끊김 방지).
 - 글쓰기는 `/write` 명령(`.claude/commands/write.md`) 절차를 따른다. 주제 선정부터 한 번에 할 때는 `/auto`, 여러 편을 미리 준비할 때는 `/batch`. 시간 날 때 다음 빈 칸 6편을 미리 준비하는 루틴은 `/daily`. 운영자가 "오늘 글 작성해줘"라고 하면 `/today`(`.claude/commands/today.md`) 절차로 1편을 원스톱 제작한다.
 - 초안은 `drafts/YYYYMMDD-<영문슬러그>/draft.json`, 검수 보고는 같은 폴더의 `review.md`에 쓴다.
 - 사진은 `input/photos/_mosaic/`에 있는 모자이크 처리된 파일만 쓴다.
