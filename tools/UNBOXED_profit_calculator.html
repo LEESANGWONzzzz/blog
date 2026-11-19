@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UNBOXED 순수익 계산기</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: one narrow column — mode tabs, inputs, big result, breakdown, editable fee settings */
+:root{
+  --bg:#f2f0eb; --panel:#ffffff; --fg:#1c1c1c; --muted:#6b6862; --line:#ddd8ce; --accent:#e5743a; --field:#faf9f6; --good:#2f7d4f; --bad:#c2402c;
+  --ui:'Noto Sans KR',system-ui,sans-serif; --display:'Archivo Black','Noto Sans KR',sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1a1918;--panel:#242321;--fg:#f0ede7;--muted:#a8a39a;--line:#3a3834;--accent:#f0864f;--field:#2d2c29;--good:#5fbf86;--bad:#ec7a66;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1a1918;--panel:#242321;--fg:#f0ede7;--muted:#a8a39a;--line:#3a3834;--accent:#f0864f;--field:#2d2c29;--good:#5fbf86;--bad:#ec7a66;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--ui);font-size:15px;line-height:1.5}
+.wrap{max-width:560px;margin:0 auto;padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
+.brand{font-family:var(--display);font-size:30px;line-height:1;letter-spacing:-.5px}
+.brand small{display:block;font-family:var(--ui);font-weight:500;font-size:12px;letter-spacing:4px;color:var(--muted);margin-top:8px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px}
+.tabs button{font:inherit;font-weight:700;border:0;border-radius:9px;padding:10px;background:transparent;color:var(--muted);cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px}
+label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:var(--muted)}
+.inp{display:flex;align-items:center;background:var(--field);border:1px solid var(--line);border-radius:10px;padding:0 12px}
+.inp input{flex:1;min-width:0;font:inherit;font-size:22px;font-weight:700;color:var(--fg);background:transparent;border:0;padding:10px 0;font-variant-numeric:tabular-nums}
+.inp span{color:var(--muted);font-weight:700}
+.inp:focus-within{outline:2px solid var(--accent);outline-offset:1px}
+.result{text-align:center;padding:22px 18px}
+.result .k{font-size:13px;font-weight:700;color:var(--muted)}
+.result .v{font-family:var(--display);font-size:44px;line-height:1.15;margin-top:6px;font-variant-numeric:tabular-nums}
+.result .v.neg{color:var(--bad)}
+.result .s{font-size:14px;color:var(--muted);margin-top:6px}
+.result .s b{color:var(--fg)}
+.pill{display:inline-block;margin-top:10px;font-size:12.5px;font-weight:700;padding:4px 10px;border-radius:20px;border:1px solid var(--line)}
+.pill.good{color:var(--good);border-color:var(--good)}.pill.bad{color:var(--bad);border-color:var(--bad)}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+td:last-child{text-align:right;font-weight:700}
+tr.total td{border-bottom:0;font-size:16px;color:var(--accent)}
+.set{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.set .inp input{font-size:16px;padding:8px 0}
+@media (max-width:420px){.set{grid-template-columns:1fr}}
+details summary{cursor:pointer;font-weight:700;font-size:14px}
+.hint{font-size:12.5px;color:var(--muted);margin:0}
+button.link{font:inherit;font-size:12.5px;background:none;border:0;color:var(--accent);cursor:pointer;padding:0;align-self:flex-start;font-weight:700}
+</style>
+
+</head><body>
+<div class="wrap">
+  <div class="brand">UNBOXED<small>네이버 스마트스토어 순수익 계산기</small></div>
+
+  <div class="tabs" role="group" aria-label="계산 방식">
+    <button id="tabProfit" type="button" aria-pressed="true">판매가 → 순수익</button>
+    <button id="tabPrice" type="button" aria-pressed="false">순수익 → 판매가</button>
+  </div>
+
+  <div class="panel">
+    <label for="cost">매입가<div class="inp"><input id="cost" inputmode="numeric" autocomplete="off" value="73,010"><span>원</span></div></label>
+    <label for="price" id="priceWrap">판매가<div class="inp"><input id="price" inputmode="numeric" autocomplete="off" value="111,000"><span>원</span></div></label>
+    <label for="target" id="targetWrap" hidden>남기고 싶은 순수익<div class="inp"><input id="target" inputmode="numeric" autocomplete="off" value="30,000"><span>원</span></div></label>
+  </div>
+
+  <div class="panel result" aria-live="polite">
+    <div class="k" id="rk">순수익</div>
+    <div class="v" id="rv">0원</div>
+    <div class="s" id="rs"></div>
+    <div><span class="pill" id="rp"></span></div>
+  </div>
+
+  <div class="panel">
+    <table><tbody id="bd"></tbody></table>
+  </div>
+
+  <div class="panel">
+    <details>
+      <summary>수수료·비용 설정</summary>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
+        <div class="set">
+          <label for="fee">네이버 수수료<div class="inp"><input id="fee" inputmode="decimal" value="6.63"><span>%</span></div></label>
+          <label for="ship">배송비 수입<div class="inp"><input id="ship" inputmode="numeric" value="3,500"><span>원</span></div></label>
+          <label for="fixed">고정비<div class="inp"><input id="fixed" inputmode="numeric" value="3,066"><span>원</span></div></label>
+        </div>
+        <p class="hint">수수료 6.63% = 주문관리 3.63% + 매출연동 3.00% (2026.08 정산 기준). 고정비 3,066원 = 박스 476 + 스티커 90 + 택배 2,500. 스마트스토어 전용이며 KREAM·포이즌·당근마켓에는 맞지 않습니다.</p>
+        <button class="link" id="resetSet" type="button">기본 설정으로 되돌리기</button>
+      </div>
+    </details>
+  </div>
+</div>
+
+<script>
+(function(){
+  var DEF={fee:'6.63',ship:'3,500',fixed:'3,066'}, KEY='unboxed-calc-v1', mode='profit';
+  var $=function(id){return document.getElementById(id);};
+  function num(el){ var v=parseFloat(String(el.value).replace(/[^0-9.\-]/g,'')); return isFinite(v)?v:0; }
+  function won(n){ return Math.round(n).toLocaleString('ko-KR')+'원'; }
+  function fmtInput(el){ var raw=String(el.value).replace(/[^0-9]/g,''); el.value=raw?Number(raw).toLocaleString('ko-KR'):''; }
+
+  function calc(){
+    var cost=num($('cost')), fee=num($('fee'))/100, ship=num($('ship')), fixed=num($('fixed'));
+    var price, target=null, breakeven=null;
+    if(mode==='price'){
+      target=num($('target'));
+      breakeven=(target+fixed+cost)/(1-fee)-ship;
+      price=Math.ceil(breakeven/1000)*1000;
+      var chk=function(p){ var t=p+ship; return t-t*fee-fixed-cost; };
+      if(chk(price)<target) price+=1000;
+    } else price=num($('price'));
+    var total=price+ship, f=total*fee, profit=total-f-fixed-cost;
+    var margin=price>0?profit/price*100:0;
+
+    if(mode==='price'){
+      $('rk').textContent='판매가';
+      $('rv').textContent=won(price); $('rv').className='v';
+      $('rs').innerHTML='순수익 <b>'+won(profit)+'</b> · 올림 전 이론상 판매가 '+won(breakeven);
+    } else {
+      $('rk').textContent='순수익';
+      $('rv').textContent=won(profit); $('rv').className='v'+(profit<0?' neg':'');
+      $('rs').innerHTML='마진율 <b>'+margin.toFixed(1)+'%</b> (판매가 대비)';
+    }
+    var p=$('rp');
+    if(profit<0){ p.textContent='손해 판매'; p.className='pill bad'; }
+    else if(margin<10){ p.textContent='마진 10% 미만'; p.className='pill bad'; }
+    else { p.textContent='마진 확보'; p.className='pill good'; }
+
+    var rows=[['판매가',price],['배송비 수입','+'+won(ship)],['총결제액',total],['네이버 수수료 '+(fee*100).toFixed(2)+'%','−'+won(f)],['고정비 (박스·스티커·택배)','−'+won(fixed)],['매입가','−'+won(cost)]];
+    var bd=$('bd'); bd.innerHTML='';
+    rows.forEach(function(r){ var tr=document.createElement('tr'); var a=document.createElement('td'); a.textContent=r[0]; var b=document.createElement('td'); b.textContent=typeof r[1]==='number'?won(r[1]):r[1]; tr.appendChild(a); tr.appendChild(b); bd.appendChild(tr); });
+    var tr=document.createElement('tr'); tr.className='total'; var a=document.createElement('td'); a.textContent='순수익'; var b=document.createElement('td'); b.textContent=won(profit); tr.appendChild(a); tr.appendChild(b); bd.appendChild(tr);
+    save();
+  }
+
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify({fee:$('fee').value,ship:$('ship').value,fixed:$('fixed').value,mode:mode})); }catch(e){} }
+  function load(){ try{ var s=JSON.parse(localStorage.getItem(KEY)||'null'); if(s){ $('fee').value=s.fee||DEF.fee; $('ship').value=s.ship||DEF.ship; $('fixed').value=s.fixed||DEF.fixed; if(s.mode==='price') mode='price'; } }catch(e){} }
+
+  function setMode(m){
+    mode=m;
+    $('tabProfit').setAttribute('aria-pressed',m==='profit'); $('tabPrice').setAttribute('aria-pressed',m==='price');
+    $('priceWrap').hidden=(m==='price'); $('targetWrap').hidden=(m!=='price');
+    calc();
+  }
+
+  ['cost','price','target','ship','fixed'].forEach(function(id){ $(id).addEventListener('input',function(){ fmtInput($(id)); calc(); }); });
+  $('fee').addEventListener('input',calc);
+  ['cost','price','target','fee','ship','fixed'].forEach(function(id){ $(id).addEventListener('focus',function(){ this.select(); }); });
+  $('tabProfit').addEventListener('click',function(){ setMode('profit'); });
+  $('tabPrice').addEventListener('click',function(){ setMode('price'); });
+  $('resetSet').addEventListener('click',function(){ $('fee').value=DEF.fee; $('ship').value=DEF.ship; $('fixed').value=DEF.fixed; calc(); });
+
+  load(); setMode(mode);
+})();
+</script>
+
+</body></html>
