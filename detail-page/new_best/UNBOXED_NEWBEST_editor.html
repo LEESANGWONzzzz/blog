@@ -1,3 +1,5 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>UNBOXED NEW &amp; BEST 편집기</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
@@ -85,6 +87,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   </div>
 </div>
 
+</head><body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
 (function(){
@@ -337,8 +340,18 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     applyDownloadsAvailability();
     if(window.claude && window.claude.use){
       window.claude.use('downloads').then(function(d){ downloads=d; applyDownloadsAvailability(); }).catch(function(){});
+    } else {
+      // Opened as a file on the user's own computer: save with a normal browser download
+      downloads = {save:function(req){ return new Promise(function(res){
+        var url=URL.createObjectURL(req.data), a=document.createElement('a');
+        a.href=url; a.download=req.filename; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function(){ URL.revokeObjectURL(url); },4000); res({status:'saved'});
+      }); }};
+      applyDownloadsAvailability();
     }
   }
   start();
 })();
 </script>
+
+</body></html>
