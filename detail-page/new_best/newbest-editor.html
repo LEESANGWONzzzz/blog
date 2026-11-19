@@ -1,0 +1,344 @@
+<title>UNBOXED NEW &amp; BEST 편집기</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: editor column (left) + stacked export preview (right); export images use fixed UNBOXED brand colors */
+:root{
+  --bg:#f2f0eb; --panel:#ffffff; --fg:#1c1c1c; --muted:#6b6862; --line:#ddd8ce; --accent:#e5743a; --field:#faf9f6;
+  --ui:'Noto Sans KR',system-ui,sans-serif; --display:'Archivo Black','Noto Sans KR',sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1a1918;--panel:#242321;--fg:#f0ede7;--muted:#a8a39a;--line:#3a3834;--accent:#f0864f;--field:#2d2c29;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1a1918;--panel:#242321;--fg:#f0ede7;--muted:#a8a39a;--line:#3a3834;--accent:#f0864f;--field:#2d2c29;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--ui);font-size:14px;line-height:1.5}
+.wrap{max-width:1280px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between;margin-bottom:20px}
+.brand{font-family:var(--display);font-size:28px;letter-spacing:-.5px;line-height:1}
+.brand small{display:block;font-family:var(--ui);font-weight:500;font-size:12px;letter-spacing:4px;color:var(--muted);margin-top:6px}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:8px 14px;font-weight:700}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.grid{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:16px}
+.panel h2{margin:0;font-size:15px}
+.hint{color:var(--muted);font-size:12.5px;margin:0}
+label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:700;color:var(--muted)}
+input[type=text],textarea{font:inherit;font-weight:400;color:var(--fg);background:var(--field);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%}
+textarea{resize:vertical;min-height:58px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.card{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.card-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.card-head b{font-size:13px}
+.card-head .mini{display:flex;gap:4px}
+.mini button{padding:4px 9px;font-size:12px}
+.sliders{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.file{font-weight:400}
+.preview{display:flex;flex-direction:column;gap:18px;min-width:0}
+.stack{background:#1d1d1d;border-radius:6px;overflow:hidden;line-height:0}
+.stack img{display:block;width:100%;height:auto}
+.out{display:flex;flex-direction:column;gap:10px}
+.out-item{display:flex;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.out-item img{width:120px;height:auto;border-radius:4px;flex:none;background:#1d1d1d}
+.out-item .meta{flex:1;min-width:0;font-size:12.5px}
+.out-item .meta b{display:block;font-size:13px}
+.status{font-size:12.5px;color:var(--muted);min-height:1.2em}
+.sec-title{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.sec-title h2{margin:0;font-size:15px}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">UNBOXED<small>NEW &amp; BEST EDITOR</small></div>
+    <div class="actions">
+      <button id="addCard" type="button">+ 상품 카드 추가</button>
+      <button id="saveZip" class="primary" type="button">전체 이미지 ZIP 저장</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <div class="panel" id="editor">
+      <div>
+        <h2>헤더</h2>
+        <p class="hint">헤더 이미지 1장 + 상품 카드 이미지 여러 장 + 마무리 이미지 1장을 순서대로 붙이면 한 장처럼 이어집니다. 카드 이미지마다 상품 링크를 따로 거세요.</p>
+      </div>
+      <label for="hEyebrow">영문 라벨<input id="hEyebrow" type="text"></label>
+      <div class="row3">
+        <label for="hT1">제목 앞<input id="hT1" type="text"></label>
+        <label for="hT2">강조(주황)<input id="hT2" type="text"></label>
+        <label for="hT3">제목 뒤<input id="hT3" type="text"></label>
+      </div>
+      <label for="hSub">안내 문구<input id="hSub" type="text"></label>
+      <div class="sec-title"><h2>상품 카드</h2><span class="hint">사진은 가로 3:2 정도가 잘 맞습니다</span></div>
+      <div id="cards" style="display:flex;flex-direction:column;gap:12px"></div>
+      <p class="status" id="status" role="status"></p>
+    </div>
+
+    <div class="preview">
+      <div class="sec-title"><h2>이어 붙인 미리보기</h2><span class="hint">스마트스토어에 올렸을 때 모습</span></div>
+      <div class="stack" id="stack"></div>
+      <div class="sec-title"><h2>저장할 이미지</h2><span class="hint" id="saveHint">이미지마다 저장하거나 위의 ZIP으로 한 번에 받으세요</span></div>
+      <div class="out" id="out"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+(function(){
+  // Export colors are fixed brand values (images must look the same on any theme)
+  var C = {dark:'#1d1d1d', card:'#ffffff', ink:'#1c1c1c', sub:'#6b6862', accent:'#e5743a', rule:'#3a3a3a', muted:'#aaaaaa', stripeA:'#e6e2d9', stripeB:'#ece9e2', dash:'#c6c0b3'};
+  var W = 860, S = 2, PAD = 48;
+  var KEY = 'unboxed-newbest-v1';
+
+  var state = {
+    header:{eyebrow:'NEW & BEST', t1:'지금 가장 ', t2:'많이 찾는', t3:' 아이템', sub:'이미지를 누르면 해당 상품 페이지로 이동합니다.'},
+    cards:[
+      {sub:'크게 드러난 에어,\n오리지널 그대로의 존재감', name:'나이키 에어맥스 95 빅버블', btn:'보러가기 →'},
+      {sub:'푹신한 쿠셔닝으로\n매일 달리는 러너에게', name:'나이키 보메로 18', btn:'보러가기 →'},
+      {sub:'솜털 90% 덕다운으로\n한겨울에도 든든하게', name:'나이키 테크 버블 재킷', btn:'보러가기 →'},
+      {sub:'폴라텍 플리스로\n산에서도 도시에서도', name:'나이키 ACG 울프트리 플러스', btn:'보러가기 →'},
+      {sub:'두툼한 기모 원단,\n넉넉한 루즈핏 후드', name:'나이키 솔로 스우시 후디', btn:'보러가기 →'},
+      {sub:'가볍게 걸치는\n퀼팅 경량 패딩', name:'나이키 클럽 퀼팅 써마핏 재킷', btn:'보러가기 →'}
+    ]
+  };
+  state.cards.forEach(function(c){ c.photo=null; c.zoom=100; c.px=50; c.py=50; });
+  var imgCache = {};
+
+  function load(){
+    try{
+      var raw = localStorage.getItem(KEY);
+      if(!raw) return;
+      var s = JSON.parse(raw);
+      if(s && s.header && Array.isArray(s.cards)) state = s;
+    }catch(e){}
+  }
+  function persist(){
+    try{ localStorage.setItem(KEY, JSON.stringify(state)); }
+    catch(e){
+      try{ // photos may exceed the quota: keep text at least
+        var lite = JSON.parse(JSON.stringify(state)); lite.cards.forEach(function(c){c.photo=null;});
+        localStorage.setItem(KEY, JSON.stringify(lite));
+      }catch(e2){}
+    }
+  }
+
+  function canvas(h){ var c=document.createElement('canvas'); c.width=W*S; c.height=h*S; var x=c.getContext('2d'); x.scale(S,S); return [c,x]; }
+  function rr(x,X,Y,w,h,r){ x.beginPath(); x.moveTo(X+r,Y); x.arcTo(X+w,Y,X+w,Y+h,r); x.arcTo(X+w,Y+h,X,Y+h,r); x.arcTo(X,Y+h,X,Y,r); x.arcTo(X,Y,X+w,Y,r); x.closePath(); }
+  function fitText(x,text,max,size,weight,family){ var s=size; do{ x.font=weight+' '+s+'px '+family; s-=1; }while(x.measureText(text).width>max && s>12); return s+1; }
+
+  function drawHeader(){
+    var H = 300, r = canvas(H), c=r[0], x=r[1];
+    x.fillStyle=C.dark; x.fillRect(0,0,W,H);
+    x.fillStyle='#ffffff'; x.font='50px "Archivo Black"'; x.textBaseline='alphabetic'; x.fillText('UNBOXED',PAD,104);
+    x.fillStyle=C.muted; x.font='500 13px "Noto Sans KR"';
+    var eb=(state.header.eyebrow||'').toUpperCase().split('').join(' ');
+    x.fillText(eb,PAD,134);
+    x.textAlign='right'; x.font='700 11px "Noto Sans KR"'; x.fillText('FIND YOUR BRAND.',W-PAD,70); x.fillText('UNBOX YOUR STYLE.',W-PAD,88);
+    x.fillStyle=C.accent; x.fillRect(W-PAD-30,100,30,3); x.textAlign='left';
+    x.fillStyle=C.rule; x.fillRect(PAD,158,W-PAD*2,3);
+    var h=state.header, fam='"Noto Sans KR"';
+    x.font='900 34px '+fam; var w1=x.measureText(h.t1).width, w2=x.measureText(h.t2).width;
+    x.fillStyle='#ffffff'; x.fillText(h.t1,PAD,215); x.fillStyle=C.accent; x.fillText(h.t2,PAD+w1,215); x.fillStyle='#ffffff'; x.fillText(h.t3,PAD+w1+w2,215);
+    x.fillStyle=C.accent; x.fillRect(PAD,232,34,4);
+    x.fillStyle=C.muted; x.font='400 17px '+fam; x.fillText(h.sub,PAD,272);
+    return c;
+  }
+
+  function drawPhoto(x,card,X,Y,w,h){
+    x.save(); rr(x,X,Y,w,h,0); x.clip();
+    var im = card.photo ? imgCache[card.photo] : null;
+    if(im && im.complete && im.naturalWidth){
+      var z=card.zoom/100, sc=Math.max(w/im.naturalWidth,h/im.naturalHeight)*z;
+      var dw=im.naturalWidth*sc, dh=im.naturalHeight*sc;
+      var dx=X+(w-dw)*(card.px/100), dy=Y+(h-dh)*(card.py/100);
+      x.fillStyle='#ffffff'; x.fillRect(X,Y,w,h); x.drawImage(im,dx,dy,dw,dh);
+    } else {
+      x.fillStyle=C.stripeB; x.fillRect(X,Y,w,h);
+      x.strokeStyle=C.stripeA; x.lineWidth=10;
+      for(var i=-h;i<w+h;i+=20){ x.beginPath(); x.moveTo(X+i,Y+h); x.lineTo(X+i+h,Y); x.stroke(); }
+      x.fillStyle='#8f897c'; x.font='700 15px "Noto Sans KR"'; x.textAlign='center'; x.fillText('상품 사진',X+w/2,Y+h/2+5); x.textAlign='left';
+    }
+    x.restore();
+    x.strokeStyle=C.dash; x.setLineDash([6,5]); x.lineWidth=2; x.beginPath(); x.moveTo(X,Y); x.lineTo(X,Y+h); x.stroke(); x.setLineDash([]);
+  }
+
+  function drawCard(card){
+    var CH=190, GAP=14, H=CH+GAP, r=canvas(H), c=r[0], x=r[1];
+    x.fillStyle=C.dark; x.fillRect(0,0,W,H);
+    var X=PAD, Y=0, Wc=W-PAD*2, PW=300;
+    x.save(); rr(x,X,Y,Wc,CH,12); x.clip();
+    x.fillStyle=C.card; x.fillRect(X,Y,Wc,CH);
+    drawPhoto(x,card,X+Wc-PW,Y,PW,CH);
+    x.restore();
+    var tx=X+28, maxW=Wc-PW-56;
+    x.fillStyle=C.sub; x.font='italic 400 15px "Noto Sans KR"';
+    (card.sub||'').split('\n').slice(0,2).forEach(function(line,i){ x.fillText(line,tx,Y+46+i*23); });
+    var btn=card.btn||'', bw=0;
+    if(btn){ x.font='700 13px "Noto Sans KR"'; bw=x.measureText(btn).width+32; }
+    var nameMax=maxW-(bw?bw+14:0);
+    var fs=fitText(x,card.name||'',nameMax,24,900,'"Noto Sans KR"');
+    x.fillStyle=C.ink; x.font='900 '+fs+'px "Noto Sans KR"'; x.fillText(card.name||'',tx,Y+CH-30);
+    if(btn){ var bx=X+Wc-PW-28-bw, by=Y+CH-56; x.fillStyle=C.ink; rr(x,bx,by,bw,34,6); x.fill(); x.fillStyle='#ffffff'; x.font='700 13px "Noto Sans KR"'; x.fillText(btn,bx+16,by+22); }
+    return c;
+  }
+
+  function drawFooter(){
+    var H=96, r=canvas(H), c=r[0], x=r[1];
+    x.fillStyle=C.dark; x.fillRect(0,0,W,H);
+    x.fillStyle=C.rule; x.fillRect(PAD,26,W-PAD*2,3);
+    x.fillStyle='#ffffff'; x.font='700 13px "Noto Sans KR"'; x.fillText('UNBOX YOUR STYLE.',PAD,66);
+    x.fillStyle=C.muted; x.textAlign='right'; x.font='400 13px "Noto Sans KR"'; x.fillText('UNBOXED · NEW & BEST',W-PAD,66); x.textAlign='left';
+    return c;
+  }
+
+  var outputs = [];
+  function render(){
+    outputs = [{name:'newbest_00_header.png', label:'헤더', canvas:drawHeader()}];
+    state.cards.forEach(function(card,i){
+      var n=String(i+1).padStart(2,'0');
+      outputs.push({name:'newbest_'+n+'_card.png', label:'카드 '+(i+1)+' · '+(card.name||'(이름 없음)'), canvas:drawCard(card)});
+    });
+    outputs.push({name:'newbest_99_footer.png', label:'마무리', canvas:drawFooter()});
+    var stack=document.getElementById('stack'), out=document.getElementById('out');
+    stack.innerHTML=''; out.innerHTML='';
+    outputs.forEach(function(o,idx){
+      var url=o.canvas.toDataURL('image/png');
+      var im=new Image(); im.src=url; im.alt=o.label; stack.appendChild(im);
+      var row=document.createElement('div'); row.className='out-item';
+      var th=new Image(); th.src=url; th.alt=o.label;
+      var meta=document.createElement('div'); meta.className='meta';
+      var b=document.createElement('b'); b.textContent=(idx+1)+'. '+o.label;
+      var sp=document.createElement('span'); sp.textContent=o.name+' · '+(W*S)+'×'+o.canvas.height+'px';
+      meta.appendChild(b); meta.appendChild(sp);
+      var bt=document.createElement('button'); bt.type='button'; bt.textContent='저장';
+      bt.addEventListener('click',function(){ saveOne(o); });
+      bt.className='save-btn';
+      row.appendChild(th); row.appendChild(meta); row.appendChild(bt); out.appendChild(row);
+    });
+    applyDownloadsAvailability();
+  }
+
+  var renderTimer=null;
+  function schedule(){ persist(); clearTimeout(renderTimer); renderTimer=setTimeout(render,120); }
+
+  function bindHeader(){
+    [['hEyebrow','eyebrow'],['hT1','t1'],['hT2','t2'],['hT3','t3'],['hSub','sub']].forEach(function(p){
+      var el=document.getElementById(p[0]); el.value=state.header[p[1]]||'';
+      el.addEventListener('input',function(){ state.header[p[1]]=el.value; schedule(); });
+    });
+  }
+
+  function cardEditor(card,i){
+    var box=document.createElement('div'); box.className='card';
+    var head=document.createElement('div'); head.className='card-head';
+    var t=document.createElement('b'); t.textContent='카드 '+(i+1);
+    var mini=document.createElement('div'); mini.className='mini';
+    [['↑','위로',function(){ if(i>0){ var a=state.cards; a.splice(i-1,0,a.splice(i,1)[0]); rebuild(); } }],
+     ['↓','아래로',function(){ var a=state.cards; if(i<a.length-1){ a.splice(i+1,0,a.splice(i,1)[0]); rebuild(); } }],
+     ['삭제','카드 삭제',function(){ state.cards.splice(i,1); rebuild(); }]].forEach(function(m){
+      var b=document.createElement('button'); b.type='button'; b.textContent=m[0]; b.setAttribute('aria-label','카드 '+(i+1)+' '+m[1]); b.addEventListener('click',m[2]); mini.appendChild(b);
+    });
+    head.appendChild(t); head.appendChild(mini); box.appendChild(head);
+
+    function field(label,key,multi){
+      var id='c'+i+'_'+key, l=document.createElement('label'); l.htmlFor=id; l.textContent=label;
+      var el=document.createElement(multi?'textarea':'input'); if(!multi) el.type='text'; el.id=id; el.value=card[key]||'';
+      el.addEventListener('input',function(){ card[key]=el.value; schedule(); });
+      l.appendChild(el); box.appendChild(l);
+    }
+    field('한 줄 문구 (줄바꿈으로 2줄)','sub',true);
+    field('상품명','name',false);
+    field('버튼 문구 (비우면 버튼 없음)','btn',false);
+
+    var fl=document.createElement('label'); fl.htmlFor='c'+i+'_file'; fl.textContent='상품 사진';
+    var fi=document.createElement('input'); fi.type='file'; fi.accept='image/*'; fi.id='c'+i+'_file'; fi.className='file';
+    fi.addEventListener('change',function(){
+      var f=fi.files&&fi.files[0]; if(!f) return;
+      var rd=new FileReader();
+      rd.onload=function(){
+        var src=String(rd.result), im=new Image();
+        im.onload=function(){ imgCache[src]=im; card.photo=src; card.zoom=100; card.px=50; card.py=50; rebuild(); };
+        im.onerror=function(){ setStatus('이 파일은 이미지로 읽을 수 없습니다. JPG나 PNG로 다시 올려 주세요.'); };
+        im.src=src;
+      };
+      rd.readAsDataURL(f);
+    });
+    fl.appendChild(fi); box.appendChild(fl);
+
+    var sl=document.createElement('div'); sl.className='sliders';
+    [['zoom','확대',100,250],['px','좌우 위치',0,100],['py','상하 위치',0,100]].forEach(function(s){
+      var id='c'+i+'_'+s[0], l=document.createElement('label'); l.htmlFor=id; l.textContent=s[1];
+      var r=document.createElement('input'); r.type='range'; r.id=id; r.min=s[2]; r.max=s[3]; r.value=card[s[0]];
+      r.addEventListener('input',function(){ card[s[0]]=Number(r.value); schedule(); });
+      l.appendChild(r); sl.appendChild(l);
+    });
+    box.appendChild(sl);
+    if(card.photo){
+      var clr=document.createElement('button'); clr.type='button'; clr.textContent='사진 지우기';
+      clr.addEventListener('click',function(){ card.photo=null; rebuild(); });
+      box.appendChild(clr);
+    }
+    return box;
+  }
+
+  function rebuild(){
+    var wrap=document.getElementById('cards'); wrap.innerHTML='';
+    state.cards.forEach(function(c,i){ wrap.appendChild(cardEditor(c,i)); });
+    schedule();
+  }
+
+  function setStatus(t){ document.getElementById('status').textContent=t; }
+
+  function blobOf(cv){ return new Promise(function(res){ cv.toBlob(res,'image/png'); }); }
+  var downloads = null;
+  function applyDownloadsAvailability(){
+    var on=!!downloads;
+    document.querySelectorAll('.save-btn').forEach(function(b){ b.hidden=!on; });
+    document.getElementById('saveZip').hidden=!on;
+    document.getElementById('saveHint').textContent = on ? '이미지마다 저장하거나 위의 ZIP으로 한 번에 받으세요' : '미리보기 이미지를 길게 누르거나 오른쪽 클릭해서 저장하세요';
+  }
+  function explain(e){
+    var code=e&&e.code;
+    if(code==='declined') return '저장을 취소했습니다.';
+    if(code==='rate_limited') return '저장 창이 이미 열려 있습니다. 잠시 후 다시 눌러 주세요.';
+    return '이 화면에서는 저장할 수 없습니다. 미리보기 이미지를 오른쪽 클릭해서 저장하세요.';
+  }
+  function saveOne(o){
+    if(!downloads) return;
+    blobOf(o.canvas).then(function(b){ return downloads.save({filename:o.name,data:b}); })
+      .then(function(){ setStatus(o.name+' 저장을 요청했습니다.'); })
+      .catch(function(e){ setStatus(explain(e)); });
+  }
+  document.getElementById('saveZip').addEventListener('click',function(){
+    if(!downloads||typeof JSZip==='undefined'){ setStatus('ZIP을 만들 수 없습니다. 이미지를 하나씩 저장해 주세요.'); return; }
+    var zip=new JSZip();
+    Promise.all(outputs.map(function(o){ return blobOf(o.canvas).then(function(b){ zip.file(o.name,b); }); }))
+      .then(function(){ return zip.generateAsync({type:'blob'}); })
+      .then(function(b){ return downloads.save({filename:'unboxed_new_best.zip',data:b}); })
+      .then(function(){ setStatus('ZIP 저장을 요청했습니다. 파일 이름 순서대로 올리면 됩니다.'); })
+      .catch(function(e){ setStatus(explain(e)); });
+  });
+  document.getElementById('addCard').addEventListener('click',function(){
+    state.cards.push({sub:'한 줄 문구를\n두 줄로 적어 주세요', name:'나이키 상품명', btn:'보러가기 →', photo:null, zoom:100, px:50, py:50});
+    rebuild();
+  });
+
+  function start(){
+    load();
+    state.cards.forEach(function(c){
+      if(c.photo){ var im=new Image(); im.onload=function(){ imgCache[c.photo]=im; schedule(); }; im.src=c.photo; }
+    });
+    bindHeader(); rebuild();
+    var fonts=['50px "Archivo Black"','900 34px "Noto Sans KR"','700 13px "Noto Sans KR"','400 17px "Noto Sans KR"','italic 400 15px "Noto Sans KR"'];
+    Promise.all(fonts.map(function(f){ return document.fonts.load(f).catch(function(){}); })).then(function(){ render(); });
+    applyDownloadsAvailability();
+    if(window.claude && window.claude.use){
+      window.claude.use('downloads').then(function(d){ downloads=d; applyDownloadsAvailability(); }).catch(function(){});
+    }
+  }
+  start();
+})();
+</script>
