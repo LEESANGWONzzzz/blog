@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f0eb;--ink:#1c1c1c;--sub:#6b6862;--line:#d9d5cc;--or:#e5743a;--card:#fff;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#999;font-family:'Noto Sans KR',sans-serif;color:var(--ink)}
+section{width:860px;background:var(--bg);margin-bottom:30px;position:relative;padding:56px 48px}
+.head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid var(--line);padding-bottom:22px;margin-bottom:34px}
+.wm{font-family:'Archivo Black',sans-serif;font-size:50px;letter-spacing:-1px;line-height:1}
+.wm small{display:block;font-family:'Noto Sans KR';font-size:13px;letter-spacing:5px;color:var(--sub);margin-top:10px;font-weight:500}
+.tag{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--sub);text-align:right;line-height:1.6}
+.tag:after{content:'';display:block;width:30px;height:3px;background:var(--or);margin:12px 0 0 auto}
+.foot{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);margin-top:40px;border-top:3px solid var(--line);padding-top:22px}
+.foot b{color:var(--ink);letter-spacing:1px}
+h2{font-size:34px;font-weight:900;letter-spacing:-.5px}
+h2 em{font-style:normal;color:var(--or)}
+.bar{width:34px;height:4px;background:var(--or);margin:14px 0 22px}
+.lead{font-size:17px;color:var(--sub);line-height:1.6}
+.slot{background:repeating-linear-gradient(45deg,#e6e2d9,#e6e2d9 10px,#ece9e2 10px,#ece9e2 20px);border:2px dashed #c6c0b3;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#8f897c;font-size:15px;font-weight:700;text-align:center;line-height:1.5}
+.slot small{font-weight:400;font-size:12px}
+/* collection */
+.ccard{display:flex;background:var(--card);border-radius:14px;box-shadow:0 3px 10px rgba(0,0,0,.07);margin-bottom:16px;overflow:hidden;height:170px}
+.ccard .t{flex:1;padding:24px 28px;display:flex;flex-direction:column;justify-content:center}
+.pill{display:inline-block;align-self:flex-start;background:var(--ink);color:#fff;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;margin-bottom:16px}
+.ccard .s{font-size:15px;color:var(--sub)}
+.ccard .n{font-size:28px;font-weight:900;margin-top:4px;letter-spacing:-.5px}
+.ccard .n em{font-style:normal;color:var(--or)}
+.ccard .slot{width:330px;border:none;border-left:2px dashed #c6c0b3}
+/* checks */
+.check{display:flex;gap:22px;align-items:center;background:var(--card);border-radius:14px;padding:26px 30px;margin-bottom:16px;box-shadow:0 3px 10px rgba(0,0,0,.07)}
+.num{font-family:'Archivo Black';font-size:15px;color:var(--or);width:86px;flex:none}
+.num b{display:block;font-size:40px;color:var(--ink);line-height:1}
+.check h3{font-size:23px;font-weight:900}
+.check p{font-size:15px;color:var(--sub);margin-top:6px;line-height:1.6}
+/* process */
+.steps{display:flex;justify-content:space-between;align-items:flex-start;margin:10px 0 34px}
+.step{width:128px;text-align:center}
+.ic{width:92px;height:92px;border-radius:50%;background:var(--card);box-shadow:0 3px 10px rgba(0,0,0,.08);margin:0 auto 14px;display:flex;align-items:center;justify-content:center}
+.ic svg{width:40px;height:40px;stroke:var(--ink);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.step b{display:block;font-size:16px}
+.step span{display:block;font-size:12.5px;color:var(--sub);margin-top:5px;line-height:1.45}
+.arrow{color:var(--or);font-size:24px;font-weight:900;margin-top:32px}
+.rule{background:var(--ink);color:#fff;border-radius:14px;padding:26px 30px}
+.rule h4{font-size:18px;margin-bottom:12px}
+.rule h4 i{font-style:normal;color:var(--or)}
+.rule li{list-style:none;font-size:15px;line-height:1.9;padding-left:16px;position:relative;color:#e9e6df}
+.rule li:before{content:'';position:absolute;left:0;top:12px;width:6px;height:6px;border-radius:50%;background:var(--or)}
+/* cs */
+.cs{text-align:center;background:var(--card);border-radius:16px;padding:44px 30px;box-shadow:0 3px 10px rgba(0,0,0,.07)}
+.cs .ic{width:110px;height:110px}
+.btn{display:inline-block;background:#03c75a;color:#fff;font-weight:900;font-size:20px;padding:16px 40px;border-radius:40px;margin-top:22px}
+.cs p{font-size:16px;color:var(--sub);line-height:1.7;margin-top:14px}
+/* product */
+.ptitle{text-align:center;padding-bottom:10px}
+.ptitle .br{font-family:'Archivo Black';font-size:15px;letter-spacing:4px;color:var(--or)}
+.ptitle h1{font-size:40px;font-weight:900;margin-top:10px;letter-spacing:-1px}
+.ptitle .code{display:inline-block;margin-top:14px;background:var(--ink);color:#fff;font-family:'Archivo Black';font-size:18px;letter-spacing:1px;padding:7px 18px;border-radius:6px}
+.dc{display:flex;align-items:center;gap:16px;margin:44px 0 18px;font-family:'Archivo Black';font-size:24px}
+.dc:after{content:'';flex:1;height:2px;background:var(--ink)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid .slot{height:360px}
+.note{font-size:13px;color:var(--sub);margin-top:12px;line-height:1.6}
+.hl{font-size:30px;font-weight:900;margin-top:50px;letter-spacing:-.5px}
+.desc{font-size:17px;line-height:1.85;color:#3d3b37;margin-top:16px}
+.ck{margin-top:26px}
+.ck li{list-style:none;font-size:17px;padding:10px 0 10px 36px;position:relative;border-bottom:1px solid var(--line)}
+.ck li:before{content:'✓';position:absolute;left:4px;top:8px;color:var(--or);font-weight:900;font-size:19px}
+.spec{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:40px}
+.spec div{background:var(--card);text-align:center;padding:20px 10px}
+.spec small{display:block;font-size:12px;letter-spacing:3px;color:var(--sub);font-weight:700}
+.spec b{display:block;font-size:20px;margin-top:8px}
+/* new best */
+.dark{background:#1d1d1d;color:#fff}
+.dark .head{border-color:#3a3a3a}.dark .wm small,.dark .tag{color:#aaa}
+.dark .foot{border-color:#3a3a3a}.dark .foot b{color:#fff}
+.nb{display:flex;background:#fff;color:var(--ink);border-radius:12px;margin-bottom:14px;overflow:hidden;height:190px}
+.nb .t{flex:1;padding:26px 28px;display:flex;flex-direction:column;justify-content:space-between}
+.nb .s{font-size:15px;font-style:italic;color:var(--sub);line-height:1.5}
+.nb .row{display:flex;justify-content:space-between;align-items:flex-end}
+.nb .n{font-size:24px;font-weight:900;letter-spacing:-.5px}
+.go{background:var(--ink);color:#fff;font-size:13px;font-weight:700;padding:8px 16px;border-radius:6px;white-space:nowrap}
+.nb .slot{width:300px;border:none;border-left:2px dashed #c6c0b3}
+</style></head><body>
+
+<!-- 1. COLLECTION -->
+<section id="b1">
+ <div class="head"><div class="wm">UNBOXED<small>THE COLLECTION</small></div><div class="tag">FIND YOUR BRAND.<br>UNBOX YOUR STYLE.</div></div>
+ <h2>한눈에 보는 <em>UNBOXED</em> 컬렉션</h2><div class="bar"></div>
+ <p class="lead" style="margin-bottom:30px">이미지를 누르면 해당 카테고리 상품으로 이동합니다.</p>
+ <div class="ccard"><div class="t"><span class="pill">보기 &gt;&gt;</span><div class="s">드러난 에어, 변하지 않는 존재감</div><div class="n">나이키 <em>에어맥스</em> 모음</div></div><div class="slot">사진 01<small>에어맥스 착용컷 + 제품컷</small></div></div>
+ <div class="ccard"><div class="t"><span class="pill">보기 &gt;&gt;</span><div class="s">입문부터 레이스까지</div><div class="n">나이키 <em>러닝화</em> 모음</div></div><div class="slot">사진 02<small>러닝화 착용컷 + 제품컷</small></div></div>
+ <div class="ccard"><div class="t"><span class="pill">보기 &gt;&gt;</span><div class="s">출근부터 주말까지</div><div class="n">나이키 <em>데일리 스니커즈</em></div></div><div class="slot">사진 03<small>스니커즈 착용컷 + 제품컷</small></div></div>
+ <div class="ccard"><div class="t"><span class="pill">보기 &gt;&gt;</span><div class="s">산에서도 도시에서도</div><div class="n">나이키 <em>ACG</em> 모음</div></div><div class="slot">사진 04<small>ACG 아웃도어 착용컷</small></div></div>
+ <div class="ccard"><div class="t"><span class="pill">보기 &gt;&gt;</span><div class="s">한겨울 든든한 아우터</div><div class="n">나이키 <em>겨울 패딩</em> 모음</div></div><div class="slot">사진 05<small>패딩 착용컷</small></div></div>
+ <div class="ccard"><div class="t"><span class="pill">보기 &gt;&gt;</span><div class="s">매일 손이 가는 기본템</div><div class="n">나이키 <em>후드·플리스</em> 모음</div></div><div class="slot">사진 06<small>후드티 착용컷</small></div></div>
+ <div class="ccard"><div class="t"><span class="pill">보기 &gt;&gt;</span><div class="s">천연잔디부터 실내 코트까지</div><div class="n">나이키 <em>축구화·풋살화</em></div></div><div class="slot">사진 07<small>축구화 제품컷</small></div></div>
+</section>
+
+<!-- 2. WHY UNBOXED -->
+<section id="b2">
+ <div class="head"><div class="wm">UNBOXED<small>WHY UNBOXED</small></div><div class="tag">FIND YOUR BRAND.<br>UNBOX YOUR STYLE.</div></div>
+ <h2>믿고 사는 <em>3가지 이유</em></h2><div class="bar"></div>
+ <div class="check"><div class="num">CHECK<b>01</b></div><div><h3>국내 매장판 정품</h3><p>나이키 국내 공식 매장에서 직접 구매한 정품만 판매합니다.</p></div></div>
+ <div class="check"><div class="num">CHECK<b>02</b></div><div><h3>오후 3시 이전 결제 시 당일 발송</h3><p>한진택배로 보내드리며, 오후 3시 이후 결제 건은 다음 날 발송됩니다.</p></div></div>
+ <div class="check"><div class="num">CHECK<b>03</b></div><div><h3>7일 이내 교환·반품 접수</h3><p>상품 수령 후 7일 이내 네이버 주문내역에서 신청하실 수 있습니다.</p></div></div>
+</section>
+
+<!-- 3. SHIPPING PROCESS -->
+<section id="b3">
+ <div class="head"><div class="wm">UNBOXED<small>SHIPPING PROCESS</small></div><div class="tag">FIND YOUR BRAND.<br>UNBOX YOUR STYLE.</div></div>
+ <h2>주문 전 <em>꼭 확인</em>해 주세요</h2><div class="bar"></div>
+ <div class="steps">
+  <div class="step"><div class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></div><b>주문 확인</b><span>결제 완료 확인</span></div>
+  <div class="arrow">›</div>
+  <div class="step"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg></div><b>상품 검수</b><span>택·상태 확인</span></div>
+  <div class="arrow">›</div>
+  <div class="step"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></div><b>포장</b><span>박스 보호 포장</span></div>
+  <div class="arrow">›</div>
+  <div class="step"><div class="ic"><svg viewBox="0 0 24 24"><path d="M2 7h11v9H2zM13 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg></div><b>한진택배 발송</b><span>오후 3시 이전<br>결제 시 당일</span></div>
+  <div class="arrow">›</div>
+  <div class="step"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9H3z"/><path d="M9 20v-6h6v6"/></svg></div><b>배송 완료</b><span>수령 후 7일 이내<br>교환·반품 접수</span></div>
+ </div>
+ <div class="rule"><h4>발송 안내 <i>·</i> 배송비 3,500원</h4><ul>
+  <li>오후 3시 이전 결제 완료: 당일 발송</li>
+  <li>오후 3시 이후 결제 완료: 다음 날 발송</li>
+  <li>주말·공휴일 및 택배사 사정에 따라 발송 일정이 달라질 수 있습니다.</li>
+  <li>배송 준비가 시작되면 주문 취소가 제한될 수 있습니다.</li>
+ </ul></div>
+</section>
+
+<!-- 4. CS -->
+<section id="b4">
+ <div class="head"><div class="wm">UNBOXED<small>CUSTOMER SERVICE</small></div><div class="tag">FIND YOUR BRAND.<br>UNBOX YOUR STYLE.</div></div>
+ <div class="cs">
+  <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2.5" y="13" width="4" height="6" rx="1.5"/><rect x="17.5" y="13" width="4" height="6" rx="1.5"/><path d="M19.5 19c0 1.5-2 2.5-5 2.5"/></svg></div>
+  <h2 style="margin-top:6px">궁금한 점은 <em>톡톡</em>으로 물어보세요</h2>
+  <p>상품·사이즈·주문·배송·교환·반품 문의를 받고 있습니다.<br>남겨주신 메시지는 순서대로 빠르게 답변드립니다.</p>
+  <div class="btn">네이버 톡톡 문의하기</div>
+  <p style="font-size:13px">이미지를 누르면 톡톡으로 연결됩니다.</p>
+ </div>
+</section>
+
+<!-- 5. PRODUCT BLOCK EXAMPLE -->
+<section id="b5">
+ <div class="ptitle"><div class="br">NIKE</div><h1>클럽 퓨추라 남성 재킷</h1><div class="code">FZ0657-010</div></div>
+ <div class="dc">Detail Cut</div>
+ <div class="grid">
+  <div class="slot">사진 ① 앞면 전체<small>직접 촬영</small></div>
+  <div class="slot">사진 ② 지퍼·스냅 단추<small>직접 촬영</small></div>
+  <div class="slot">사진 ③ 퓨추라 로고 자수<small>직접 촬영</small></div>
+  <div class="slot">사진 ④ 택 라벨<small>스타일 코드·사이즈·제조국 보이게</small></div>
+ </div>
+ <p class="note">*본 상품 이미지는 촬영 환경(조명, 카메라) 및 사용하시는 모니터·스마트폰 해상도에 따라 실제 색상과 다소 차이가 있을 수 있습니다.</p>
+ <div class="hl">깔끔한 스탠드 카라, 데일리로 입는 클럽 재킷</div>
+ <p class="desc">목까지 올라오는 스탠드 카라와 스냅 단추 스톰 플랩으로 바람을 막아주는 재킷입니다. 면과 나일론을 섞은 탄탄한 원단에 왼쪽 가슴의 퓨추라 로고 자수로 깔끔하게 마무리했습니다.</p>
+ <ul class="ck">
+  <li>스탠드 카라로 목까지 따뜻하게</li>
+  <li>스냅 단추 스톰 플랩으로 바람 차단</li>
+  <li>면 60%·나일론 40% 혼방 겉감</li>
+  <li>폴리에스터 100% 안감</li>
+  <li>밑단 일부 밴딩으로 깔끔한 핏</li>
+  <li>왼쪽 가슴 나이키 퓨추라 로고 자수</li>
+ </ul>
+ <div class="spec"><div><small>BRAND</small><b>Nike</b></div><div><small>STYLE</small><b>FZ0657-010</b></div><div><small>COLOR</small><b>블랙</b></div><div><small>MADE IN</small><b>베트남</b></div></div>
+</section>
+
+<!-- 6. NEW & BEST -->
+<section id="b6" class="dark">
+ <div class="head"><div class="wm">UNBOXED<small>NEW &amp; BEST</small></div><div class="tag">FIND YOUR BRAND.<br>UNBOX YOUR STYLE.</div></div>
+ <h2 style="color:#fff">지금 가장 <em>많이 찾는</em> 아이템</h2><div class="bar"></div>
+ <p class="lead" style="margin-bottom:30px;color:#aaa">이미지를 누르면 해당 상품 페이지로 이동합니다.</p>
+ <div class="nb"><div class="t"><div class="s">크게 드러난 에어,<br>오리지널 그대로의 존재감</div><div class="row"><div class="n">나이키 에어맥스 95 빅버블</div><span class="go">보러가기 →</span></div></div><div class="slot">상품 사진 01</div></div>
+ <div class="nb"><div class="t"><div class="s">푹신한 쿠셔닝으로<br>매일 달리는 러너에게</div><div class="row"><div class="n">나이키 보메로 18</div><span class="go">보러가기 →</span></div></div><div class="slot">상품 사진 02</div></div>
+ <div class="nb"><div class="t"><div class="s">솜털 90% 덕다운으로<br>한겨울에도 든든하게</div><div class="row"><div class="n">나이키 테크 버블 재킷</div><span class="go">보러가기 →</span></div></div><div class="slot">상품 사진 03</div></div>
+ <div class="nb"><div class="t"><div class="s">폴라텍 플리스로<br>산에서도 도시에서도</div><div class="row"><div class="n">나이키 ACG 울프트리 플러스</div><span class="go">보러가기 →</span></div></div><div class="slot">상품 사진 04</div></div>
+ <div class="nb"><div class="t"><div class="s">두툼한 기모 원단,<br>넉넉한 루즈핏 후드</div><div class="row"><div class="n">나이키 솔로 스우시 후디</div><span class="go">보러가기 →</span></div></div><div class="slot">상품 사진 05</div></div>
+ <div class="nb"><div class="t"><div class="s">가볍게 걸치는<br>퀼팅 경량 패딩</div><div class="row"><div class="n">나이키 클럽 퀼팅 써마핏 재킷</div><span class="go">보러가기 →</span></div></div><div class="slot">상품 사진 06</div></div>
+</section>
+</body></html>
