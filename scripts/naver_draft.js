@@ -108,8 +108,10 @@ async function tryFirst(scope, candidates, timeout = 1500) {
 }
 
 // "작성 중인 글이 있습니다" 팝업과 도움말 패널이 보이면 취소/닫기
-async function dismissPopups(frame) {
+async function dismissPopups(frame, waitMs = 0) {
   const popup = frame.getByText(SEL.draftPopupText);
+  // 에디터를 막 연 직후에는 팝업이 늦게 뜬다 (2026-11-16 제목 클릭이 팝업에 막힘) — 잠깐 기다려 본다
+  if (waitMs > 0) await popup.first().waitFor({ state: 'visible', timeout: waitMs }).catch(() => {});
   if ((await popup.count()) > 0 && (await popup.first().isVisible())) {
     const cancel = await tryFirst(frame, SEL.draftPopupCancel);
     if (cancel) {
@@ -437,7 +439,7 @@ async function main() {
     const frame = await getEditorFrame(page);
     await first(frame, SEL.title, { timeout: 30000 });
     await assertGuard(frame, 'editor');
-    await dismissPopups(frame);
+    await dismissPopups(frame, 4000);
     mark(draftFile, status, 'open_editor', true);
 
     // 3. 제목
