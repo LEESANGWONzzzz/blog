@@ -12,6 +12,7 @@ import json
 import math
 import mimetypes
 import os
+import re
 import sys
 import time
 from datetime import datetime
@@ -186,7 +187,45 @@ def net_profit(price, cost):
 
 
 # ---------- 요청 만들기 ----------
-def detail_html(p):
+TOP_FILE = os.path.join(HERE, "상세_상단.html")
+BOTTOM_FILE = os.path.join(HERE, "상세_하단.html")
+MARK_TOP = "<!--UNBOXED-COMMON-TOP-->"
+MARK_BOTTOM = "<!--UNBOXED-COMMON-BOTTOM-->"
+
+
+def read_text(path):
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as fh:
+            return fh.read().strip()
+    return ""
+
+
+def already_wrapped(body):
+    """표시 주석이 있거나(네이버가 주석을 지워도) 공통 블록의 이미지 주소가 이미 들어 있으면 True."""
+    if MARK_TOP in body or MARK_BOTTOM in body:
+        return True
+    for tpl in (read_text(TOP_FILE), read_text(BOTTOM_FILE)):
+        for url in re.findall(r'src="([^"]+)"', tpl)[:3]:
+            if url in body:
+                return True
+    return False
+
+
+def wrap_common(body):
+    """공통 블록(브랜드 배너·NEW & BEST·톡톡·고객 가이드 등)을 상품 설명 위아래에 붙인다."""
+    if already_wrapped(body):  # 이미 감싼 상세는 다시 감싸지 않는다
+        return body
+    top, bottom = read_text(TOP_FILE), read_text(BOTTOM_FILE)
+    parts = []
+    if top:
+        parts += [MARK_TOP, top]
+    parts.append(body)
+    if bottom:
+        parts += [MARK_BOTTOM, bottom]
+    return "\n".join(parts)
+
+
+def product_block_html(p):
     f = str(p["상세HTML파일"]).strip()
     if f:
         path = f if os.path.isabs(f) else os.path.join(HERE, f)
@@ -196,6 +235,10 @@ def detail_html(p):
     esc = lambda s: s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
     body = "".join(f"<p>{esc(ln)}</p>" if ln.strip() else "<p>&nbsp;</p>" for ln in lines)
     return f'<div style="text-align:center;line-height:1.8;font-size:15px">{body}</div>'
+
+
+def detail_html(p):
+    return wrap_common(product_block_html(p))
 
 
 def notice(cfg, p):
@@ -398,6 +441,57 @@ def run(cfg, send):
     print(f"\n결과 파일: {log_path}")
 
 
+# ---------- 이미 등록된 상품 ----------
+def get_channel_product(cfg, no):
+    r = requests.get(f"{BASE}/v2/products/channel-products/{no}", headers=headers(cfg), timeout=60)
+    if r.status_code != 200:
+        explain_error(r)
+        raise SystemExit(f"상품 {no} 를 가져오지 못했습니다.")
+    return r.json()
+
+
+def fetch_detail(cfg, no):
+    data = get_channel_product(cfg, no)
+    html = data["originProduct"].get("detailContent", "")
+    os.makedirs(OUT_DIR, exist_ok=True)
+    path = os.path.join(OUT_DIR, f"상세_{no}.html")
+    with open(path, "w", encoding="utf-8") as fh:
+        fh.write(html)
+    print(f"상품 {no} 의 상세 HTML 저장: {path} ({len(html):,}자)")
+    print("→ 이 파일에서 공통 블록 윗부분을 상세_상단.html, 아랫부분을 상세_하단.html 로 저장하세요.")
+
+
+def fix_detail(cfg, nos, send):
+    if not read_text(TOP_FILE) and not read_text(BOTTOM_FILE):
+        raise SystemExit("상세_상단.html / 상세_하단.html 이 비어 있습니다. 먼저 fetch-detail 로 공통 블록을 만들어 주세요.")
+    os.makedirs(OUT_DIR, exist_ok=True)
+    for no in nos:
+        data = get_channel_product(cfg, no)
+        cur = data["originProduct"].get("detailContent", "")
+        if already_wrapped(cur):
+            print(f"{no}: 이미 공통 블록이 들어 있습니다. 건너뜁니다.")
+            continue
+        new = wrap_common(cur)
+        with open(os.path.join(OUT_DIR, f"수정전_{no}.html"), "w", encoding="utf-8") as fh:
+            fh.write(cur)
+        with open(os.path.join(OUT_DIR, f"수정후_{no}.html"), "w", encoding="utf-8") as fh:
+            fh.write(new)
+        if not send:
+            print(f"{no}: 미리보기 저장 (결과 폴더 수정전/수정후 HTML). 상세 {len(cur):,}자 → {len(new):,}자")
+            continue
+        data["originProduct"]["detailContent"] = new
+        body = {"originProduct": data["originProduct"], "smartstoreChannelProduct": data.get("smartstoreChannelProduct", {})}
+        r = requests.put(f"{BASE}/v2/products/channel-products/{no}",
+                         headers={**headers(cfg), "Content-Type": "application/json"},
+                         data=json.dumps(body, ensure_ascii=False).encode("utf-8"), timeout=120)
+        if r.status_code in (200, 201):
+            print(f"{no}: 상세페이지 수정 완료")
+        else:
+            explain_error(r)
+            print(f"{no}: 수정 실패")
+        time.sleep(1)
+
+
 def check_pc(cfg):
     """새 컴퓨터에서 준비가 됐는지 한 번에 점검한다."""
     print("\n[환경 점검]")
@@ -478,6 +572,7 @@ def main():
 def cli(args):
     """Claude Code 같은 도우미가 메뉴 없이 실행할 때 쓰는 명령.
     python unboxed_uploader.py check | preview | category 단어 | upload --confirm
+                               fetch-detail 상품번호 | fix-detail 상품번호... [--confirm]
     """
     cmd = args[0]
     if cmd == "check":
@@ -490,8 +585,13 @@ def cli(args):
         if "--confirm" not in args:
             sys.exit("실제 등록은 사용자가 확인한 뒤 'upload --confirm' 으로만 실행합니다.")
         run(load_config(), send=True)
+    elif cmd == "fetch-detail":
+        fetch_detail(load_config(), args[1])
+    elif cmd == "fix-detail":
+        nos = [a for a in args[1:] if a != "--confirm"]
+        fix_detail(load_config(), nos, send="--confirm" in args)
     else:
-        sys.exit("사용법: check | preview | category 단어 | upload --confirm")
+        sys.exit("사용법: check | preview | category 단어 | upload --confirm | fetch-detail 번호 | fix-detail 번호... [--confirm]")
 
 
 if __name__ == "__main__":
