@@ -3,7 +3,7 @@
 
 사용법: python add_row.py 상품.json
 상품.json 은 products.xlsx 머리글과 같은 키를 가진 JSON 객체 하나.
-이미지 칸이 비어 있으면 이미지 폴더에서 모델코드로 시작하는 파일을 찾아 채운다.
+이미지 칸이 비어 있으면 images 폴더에서 모델코드로 시작하는 파일을 찾아 채운다.
 """
 import glob
 import json
@@ -14,7 +14,7 @@ from openpyxl import load_workbook
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 XLSX = os.path.join(HERE, "products.xlsx")
-IMG = os.path.join(HERE, "이미지")
+IMG = os.path.join(HERE, "images")
 
 
 def find_images(code):
@@ -41,7 +41,7 @@ def main(path):
     ws.append(row)
     wb.save(XLSX)
     print(f"products.xlsx {ws.max_row}줄에 추가: {item.get('상품명', '')}")
-    print(f"이미지: {item.get('대표이미지') or '(없음 - 이미지 폴더에 모델코드로 시작하는 사진을 넣어 주세요)'}"
+    print(f"이미지: {item.get('대표이미지') or '(없음 - images 폴더에 모델코드로 시작하는 사진을 넣어 주세요)'}"
           + (f" 외 {len(str(item.get('추가이미지','')).split(';'))}장" if item.get("추가이미지") else ""))
 
 

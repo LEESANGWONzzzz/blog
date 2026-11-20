@@ -14,5 +14,5 @@ if errorlevel 1 (
 python -m pip install --upgrade pip
 python -m pip install requests bcrypt openpyxl
 echo.
-echo 설치가 끝났습니다. 이제 2_실행.bat 을 더블클릭하세요.
+echo 설치가 끝났습니다. 이제 2_run.bat 을 더블클릭하세요.
 pause

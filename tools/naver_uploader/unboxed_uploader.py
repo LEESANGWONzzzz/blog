@@ -22,7 +22,7 @@ try:
     import requests
     from openpyxl import load_workbook
 except ImportError:
-    print("필요한 프로그램이 설치되지 않았습니다. '1_설치.bat'을 먼저 실행해 주세요.")
+    print("필요한 프로그램이 설치되지 않았습니다. '1_install.bat'을 먼저 실행해 주세요.")
     input("엔터를 누르면 닫힙니다.")
     sys.exit(1)
 
@@ -363,7 +363,7 @@ def image_paths(p):
     for f in files:
         if not f:
             continue
-        path = f if os.path.isabs(f) else os.path.join(HERE, "이미지", f)
+        path = f if os.path.isabs(f) else os.path.join(HERE, "images", f)
         if not os.path.exists(path):
             raise FileNotFoundError(f"이미지 파일이 없습니다: {path}")
         out.append(path)
@@ -498,7 +498,7 @@ def check_pc(cfg):
     print(f" - 파이썬 {sys.version.split()[0]}  : OK")
     print(" - 필요한 부품(requests, bcrypt, openpyxl) : OK")
     print(f" - products.xlsx : {'OK' if os.path.exists(XLSX_PATH) else '없음'}")
-    print(f" - 이미지 폴더 : {'OK' if os.path.isdir(os.path.join(HERE, '이미지')) else '없음'}")
+    print(f" - images 폴더 : {'OK' if os.path.isdir(os.path.join(HERE, 'images')) else '없음'}")
     print(f" - API 키 입력 : {'OK' if keys_ready(cfg) else '아직 안 함 (config.ini 입력 필요)'}")
     for k in ("shipping_address_id", "return_address_id"):
         print(f" - {k} : {'OK' if cfg.get('store', k, fallback='').strip() else '비어 있음 (메뉴 3)'}")
