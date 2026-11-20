@@ -35,14 +35,18 @@ FEE, SHIP, FIXED = 0.0663, 3500, 3066
 
 
 # ---------- 설정 ----------
-def load_config():
+def keys_ready(cfg):
+    cid = cfg.get("api", "client_id", fallback="").strip()
+    sec = cfg.get("api", "client_secret", fallback="").strip()
+    return bool(cid and sec and "여기에" not in cid and "여기에" not in sec)
+
+
+def load_config(require_keys=True):
     if not os.path.exists(CFG_PATH):
         sys.exit("config.ini 파일이 없습니다. 프로그램 폴더에 config.ini가 있는지 확인해 주세요.")
     cfg = configparser.ConfigParser()
     cfg.read(CFG_PATH, encoding="utf-8")
-    cid = cfg.get("api", "client_id", fallback="").strip()
-    sec = cfg.get("api", "client_secret", fallback="").strip()
-    if not cid or not sec or "여기에" in cid or "여기에" in sec:
+    if require_keys and not keys_ready(cfg):
         sys.exit("config.ini 의 client_id / client_secret 을 먼저 입력해 주세요.")
     return cfg
 
@@ -393,8 +397,38 @@ def run(cfg, send):
     print(f"\n결과 파일: {log_path}")
 
 
+def check_pc(cfg):
+    """새 컴퓨터에서 준비가 됐는지 한 번에 점검한다."""
+    print("\n[환경 점검]")
+    print(f" - 파이썬 {sys.version.split()[0]}  : OK")
+    print(" - 필요한 부품(requests, bcrypt, openpyxl) : OK")
+    print(f" - products.xlsx : {'OK' if os.path.exists(XLSX_PATH) else '없음'}")
+    print(f" - 이미지 폴더 : {'OK' if os.path.isdir(os.path.join(HERE, '이미지')) else '없음'}")
+    print(f" - API 키 입력 : {'OK' if keys_ready(cfg) else '아직 안 함 (config.ini 입력 필요)'}")
+    for k in ("shipping_address_id", "return_address_id"):
+        print(f" - {k} : {'OK' if cfg.get('store', k, fallback='').strip() else '비어 있음 (메뉴 3)'}")
+    try:
+        ip = requests.get("https://api.ipify.org", timeout=10).text
+        print(f" - 이 컴퓨터의 인터넷 IP : {ip}  ← 커머스API센터 API호출 IP에 등록되어 있어야 합니다")
+    except requests.RequestException:
+        print(" - 인터넷 IP 확인 실패 (인터넷 연결 또는 회사 방화벽 확인)")
+    try:
+        requests.get(f"{BASE}/v1/categories", timeout=15)
+        print(" - 네이버 커머스API 접속 : OK")
+    except requests.RequestException:
+        print(" - 네이버 커머스API 접속 실패 → 회사 방화벽/보안 프로그램이 api.commerce.naver.com 을 막는지 확인")
+    if keys_ready(cfg):
+        try:
+            get_token(cfg)
+            print(" - 토큰 발급 : OK (이 컴퓨터에서 등록 가능)")
+        except SystemExit as e:
+            print(f" - 토큰 발급 실패: {e}")
+
+
 def main():
-    cfg = load_config()
+    cfg = load_config(require_keys=False)
+    if not keys_ready(cfg):
+        print("※ config.ini 에 client_id / client_secret 을 아직 입력하지 않았습니다. (6·7번은 지금도 사용 가능)")
     menu = """
 =============================================
   UNBOXED 스마트스토어 자동 등록
@@ -405,12 +439,16 @@ def main():
  4. 미리보기 (등록하지 않고 요청 내용만 저장)
  5. 상품 등록하기
  6. 내 IP 확인
+ 7. 이 컴퓨터 환경 점검 (새 PC 세팅 확인)
  0. 끝내기
 """
     while True:
         print(menu)
         c = input("번호를 입력하세요: ").strip()
         try:
+            if c in ("1", "2", "3", "4", "5") and not keys_ready(cfg):
+                print("먼저 config.ini 에 client_id / client_secret 을 입력하고 프로그램을 다시 실행해 주세요.")
+                continue
             if c == "1":
                 get_token(cfg)
                 print("연결 성공! 토큰을 받았습니다.")
@@ -426,6 +464,8 @@ def main():
                     run(cfg, send=True)
             elif c == "6":
                 show_ip()
+            elif c == "7":
+                check_pc(cfg)
             elif c == "0":
                 break
         except SystemExit as e:
