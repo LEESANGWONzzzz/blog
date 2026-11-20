@@ -106,8 +106,9 @@ def explain_error(r):
 
 
 # ---------- 조회 기능 ----------
-def search_categories(cfg):
-    kw = input("찾을 카테고리 단어 (예: 운동화, 패딩, 후드): ").strip()
+def search_categories(cfg, kw=None):
+    if kw is None:
+        kw = input("찾을 카테고리 단어 (예: 운동화, 패딩, 후드): ").strip()
     r = requests.get(f"{BASE}/v1/categories", headers=headers(cfg), params={"last": "true"}, timeout=60)
     if r.status_code != 200:
         explain_error(r)
@@ -474,5 +475,27 @@ def main():
             print("인터넷 연결 오류:", e)
 
 
+def cli(args):
+    """Claude Code 같은 도우미가 메뉴 없이 실행할 때 쓰는 명령.
+    python unboxed_uploader.py check | preview | category 단어 | upload --confirm
+    """
+    cmd = args[0]
+    if cmd == "check":
+        check_pc(load_config(require_keys=False))
+    elif cmd == "preview":
+        run(load_config(), send=False)
+    elif cmd == "category":
+        search_categories(load_config(), " ".join(args[1:]).strip())
+    elif cmd == "upload":
+        if "--confirm" not in args:
+            sys.exit("실제 등록은 사용자가 확인한 뒤 'upload --confirm' 으로만 실행합니다.")
+        run(load_config(), send=True)
+    else:
+        sys.exit("사용법: check | preview | category 단어 | upload --confirm")
+
+
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1:
+        cli(sys.argv[1:])
+    else:
+        main()
