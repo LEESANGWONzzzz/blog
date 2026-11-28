@@ -43,12 +43,20 @@ function scoreRows(rows, { minSearches = 100 } = {}) {
     .sort((a, b) => a.ratio - b.ratio || b.searches - a.searches);
 }
 
+// 블로그 문서 수를 못 얻을 때(개발자센터 키 없음·거절) 검색량 큰 순으로만 보여 준다.
+function rankBySearches(rows, { minSearches = 100 } = {}) {
+  return rows.filter((r) => r.searches >= minSearches).sort((a, b) => b.searches - a.searches);
+}
+
 function toMarkdown(scored, { date, hints }) {
+  const noDocs = scored.length > 0 && scored.every((r) => r.docs === undefined || r.docs === null);
   const lines = [
     `# 키워드 기회 — ${date}`,
     '',
     `- 힌트: ${hints.join(', ')}`,
-    '- 월간 검색량: 네이버 검색광고 키워드도구(PC+모바일, 최근 30일). 문서 수: 네이버 검색 API 블로그 total.',
+    noDocs
+      ? '- 월간 검색량: 네이버 검색광고 키워드도구(PC+모바일, 최근 30일). **블로그 문서 수는 조회하지 못해 검색량 큰 순**이다 (경쟁도 없음).'
+      : '- 월간 검색량: 네이버 검색광고 키워드도구(PC+모바일, 최근 30일). 문서 수: 네이버 검색 API 블로그 total.',
     '- 경쟁도 = 블로그 문서 수 ÷ 월간 검색량. 낮을수록 글이 적은데 찾는 사람은 많다. 상위 노출을 보장하는 숫자는 아니다.',
     '',
     '- 행동형 ✔ = 신청·기간·지급일·비용처럼 검색한 사람의 다음 행동이 담긴 검색어 (제목 우선 후보).',
@@ -56,7 +64,10 @@ function toMarkdown(scored, { date, hints }) {
     '| 순위 | 키워드 | 월간 검색량 | 블로그 문서 수 | 경쟁도 | 행동형 |',
     '|---|---|---|---|---|---|',
   ];
-  scored.forEach((r, i) => lines.push(`| ${i + 1} | ${r.keyword} | ${r.searches.toLocaleString()} | ${r.docs.toLocaleString()} | ${r.ratio.toFixed(1)} | ${isAction(r.keyword) ? '✔' : ''} |`));
+  scored.forEach((r, i) => {
+    const hasDocs = r.docs !== undefined && r.docs !== null;
+    lines.push(`| ${i + 1} | ${r.keyword} | ${r.searches.toLocaleString()} | ${hasDocs ? r.docs.toLocaleString() : '—'} | ${hasDocs ? r.ratio.toFixed(1) : '—'} | ${isAction(r.keyword) ? '✔' : ''} |`);
+  });
   return `${lines.join('\n')}\n`;
 }
 
@@ -119,7 +130,8 @@ async function main() {
   }
   if (!hints.length) throw new Error('힌트 키워드를 주거나 --from-trends 를 쓰세요.');
   const env = { ...loadEnv(), ...process.env };
-  const need = ['NAVER_SEARCHAD_API_KEY', 'NAVER_SEARCHAD_SECRET', 'NAVER_SEARCHAD_CUSTOMER_ID', 'NAVER_CLIENT_ID', 'NAVER_CLIENT_SECRET'];
+  // 검색광고 키 3개는 필수. 개발자센터 키 2개(블로그 문서 수)는 선택 — 없거나 거절되면 검색량만 본다 (2026-11-28).
+  const need = ['NAVER_SEARCHAD_API_KEY', 'NAVER_SEARCHAD_SECRET', 'NAVER_SEARCHAD_CUSTOMER_ID'];
   const missing = need.filter((k) => !env[k]);
   if (missing.length) throw new Error(`.env에 ${missing.join(', ')} 가 없습니다.`);
 
@@ -131,17 +143,27 @@ async function main() {
   }
   // 문서 수는 검색량 상위 40개만 조회한다 (검색 API 하루 25,000회 한도 안에서 넉넉하게).
   const top = [...seen.values()].sort((a, b) => b.searches - a.searches).slice(0, 40);
+  let docsOk = Boolean(env.NAVER_CLIENT_ID && env.NAVER_CLIENT_SECRET);
+  if (!docsOk) console.log('ℹ 개발자센터 키(NAVER_CLIENT_ID·SECRET)가 없어 블로그 문서 수는 건너뛰고 월간 검색량만 봅니다.');
   for (const r of top) {
-    r.docs = await blogDocCount(r.keyword, env);
+    if (!docsOk) break;
+    try {
+      r.docs = await blogDocCount(r.keyword, env);
+    } catch (e) {
+      console.log(`⚠ ${e.message} → 블로그 문서 수는 건너뛰고 월간 검색량만 봅니다.`);
+      docsOk = false;
+      top.forEach((x) => { x.docs = undefined; });
+      break;
+    }
     await new Promise((ok) => setTimeout(ok, 150));
   }
   const date = new Date().toISOString().slice(0, 10);
   fs.mkdirSync(OUT_DIR, { recursive: true });
   const file = path.join(OUT_DIR, `${date}.md`);
-  const scored = scoreRows(top);
+  const scored = docsOk ? scoreRows(top) : rankBySearches(top);
   fs.writeFileSync(file, toMarkdown(scored, { date, hints }));
-  console.log(`✔ ${path.relative(ROOT, file)} (키워드 ${scored.length}개, 경쟁도 낮은 순)`);
-  scored.slice(0, 10).forEach((r, i) => console.log(`  ${i + 1}. ${r.keyword} — 검색 ${r.searches.toLocaleString()} / 문서 ${r.docs.toLocaleString()}`));
+  console.log(`✔ ${path.relative(ROOT, file)} (키워드 ${scored.length}개, ${docsOk ? '경쟁도 낮은 순' : '검색량 큰 순'})`);
+  scored.slice(0, 10).forEach((r, i) => console.log(`  ${i + 1}. ${r.keyword} — 검색 ${r.searches.toLocaleString()} / 문서 ${r.docs === undefined ? '—' : r.docs.toLocaleString()}`));
 }
 
 if (require.main === module) {
@@ -151,4 +173,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { signature, parseCount, scoreRows, toMarkdown, latestTrendQueries, isAction };
+module.exports = { signature, parseCount, scoreRows, rankBySearches, toMarkdown, latestTrendQueries, isAction };

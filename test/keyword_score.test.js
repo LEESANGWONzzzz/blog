@@ -42,3 +42,13 @@ test('트렌드 검색어: 비즈니스·경제가 없으면 모든 주제 검�
   fs.writeFileSync(path.join(dir, '2026-10-21.md'), '### 스타·연예인\n1. 하영 (-)\n### 비즈니스·경제\n1. 근로장려금 (▲2)\n');
   assert.deepStrictEqual(latestTrendQueries(undefined, dir), { file: '2026-10-21.md', queries: ['근로장려금'] });
 });
+
+test('rankBySearches: 문서 수 없이 검색량 큰 순으로, 100 미만은 뺀다', () => {
+  const { rankBySearches, toMarkdown } = require('../scripts/keyword_score');
+  const rows = [{ keyword: 'a', searches: 500 }, { keyword: 'b', searches: 90 }, { keyword: 'c', searches: 2000 }];
+  const r = rankBySearches(rows);
+  assert.deepStrictEqual(r.map((x) => x.keyword), ['c', 'a']);
+  const md = toMarkdown(r, { date: '2026-11-28', hints: ['x'] });
+  assert.match(md, /검색량 큰 순/);
+  assert.match(md, /\| 1 \| c \| 2,000 \| — \| — \|/);
+});
