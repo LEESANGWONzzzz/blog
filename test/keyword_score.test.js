@@ -52,3 +52,11 @@ test('rankBySearches: 문서 수 없이 검색량 큰 순으로, 100 미만은 �
   assert.match(md, /검색량 큰 순/);
   assert.match(md, /\| 1 \| c \| 2,000 \| — \| — \|/);
 });
+
+test('redact: 서버 오류 문구에 되돌아온 api-key·설정 값을 가린다', () => {
+  const { redact } = require('../scripts/keyword_score');
+  const out = redact('{"detail":"Auth failed with api-key: 0100ABCDEF123456 and abcd1234secret"}', { NAVER_SEARCHAD_SECRET: 'abcd1234secret' });
+  assert.ok(!out.includes('0100ABCDEF123456'));
+  assert.ok(!out.includes('abcd1234secret'));
+  assert.match(out, /api-key: \*\*\*/);
+});

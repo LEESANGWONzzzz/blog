@@ -25,6 +25,16 @@ function signature(timestamp, method, uri, secret) {
   return crypto.createHmac('sha256', secret).update(`${timestamp}.${method}.${uri}`).digest('base64');
 }
 
+// 서버 오류 문구에 우리가 보낸 값(api-key 등)이 되돌아올 수 있다 → 출력 전에 가린다.
+function redact(msg, env = {}) {
+  let out = String(msg).replace(/(api-key|secret|customer)\s*[:=]\s*\S+/gi, '$1: ***');
+  for (const k of ['NAVER_SEARCHAD_API_KEY', 'NAVER_SEARCHAD_SECRET', 'NAVER_SEARCHAD_CUSTOMER_ID', 'NAVER_CLIENT_ID', 'NAVER_CLIENT_SECRET']) {
+    const v = env[k];
+    if (v && String(v).length >= 4) out = out.split(String(v)).join('***');
+  }
+  return out;
+}
+
 // 검색한 사람이 다음에 할 행동(신청·조회·비용 확인)을 담은 검색어. 이런 키워드가 제목감이다 (writing-rules 5-7).
 const ACTION_WORDS = /신청|기간|지급일|지급|방법|비용|가격|요금|조회|대상|조건|자격|서류|날짜|일정|예매|환급|보상|계산/;
 const isAction = (k) => ACTION_WORDS.test(k);
@@ -105,7 +115,7 @@ async function relatedKeywords(hints, env) {
   if (!res.ok) {
     // 서버가 돌려준 오류 문구(서명·고객 ID·권한 구분에 도움)만 보여 준다. 우리가 보낸 값은 출력하지 않는다.
     let msg = '';
-    try { msg = (await res.text()).replace(/\s+/g, ' ').slice(0, 160); } catch { /* 본문 없음 */ }
+    try { msg = redact((await res.text()).replace(/\s+/g, ' '), env).slice(0, 220); } catch { /* 본문 없음 */ }
     throw new Error(`검색광고 API ${res.status}${msg ? ` — 서버 응답: ${msg}` : ''} — 키·고객 ID를 확인하세요 (값은 출력하지 않음).`);
   }
   const body = await res.json();
@@ -184,4 +194,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { signature, parseCount, scoreRows, rankBySearches, toMarkdown, latestTrendQueries, isAction };
+module.exports = { redact, signature, parseCount, scoreRows, rankBySearches, toMarkdown, latestTrendQueries, isAction };
