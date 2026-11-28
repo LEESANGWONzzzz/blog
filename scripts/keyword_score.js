@@ -102,7 +102,12 @@ async function relatedKeywords(hints, env) {
       'X-Signature': signature(ts, 'GET', uri, env.NAVER_SEARCHAD_SECRET),
     },
   });
-  if (!res.ok) throw new Error(`검색광고 API ${res.status} — 키·고객 ID를 확인하세요 (값은 출력하지 않음).`);
+  if (!res.ok) {
+    // 서버가 돌려준 오류 문구(서명·고객 ID·권한 구분에 도움)만 보여 준다. 우리가 보낸 값은 출력하지 않는다.
+    let msg = '';
+    try { msg = (await res.text()).replace(/\s+/g, ' ').slice(0, 160); } catch { /* 본문 없음 */ }
+    throw new Error(`검색광고 API ${res.status}${msg ? ` — 서버 응답: ${msg}` : ''} — 키·고객 ID를 확인하세요 (값은 출력하지 않음).`);
+  }
   const body = await res.json();
   return (body.keywordList || []).map((k) => ({
     keyword: k.relKeyword,
@@ -134,6 +139,12 @@ async function main() {
   const need = ['NAVER_SEARCHAD_API_KEY', 'NAVER_SEARCHAD_SECRET', 'NAVER_SEARCHAD_CUSTOMER_ID'];
   const missing = need.filter((k) => !env[k]);
   if (missing.length) throw new Error(`.env에 ${missing.join(', ')} 가 없습니다.`);
+  // 값 모양만 점검한다 (값 자체는 출력하지 않고 길이만). 공백·한글·"(설명)"이 섞이면 403의 흔한 원인이다.
+  for (const k of need) {
+    const v = String(env[k]);
+    console.log(`  · ${k}: ${v.length}자${/[^\x21-\x7E]/.test(v) ? ' ⚠ 공백·한글 같은 문자가 섞여 있어요(설명 글자를 지우고 값만 남기세요)' : ''}`);
+  }
+  if (!/^\d+$/.test(String(env.NAVER_SEARCHAD_CUSTOMER_ID))) console.log('  ⚠ NAVER_SEARCHAD_CUSTOMER_ID는 숫자만 있어야 해요.');
 
   const seen = new Map();
   for (let i = 0; i < hints.length; i += 5) {
